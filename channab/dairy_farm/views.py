@@ -6,9 +6,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from datetime import date
-from .models import AnimalCategory, Animal, MilkRecord
-from .forms import AnimalCategoryForm, AnimalForm, MilkRecordForm, MemberForm
+from .models import AnimalCategory, Animal, MilkRecord, AnimalWeight
+from .forms import AnimalCategoryForm, AnimalForm, MilkRecordForm, MemberForm, AnimalWeightForm
 from django.db.models import Q
+
+from django.db.models import F, FloatField, ExpressionWrapper, Window
+from django.db.models.functions.window import Lag
 
 
 class AnimalCategoryListView(ListView):
@@ -71,6 +74,12 @@ def animal_list(request):
     return render(request, 'dairy_farm/animal_list.html', context)
 
 
+from django.db.models import F, FloatField, ExpressionWrapper, Window
+from django.db.models.functions import Lag
+
+from django.db.models import F, FloatField, ExpressionWrapper, Window, OrderBy
+from django.db.models.functions import Lag
+
 class AnimalDetailView(LoginRequiredMixin, DetailView):
     model = Animal
     template_name = 'dairy_farm/animal_detail.html'
@@ -82,7 +91,27 @@ class AnimalDetailView(LoginRequiredMixin, DetailView):
         context['animal_mother'] = AnimalRelation.objects.filter(animal=animal, relation_type="mother").first()
         context['animal_father'] = AnimalRelation.objects.filter(animal=animal, relation_type="father").first()
         context['animal_children'] = AnimalRelation.objects.filter(related_animal=animal)
+
+        # Add the weight change calculation to the queryset
+        animal_weights = animal.animalweight_set.annotate(
+            weight_change=ExpressionWrapper(
+                F('weight') - Window(Lag('weight', default=0), order_by=OrderBy(F('date'))),
+                output_field=FloatField()
+            )
+        )
+        context['animal_weights'] = animal_weights
+
+        # Get the last weight and its difference
+        last_weight = animal_weights.order_by('-date').first()
+        if last_weight:
+            context['last_weight'] = last_weight.weight
+            context['last_weight_difference'] = last_weight.weight_change
+        else:
+            context['last_weight'] = 0
+            context['last_weight_difference'] = 0
+
         return context
+
 
     def post(self, request, *args, **kwargs):
         form = MilkRecordForm(request.POST)
@@ -95,10 +124,6 @@ class AnimalDetailView(LoginRequiredMixin, DetailView):
         else:
             context = self.get_context_data(object=animal, form=form)
             return self.render_to_response(context)
-
-
-
-    
 
 
 @login_required
@@ -376,3 +401,45 @@ class AnimalRelationDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('dairy_farm:animal_detail', kwargs={'pk': self.object.animal.id})
+
+
+# Add AnimalWeight views
+
+@login_required
+def add_weight_record(request, animal_id):
+    animal = get_object_or_404(Animal, pk=animal_id)
+    if request.method == 'POST':
+        form = AnimalWeightForm(request.POST)
+        if form.is_valid():
+            weight_record = form.save(commit=False)
+            weight_record.animal = animal
+            weight_record.save()
+            return redirect('dairy_farm:animal_detail', pk=animal_id)
+    else:
+        form = AnimalWeightForm()
+    return render(request, 'dairy_farm/weight/animal_weight_form.html', {'form': form, 'animal_id': animal_id, 'animal': animal})
+
+@login_required
+def edit_weight_record(request, weight_record_id):
+    weight_record = get_object_or_404(AnimalWeight, pk=weight_record_id)
+    if request.method == 'POST':
+        form = AnimalWeightForm(request.POST, instance=weight_record)
+        if form.is_valid():
+            form.save()
+            return redirect('dairy_farm:animal_detail', pk=weight_record.animal.id)
+    else:
+        form = AnimalWeightForm(instance=weight_record)
+    return render(request, 'dairy_farm/weight/edit_weight_record.html', {'form': form, 'weight_record': weight_record})
+
+
+
+
+
+@login_required
+def animal_weight_delete_view(request, weight_record_id):
+    weight_record = get_object_or_404(AnimalWeight, pk=weight_record_id)
+    animal_id = weight_record.animal.id
+    weight_record.delete()
+    return redirect('dairy_farm:animal_detail', pk=animal_id)
+
+

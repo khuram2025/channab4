@@ -124,3 +124,10 @@ class AnimalRelationForm(forms.ModelForm):
     class Meta:
         model = AnimalRelation
         fields = ['related_animal', 'relation_type']
+
+from .models import AnimalWeight
+
+class AnimalWeightForm(forms.ModelForm):
+    class Meta:
+        model = AnimalWeight
+        fields = ['date', 'weight']

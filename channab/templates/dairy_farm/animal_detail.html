@@ -12,6 +12,27 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<style>
+    .responsive-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .right-box-contain {
+        flex: 1;
+    }
+
+    .info-table-wrapper {
+        flex: 1;
+    }
+
+    @media (max-width: 767px) {
+        .responsive-container {
+            display: block;
+        }
+    }
+</style>
+
     
 <body>
 
@@ -66,28 +87,62 @@
                         </div>
 
                         <div class="col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
-                            <div class="right-box-contain">
-                                <h6 class="offer-top">30% Off</h6>
-                                <h2 class="name">{{ animal.tag }}</h2>
-                                <h3 class="theme-color price">{{ animal.dob|age_display }}</h3>
-
-
-                                <div class="product-packege">
-                                    <div class="product-title">
-                                        <h4>{{ animal.category }}</h4>
-                                    </div>
-                                    <ul class="select-packege">
-                                        <li>
-                                            <a href="javascript:void(0)" class="active">1/2 KG</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">1 KG</a>
-                                        </li>
-                                    </ul>
+                            <div class="responsive-container">
+                                <div class="right-box-contain">
+                                    <h2 class="name">{{ animal.tag }}</h2>
+                                                        <h4 class="theme-color price">{{ animal.dob|age_display }}</h4>
+                        
+                        
+                                                        <div class="product-packege">
+                                                            <div class="product-title">
+                                                                <h4>{{ animal.category }}</h4>
+                                                            </div>
+                                                            <ul class="select-packege">
+                                                                <li>
+                                                                    <a href="javascript:void(0)" class="active">Current Weight: {{ last_weight }} KGs</a>
+                                                                </li>
+                                                                <li>
+                                                                    {% if last_weight_difference > 0 %}
+                                                                        <a href="javascript:void(0)" class="text-success">+{{ last_weight_difference }} KGs</a>
+                                                                    {% elif last_weight_difference < 0 %}
+                                                                        <a href="javascript:void(0)" class="text-danger">{{ last_weight_difference }} KGs</a>
+                                                                    {% else %}
+                                                                        <a href="javascript:void(0)">0 KGs</a>
+                                                                    {% endif %}
+                                                                </li>
+                                                            </ul>
+                                                        </div>
                                 </div>
-    
+                                <div class="info-table-wrapper">
+                                    <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab">
+                                                                <div class="table-responsive">
+                                                                    <table class="table info-table">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>Status</td>
+                                                                                <td>{{ animal.status }}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Age</td>
+                                                                                <td>{{ animal.dob|age_display }}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Gender</td>
+                                                                                <td>{{ animal.sex }}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Purchase Price</td>
+                                                                                <td>{{ animal.purchase_cost }} Rs.</td>
+                                                                            </tr>
+                            
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                </div>
                             </div>
                         </div>
+                         
     
                         <div class="col-12">
                             <div class="product-section-box">
@@ -109,6 +164,9 @@
                                             data-bs-target="#care" type="button" role="tab" aria-controls="care"
                                             aria-selected="false">Family </button>
                                     </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="weight-tab" data-bs-toggle="tab" data-bs-target="#weight" type="button" role="tab" aria-controls="weight" aria-selected="false">Weight</button>
+                                    </li>
     
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="review-tab" data-bs-toggle="tab"
@@ -121,6 +179,54 @@
                                     <div class="tab-pane fade show active" id="description" role="tabpanel"
                                         aria-labelledby="description-tab">
     
+                                    </div>
+                                    <div class="tab-pane fade" id="weight" role="tabpanel" aria-labelledby="weight-tab">
+                                        <div class="d-flex justify-content-between mb-3">
+                                            <h3 class="mb-0">Weight Records</h3>
+                                            <p>Animal ID: {{ animal.id }}</p>
+
+                                            <button type="button" class="btn btn-primary btn-sm" onclick="location.href='{% url 'dairy_farm:add_weight' animal.id %}';">
+                                                Add Weight Record
+                                            </button>
+
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table info-table" id="weight-record-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Weight (KGs)</th>
+                                                        <th>Change</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for record in animal_weights %}
+                                                    <tr>
+                                                        <td>{{ record.date }}</td>
+                                                        <td>{{ record.weight }}</td>
+                                                        <td>
+                                                            {% if record.weight_change > 0 %}
+                                                                <span class="text-success">+{{ record.weight_change }}</span>
+                                                            {% elif record.weight_change < 0 %}
+                                                                <span class="text-danger">{{ record.weight_change }}</span>
+                                                            {% else %}
+                                                                {{ record.weight_change }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            <a href="{% url 'dairy_farm:edit_weight' record.id %}" title="Edit">
+                                                                <i class="ri-pencil-line"></i>
+                                                            </a>
+                                                            <a href="{% url 'dairy_farm:delete_weight' record.id %}" title="Delete">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
     
                                     <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab">

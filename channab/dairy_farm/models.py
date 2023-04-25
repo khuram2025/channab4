@@ -160,3 +160,11 @@ class AnimalRelation(models.Model):
 
     def __str__(self):
         return f"{self.animal.tag} - {self.relation_type} - {self.related_animal.tag}"
+
+class AnimalWeight(models.Model):
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    date = models.DateField()
+    weight = models.DecimalField(max_digits=6, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.animal.tag} - {self.date} - {self.weight} KGs"

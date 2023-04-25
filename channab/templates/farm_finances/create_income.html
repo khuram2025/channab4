@@ -1,10 +1,56 @@
-{% extends 'base.html' %}
+{% extends 'home/base.html' %}
+
+{% block extra_head %}
+{{ block.super }}
+<script>
+    $(function() {
+        $("#id_dob").datepicker({
+            dateFormat: 'yy-mm-dd',
+            changeMonth: true,
+            changeYear: true
+        });
+    });
+</script>
+{% endblock %}
 
 {% block content %}
-    <h2>Create Income</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
-    </form>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2>Create Income</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="{% if field.name == 'category' or field.name == 'purchase_cost' %}col-md-6{% else %}col-md-12{% endif %} mb-3">
+                    <div class="form-group">
+                        <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
+                        {% if field.field.widget.input_type == 'file' %}
+                        <input type="{{ field.field.widget.input_type }}" class="form-control-file" name="{{ field.html_name }}" id="{{ field.auto_id }}" value="{{ field.value|default:'' }}" {% if field.field.required %}required{% endif %}>
+                        {% elif field.field.widget.input_type == 'date' %}
+                        <input type="text" class="form-control" name="{{ field.html_name }}" id="{{ field.auto_id }}" value="{{ field.value|default:'' }}" {% if field.field.required %}required{% endif %}>
+                        {% elif field.name == 'category' %}
+                        <select class="form-control" name="{{ field.html_name }}" id="{{ field.auto_id }}">
+                            {% for option in field.field.choices %}
+                            <option value="{{ option.0 }}" {% if option.0 == field.value %}selected{% endif %}>{{ option.1 }}</option>
+                            {% endfor %}
+                        </select>
+                        
+                        {% else %}
+                        <input type="{{ field.field.widget.input_type }}" class="form-control" name="{{ field.html_name }}" id="{{ field.auto_id }}" value="{{ field.value|default:'' }}" {% if field.field.required %}required{% endif %}>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if field.name == 'purchase_cost' %}
+                <div class="w-100"></div>
+                {% endif %}
+                {% endfor %}
+
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-success w-100">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

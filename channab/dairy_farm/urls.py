@@ -36,6 +36,13 @@ urlpatterns = [
     path('animal/<int:pk>/add_relation/', views.AnimalRelationCreateView.as_view(), name='add_relation'),
     path('animal/relation/<int:pk>/update/', views.AnimalRelationUpdateView.as_view(), name='update_relation'),
     path('animal/relation/<int:pk>/delete/', views.AnimalRelationDeleteView.as_view(), name='delete_relation'),
+
+    path('animal/<int:animal_id>/add_weight/', views.add_weight_record, name='add_weight'),
+    path('animal_weight/<int:weight_record_id>/delete/', views.animal_weight_delete_view, name='delete_weight'),
+
+    path('weight/<int:weight_record_id>/edit/', views.edit_weight_record, name='edit_weight'),
+
+  
     
     
 ]
