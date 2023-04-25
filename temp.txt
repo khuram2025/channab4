@@ -1,0 +1,25 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+  <div class="container">
+    <h2>User Profile</h2>
+    
+
+    <h3>Profile Details</h3>
+    <p><strong>First Name:</strong> {{ form.first_name.value }}</p>
+    <p><strong>Last Name:</strong> {{ form.last_name.value }}</p>
+    <p><strong>Role:</strong> {{ form.role.value }}</p>
+    <p><strong>City:</strong> {{ form.city.value }}</p>
+    <p><strong>Email:</strong> {{ form.email.value }}</p>
+    {% if form.facebook.value %}
+      <p><strong>Facebook:</strong> <a href="{{ form.facebook.value }}">{{ form.facebook.value }}</a></p>
+    {% endif %}
+    {% if form.youtube.value %}
+      <p><strong>YouTube:</strong> <a href="{{ form.youtube.value }}">{{ form.youtube.value }}</a></p>
+    {% endif %}
+    {% if form.profile_picture.value %}
+      <p><strong>Profile Picture:</strong></p>
+      <img src="{{ form.profile_picture.value.url }}" alt="Profile Picture" style="max-width: 200px; max-height: 200px;">
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,25 +1,136 @@
-{% extends 'accounts/base.html' %}
+{% extends "home/base.html" %} {% block content %}
 
-{% block content %}
-  <div class="container">
-    <h2>User Profile</h2>
-    
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      @media (min-width: 992px) {
+        .info-tab-mobile {
+          display: none;
+        }
+      }
+      @media (max-width: 991.98px) {
+        .info-tab-desktop {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loader Start -->
+    <div class="fullpage-loader">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <!-- Loader End -->
+    <!-- mobile fix menu start -->
+{% include 'home/mobile_menu.html' %}
+<!-- mobile fix menu end -->
 
-    <h3>Profile Details</h3>
-    <p><strong>First Name:</strong> {{ form.first_name.value }}</p>
-    <p><strong>Last Name:</strong> {{ form.last_name.value }}</p>
-    <p><strong>Role:</strong> {{ form.role.value }}</p>
-    <p><strong>City:</strong> {{ form.city.value }}</p>
-    <p><strong>Email:</strong> {{ form.email.value }}</p>
-    {% if form.facebook.value %}
-      <p><strong>Facebook:</strong> <a href="{{ form.facebook.value }}">{{ form.facebook.value }}</a></p>
-    {% endif %}
-    {% if form.youtube.value %}
-      <p><strong>YouTube:</strong> <a href="{{ form.youtube.value }}">{{ form.youtube.value }}</a></p>
-    {% endif %}
-    {% if form.profile_picture.value %}
-      <p><strong>Profile Picture:</strong></p>
-      <img src="{{ form.profile_picture.value.url }}" alt="Profile Picture" style="max-width: 200px; max-height: 200px;">
-    {% endif %}
-  </div>
+<!-- Product Left Sidebar Start -->
+<section class="product-section">
+  <div class="container-fluid-lg">
+    <div class="row">
+      <div class="col-xxl-9 col-xl-8 col-lg-7 wow fadeInUp">
+        <div class="row g-4">
+          <div class="col-xl-6 wow fadeInUp">
+            <div class="product-left-box">
+              <div class="row g-2">
+                <div class="col-xxl-10 col-lg-12 col-md-10 order-xxl-2 order-lg-1 order-md-2">
+                  <div class="product-main-2 no-arrow">
+                    <div>
+                      <div class="slider-image">
+                        <img src="{{ animal.image.url|default:'path/to/default/image.jpg' }}" id="img-1" data-zoom-image="{{ animal.image.url|default:'path/to/default/image.jpg' }}" class="img-fluid image_zoom_cls-0 blur-up lazyload" alt="" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-xxl-2 col-lg-12 col-md-2 order-xxl-1 order-lg-2 order-md-1"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="responsive-container">
+              <div class="right-box-contain">
+                <h2 class="name">{{ form.first_name.value }} {{ form.last_name.value }}</h2>
+                <div class="info-table-wrapper info-tab-desktop">
+                  <div class="table-responsive">
+                    <table class="table info-table">
+                      <tbody>
+                        <tr>
+                          <td>Role</td>
+                          <td>{{ form.role.value }}</td>
+                        </tr>
+                        <tr>
+                          <td>City</td>
+                          <td>{{ form.city.value }}</td>
+                        </tr>
+                        <tr>
+                          <td>Email</td>
+                          <td>{{ form.email.value }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="product-section-box">
+              <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link info-tab-mobile" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="false">Info</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                <button class="nav-link" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">Account</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review" type="button" role="tab" aria-controls="review" aria-selected="false">Tasks</button>
+                </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                  <div class="tab-pane fade info-tab-mobile" id="info" role="tabpanel" aria-labelledby="info-tab">
+                    <div class="table-responsive">
+                      <table class="table info-table">
+                        <tbody>
+                          <tr>
+                            <td>Role</td>
+                            <td>{{ form.role.value }}</td>
+                          </tr>
+                          <tr>
+                            <td>City</td>
+                            <td>{{ form.city.value }}</td>
+                          </tr>
+                          <tr>
+                            <td>Email</td>
+                            <td>{{ form.email.value }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
+                    <!-- Account content goes here -->
+                  </div>
+                  <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
+                    <!-- Tasks content goes here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
 {% endblock %}
