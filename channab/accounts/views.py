@@ -61,7 +61,7 @@ def user_profile(request):
     else:
         form = ProfileUpdateForm(instance=profile)
 
-    return render(request, 'accounts/profile.html', {'form': form})
+    return render(request, 'accounts/profile.html', {'form': form, 'profile': profile})
 
 from .forms import ProfileUpdateForm
 

@@ -1,121 +1,126 @@
-{% extends "accounts/base.html" %}
 
+
+{% extends "home/base.html" %} {% block content %}
 {% load static %}
+{% load widget_tweaks %}
 
-{% block content %}
-
-<body class=" layout-boxed">
-    
-    <!-- BEGIN LOADER -->
-    <div id="load_screen"> <div class="loader"> <div class="loader-content">
-        <div class="spinner-grow align-self-center"></div>
-    </div></div></div>
-    <!--  END LOADER -->
-
-    <!--  BEGIN NAVBAR  -->
-    {%include 'accounts/navbar.html' %}
-    <!--  END NAVBAR  -->
-
-    <!--  BEGIN MAIN CONTAINER  -->
-    <div class="main-container " id="container">
-
-        <div class="overlay"></div>
-        <div class="cs-overlay"></div>
-        <div class="search-overlay"></div>
-
-        <!--  BEGIN SIDEBAR  -->
-       {% include 'accounts/sidebar.html' %}
-        <!--  END SIDEBAR  -->
-
-        <!--  BEGIN CONTENT AREA  -->
-        <div id="content" class="main-content">
-            <div class="layout-px-spacing">
-
-                <div class="middle-content container-xxl p-0">
-
-                    <!-- BREADCRUMB -->
-                    <div class="page-meta">
-                        <nav class="breadcrumb-style-one" aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Users</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Account Settings</li>
-                            </ol>
-                        </nav>
-                    </div>
-                    <!-- /BREADCRUMB -->
-                        
-                    <div class="account-settings-container layout-top-spacing">
-    
-                        <div class="account-content">
-                            
-    
-                            <div class="tab-content" id="animateLineContent-4">
-                                <div class="tab-pane fade show active" id="animated-underline-home" role="tabpanel" aria-labelledby="animated-underline-home-tab">
-                                    <div class="row">
-                                        <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
-                                            <form class="section general-info" method="post" action="{% url 'accounts:edit_profile' %}">
-                                                {% csrf_token %}
-                                                <div class="info">
-                                                    <h6 class="">General Information</h6>
-                                                    <div class="row">
-                                                        <div class="col-lg-11 mx-auto">
-                                                            <div class="row">
-                                                               
-                                                                <div class="col-xl-10 col-lg-12 col-md-8 mt-md-0 mt-4">
-                                                                    <div class="form">
-                                                                        <div class="row">
-                                                                            
-                                                                            {% for field in form %}
-                                                                            <div class="col-md-6">
-                                                                                <div class="form-group">
-                                                                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                                                                    <input type="{{ field.field.widget.input_type }}" class="form-control mb-3" id="{{ field.auto_id }}" name="{{ field.html_name }}" placeholder="{{ field.help_text }}" value="{{ field.value|default:'' }}" {% if field.field.required %}required{% endif %}>
-                                                                                </div>
-                                                                            </div>
-                                                                            {% endfor %}
-
-                                                                            <div class="col-md-12 mt-1">
-                                                                                <div class="form-group text-end">
-                                                                                    <button class="btn btn-secondary" type="submit">Save</button>
-                                                                                </div>
-                                                                            </div>
-
-
-                                                                            
-                                                                        </div>
-                                                                        
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-            
-                                       
-                                    </div>
-                                </div>
-                             
-                              
-                            </div>
-                            
-                        </div>
-                        
-                    </div>
-
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          var editProfileModal = new bootstrap.Modal(document.getElementById('editProfile'), {});
+          editProfileModal.show();
+  
+          document.getElementById('id_profile_picture').addEventListener('change', function (event) {
+            previewImage(event.target);
+          });
+  
+          document.getElementById('change_picture_icon').addEventListener('click', function () {
+            document.getElementById('id_profile_picture').click();
+          });
+        });
+  
+        function previewImage(input) {
+          if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              document.getElementById('profile_picture_preview').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+          }
+        }
+      </script>
+  </head>
+  <body>
+    {% include 'home/mobile_menu.html' %}
+    <div class="modal fade theme-modal" id="editProfile" tabindex="-1" aria-labelledby="exampleModalLabel2"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel2">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
+                <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-xxl-12 text-center mb-4">
+                            <div style="position: relative;">
+                                <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture" id="profile_picture_preview" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                                <i class="fa fa-pencil" id="change_picture_icon" style="position: absolute; bottom: 0; right: 0; background-color: rgba(0,0,0,0.5); color: white; padding: 5px; cursor: pointer;"></i>
+                            </div>
+                        </div>
+                        <div class="col-xxl-12">
+                            <div class="form-floating theme-form-floating" style="display: none;">
+                                <label for="{{ form.profile_picture.auto_id }}">Change Profile Picture</label>
+                                {{ form.profile_picture|add_class:"form-control" }}
+                            </div>
+                        </div>
+                        <div class="col-xxl-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.first_name|add_class:"form-control" }}
+                                <label for="{{ form.first_name.auto_id }}">First Name</label>
+                            </div>
+                        </div>
+                        <div class="col-xxl-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.last_name|add_class:"form-control" }}
+                                <label for="{{ form.last_name.auto_id }}">Last Name</label>
+                            </div>
+                        </div>
 
+                        <div class="col-xxl-12">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.email|add_class:"form-control" }}
+                                <label for="{{ form.email.auto_id }}">Email address</label>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.role|add_class:"form-control" }}
+                                <label for="{{ form.role.auto_id }}">Role</label>
+                            </div>
+                        </div>
+
+                       
+
+                        <div class="col-xxl-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.city|add_class:"form-control" }}
+                                <label for="{{ form.city.auto_id }}">City</label>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.facebook|add_class:"form-control" }}
+                                <label for="{{ form.facebook.auto_id }}">Facebook</label>
+                            </div>
+                        </div>
+                        <div class="col-xxl-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.youtube|add_class:"form-control" }}
+                                <label for="{{ form.youtube.auto_id }}">Youtube</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-animation btn-md fw-bold"
+                        data-bs-dismiss="modal">Close</button>
+                    <button type="submit"
+                        class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
+                </div>
+            </form>
             </div>
-
-            <!--  BEGIN FOOTER  -->
-     
-            <!--  END FOOTER  -->
-            
         </div>
-        <!--  END CONTENT AREA  -->
     </div>
-    <!-- END MAIN CONTAINER -->
+<!-- Edit Profile End -->
 </body>
-
+</html>
 {% endblock %}
