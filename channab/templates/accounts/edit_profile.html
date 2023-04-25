@@ -1,0 +1,121 @@
+{% extends "accounts/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<body class=" layout-boxed">
+    
+    <!-- BEGIN LOADER -->
+    <div id="load_screen"> <div class="loader"> <div class="loader-content">
+        <div class="spinner-grow align-self-center"></div>
+    </div></div></div>
+    <!--  END LOADER -->
+
+    <!--  BEGIN NAVBAR  -->
+    {%include 'accounts/navbar.html' %}
+    <!--  END NAVBAR  -->
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container " id="container">
+
+        <div class="overlay"></div>
+        <div class="cs-overlay"></div>
+        <div class="search-overlay"></div>
+
+        <!--  BEGIN SIDEBAR  -->
+       {% include 'accounts/sidebar.html' %}
+        <!--  END SIDEBAR  -->
+
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+                <div class="middle-content container-xxl p-0">
+
+                    <!-- BREADCRUMB -->
+                    <div class="page-meta">
+                        <nav class="breadcrumb-style-one" aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Users</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Account Settings</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <!-- /BREADCRUMB -->
+                        
+                    <div class="account-settings-container layout-top-spacing">
+    
+                        <div class="account-content">
+                            
+    
+                            <div class="tab-content" id="animateLineContent-4">
+                                <div class="tab-pane fade show active" id="animated-underline-home" role="tabpanel" aria-labelledby="animated-underline-home-tab">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+                                            <form class="section general-info" method="post" action="{% url 'accounts:edit_profile' %}">
+                                                {% csrf_token %}
+                                                <div class="info">
+                                                    <h6 class="">General Information</h6>
+                                                    <div class="row">
+                                                        <div class="col-lg-11 mx-auto">
+                                                            <div class="row">
+                                                               
+                                                                <div class="col-xl-10 col-lg-12 col-md-8 mt-md-0 mt-4">
+                                                                    <div class="form">
+                                                                        <div class="row">
+                                                                            
+                                                                            {% for field in form %}
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                                                                    <input type="{{ field.field.widget.input_type }}" class="form-control mb-3" id="{{ field.auto_id }}" name="{{ field.html_name }}" placeholder="{{ field.help_text }}" value="{{ field.value|default:'' }}" {% if field.field.required %}required{% endif %}>
+                                                                                </div>
+                                                                            </div>
+                                                                            {% endfor %}
+
+                                                                            <div class="col-md-12 mt-1">
+                                                                                <div class="form-group text-end">
+                                                                                    <button class="btn btn-secondary" type="submit">Save</button>
+                                                                                </div>
+                                                                            </div>
+
+
+                                                                            
+                                                                        </div>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+            
+                                       
+                                    </div>
+                                </div>
+                             
+                              
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!--  BEGIN FOOTER  -->
+     
+            <!--  END FOOTER  -->
+            
+        </div>
+        <!--  END CONTENT AREA  -->
+    </div>
+    <!-- END MAIN CONTAINER -->
+</body>
+
+{% endblock %}

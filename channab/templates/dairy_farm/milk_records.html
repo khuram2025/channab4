@@ -1,0 +1,38 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="my-4">Milk Records</h1>
+            <a href="{% url 'dairy_farm:add_milk_record_to_animal' %}" class="btn btn-success mb-3">Add Milk Record</a> <!-- Add this line -->
+            <div class="table-responsive">
+                <table class="table info-table">
+                    <thead>
+                        <tr>
+                            <th>Animal</th>
+                            <th>Date</th>
+                            <th>1st</th>
+                            <th>2nd</th>
+                            <th>3rd</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in milk_records %}
+                        <tr>
+                            <td>{{ record.animal.tag }}</td>
+                            <td>{{ record.date }}</td>
+                            <td>{{ record.first_time }}</td>
+                            <td>{{ record.second_time }}</td>
+                            <td>{{ record.third_time }}</td>
+                            <td>{{ record.total_milk }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+  <h2>Add Animal</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-group">
+        <label for="{{ form.category.auto_id }}">Category</label>
+        <div class="input-group">
+            {{ form.category }}
+            <input type="text" class="form-control d-none" id="new_category" name="new_category" placeholder="Enter new category">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="toggle_new_category">Add new</button>
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Animal</button>
+  </form>
+
+{% block extra_js %}
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script>
+    $(document).ready(function() {
+        // Initialize the datepicker
+        $("#id_dob").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "-100:+0",
+            maxDate: "0",
+            dateFormat: "yy-mm-dd",
+            onSelect: function(dateText, inst) {
+                let dob = new Date(dateText);
+                let today = new Date();
+                let age = today.getFullYear() - dob.getFullYear();
+                let monthDiff = today.getMonth() - dob.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
+                $("#id_age").val(age);
+            }
+        });
+
+        $('#toggle_new_category').on('click', function() {
+            const newCategoryInput = $('#new_category');
+            const categorySelect = $('#{{ form.category.auto_id }}');
+            if (newCategoryInput.hasClass('d-none')) {
+                newCategoryInput.removeClass('d-none');
+                categorySelect.attr('disabled', 'disabled');
+                $(this).text('Choose existing');
+            } else {
+                newCategoryInput.addClass('d-none');
+                categorySelect.removeAttr('disabled');
+                $(this).text('Add new');
+            }
+        });
+    });
+  </script>
+{% endblock %}
+{% endblock %}

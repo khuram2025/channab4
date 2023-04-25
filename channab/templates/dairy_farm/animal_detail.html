@@ -1,0 +1,370 @@
+{% extends "home/base.html" %}
+{% load age_filters %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
+<!-- Add these lines in the <head> section of your HTML template -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+<body>
+
+    <!-- Loader Start -->
+    <div class="fullpage-loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <!-- Loader End -->
+
+    <!-- Header Start -->
+
+    <!-- Header End -->
+
+    <!-- mobile fix menu start -->
+    {% include 'home/mobile_menu.html' %}
+    <!-- mobile fix menu end -->
+
+    <!-- Breadcrumb Section Start -->
+
+    <!-- Breadcrumb Section End -->
+
+    <!-- Product Left Sidebar Start -->
+    <section class="product-section">
+        <div class="container-fluid-lg">
+            <div class="row">
+                <div class="col-xxl-9 col-xl-8 col-lg-7 wow fadeInUp">
+                    <div class="row g-4">
+                        <div class="col-xl-6 wow fadeInUp">
+                            <div class="product-left-box">
+                                <div class="row g-2">
+                                    <div class="col-xxl-10 col-lg-12 col-md-10 order-xxl-2 order-lg-1 order-md-2">
+                                        <div class="product-main-2 no-arrow">
+                                            <div>
+                                                <div class="slider-image">
+                                                    <img src="{{ animal.image.url|default:'path/to/default/image.jpg' }}" id="img-1"
+                                                        data-zoom-image="{{ animal.image.url|default:'path/to/default/image.jpg' }}"
+                                                        class="img-fluid image_zoom_cls-0 blur-up lazyload" alt="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xxl-2 col-lg-12 col-md-2 order-xxl-1 order-lg-2 order-md-1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
+                            <div class="right-box-contain">
+                                <h6 class="offer-top">30% Off</h6>
+                                <h2 class="name">{{ animal.tag }}</h2>
+                                <h3 class="theme-color price">{{ animal.dob|age_display }}</h3>
+
+
+                                <div class="product-packege">
+                                    <div class="product-title">
+                                        <h4>{{ animal.category }}</h4>
+                                    </div>
+                                    <ul class="select-packege">
+                                        <li>
+                                            <a href="javascript:void(0)" class="active">1/2 KG</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">1 KG</a>
+                                        </li>
+                                    </ul>
+                                </div>
+    
+                            </div>
+                        </div>
+    
+                        <div class="col-12">
+                            <div class="product-section-box">
+                                <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
+    
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab"
+                                            data-bs-target="#info" type="button" role="tab" aria-controls="info"
+                                            aria-selected="false"> Info</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link " id="description-tab" data-bs-toggle="tab"
+                                            data-bs-target="#description" type="button" role="tab"
+                                            aria-controls="description" aria-selected="true">Health </button>
+                                    </li>
+    
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="care-tab" data-bs-toggle="tab"
+                                            data-bs-target="#care" type="button" role="tab" aria-controls="care"
+                                            aria-selected="false">Family </button>
+                                    </li>
+    
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="review-tab" data-bs-toggle="tab"
+                                            data-bs-target="#review" type="button" role="tab" aria-controls="review"
+                                            aria-selected="false">Milk Record</button>
+                                    </li>
+                                </ul>
+    
+                                <div class="tab-content custom-tab" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="description" role="tabpanel"
+                                        aria-labelledby="description-tab">
+    
+                                    </div>
+    
+                                    <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab">
+                                        <div class="table-responsive">
+                                            <table class="table info-table">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Status</td>
+                                                        <td>{{ animal.status }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Age</td>
+                                                        <td>{{ animal.dob|age_display }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Gender</td>
+                                                        <td>{{ animal.sex }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Purchase Price</td>
+                                                        <td>{{ animal.purchase_cost }} Rs.</td>
+                                                    </tr>
+    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
+                                        <div class="d-flex justify-content-between mb-3">
+                                            <h3 class="mb-0">Milk Records</h3>
+                                            <button type="button" class="btn btn-primary btn-sm" onclick="location.href='{% url 'dairy_farm:add_milk_record' animal.id %}';">
+                                                Add Milk Record
+                                            </button>
+                                            
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table info-table" id="milk-record-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>1st</th>
+                                                        <th>2nd</th>
+                                                        <th>3rd</th>
+                                                        <th>Total</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for record in animal.milkrecord_set.all %}
+                                                    
+                                                    <tr>
+                                                        <td>{{ record.date }}</td>
+                                                        <td>{{ record.first_time }}</td>
+                                                        <td>{{ record.second_time }}</td>
+                                                        <td>{{ record.third_time }}</td>
+                                                        <td>{{ record.total_milk }}</td>
+                                                        <td>
+                                                            <a href="{% url 'dairy_farm:edit_milk_record' record.id %}" title="Edit">
+                                                                <i class="ri-pencil-line"></i>
+                                                            </a>
+                                                            
+                                                            
+                                                          
+                                                            <a href="{% url 'dairy_farm:delete_milk_record' record.id %}" title="Delete">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    
+                                        <!-- Add Milk Record Modal -->
+                                      <!-- Add Milk Record Modal -->
+                                        <div class="modal fade" id="addMilkRecordModal" tabindex="-1" role="dialog" aria-labelledby="addMilkRecordModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h5 class="modal-title" id="addMilkRecordModalLabel">Add Milk Record</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                <!-- Add Milk Record Form will be loaded here -->
+                                                </div>
+                                                <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        
+                                    
+                                        <!-- Edit Milk Record Modal -->
+                                        <!-- ... -->
+                                    </div>
+                                    <!-- Add this code inside the "care" tab pane -->
+<div class="tab-pane fade" id="care" role="tabpanel" aria-labelledby="care-tab">
+    <div class="table-responsive">
+        <table class="table family-table">
+            <thead>
+                <tr>
+                    <th>Relation</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Age</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if animal_mother %}
+                <tr>
+                    <td>Mother</td>
+                    <td>{{ animal_mother.related_animal.tag }}</td>
+                    <td>{{ animal_mother.related_animal.sex }}</td>
+                    <td>{{ animal_mother.related_animal.dob|age_display }}</td>
+                </tr>
+                {% endif %}
+                {% if animal_father %}
+                <tr>
+                    <td>Father</td>
+                    <td>{{ animal_father.related_animal.tag }}</td>
+                    <td>{{ animal_father.related_animal.sex }}</td>
+                    <td>{{ animal_father.related_animal.dob|age_display }}</td>
+                </tr>
+                {% endif %}
+                {% for child_relation in animal_children %}
+                <tr>
+                    <td>Child</td>
+                    <td>{{ child_relation.animal.tag }}</td>
+                    <td>{{ child_relation.animal.sex }}</td>
+                    <td>{{ child_relation.animal.dob|age_display }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            
+            
+            
+            
+        </table>
+        <!-- Add this code inside the "care" tab pane, after the table -->
+<div class="d-flex justify-content-end mb-3">
+    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addRelationModal">
+        Add Relation
+    </button>
+</div>
+
+<!-- Add Relation Modal -->
+<div class="modal fade" id="addRelationModal" tabindex="-1" role="dialog" aria-labelledby="addRelationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addRelationModalLabel">Add Relation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'dairy_farm:add_relation' animal.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="relationType" class="form-label">Relation Type</label>
+                        <select class="form-select" id="relationType" name="relation_type">
+                            <option value="mother">Mother</option>
+                            <option value="father">Father</option>
+                            <option value="child">Child</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="relatedAnimal" class="form-label">Related Animal</label>
+                        <select class="form-select" id="relatedAnimal" name="related_animal">
+                            {% for related_animal in all_animals %}
+                                <option value="{{ related_animal.id }}">{{ related_animal.tag }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add Relation</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+                                    
+                                  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+        </div>
+    </section>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#milk-record-table').DataTable({
+                "order": [[0, "desc"]]
+            });
+        });
+    </script>
+</body>
+</html>
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const editButtons = document.querySelectorAll(".edit-milk-record");
+    const modalBody = document.querySelector("#editMilkRecordModal .modal-body");
+
+    editButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            const recordId = this.dataset.recordId;
+            const editUrl = this.dataset.url;
+            
+            console.log("recordId:", recordId);
+            console.log("editUrl:", editUrl);
+
+            fetch(editUrl, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+                .then(response => response.text())
+                .then(html => {
+                    modalBody.innerHTML = html;
+                    $("#editMilkRecordModal").modal("show");
+                });
+        });
+    });
+});
+
+
+</script>
+{% endblock %}
+
+{% endblock %}
+    
+    
+

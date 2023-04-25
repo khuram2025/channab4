@@ -1,0 +1,118 @@
+{% extends 'dairy_farm/backend/backendbase.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<body>
+    <!-- tap on top start-->
+    <div class="tap-top">
+        <span class="lnr lnr-chevron-up"></span>
+    </div>
+    <!-- tap on tap end-->
+
+    <!-- page-wrapper Start-->
+    <div class="page-wrapper compact-wrapper" id="pageWrapper">
+        <!-- Page Header Start-->
+        {%include 'dairy_farm/backend/header.html' %}
+        <!-- Page Header Ends-->
+
+        <!-- Page Body Start-->
+        <div class="page-body-wrapper">
+            <!-- Page Sidebar Start-->
+            {%include 'dairy_farm/backend/sidebar.html' %}
+            <!-- Page Sidebar Ends-->
+
+            <!-- Container-fluid starts-->
+            <div class="page-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card card-table">
+                                <div class="card-body">
+                                    <div class="title-header option-title d-sm-flex d-block">
+                                        <h5>Animals List</h5>
+                                    </div>
+                                    <div>
+                                        <div class="table-responsive">
+                                            <table class="table all-package theme-table table-product" id="table_id">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Animal Image</th>
+                                                        <th>Tag#</th>
+                                                        <th>Animal Category</th>
+                                                        <th>Age</th>
+                                                        <th>Gender</th>
+                                                        <th>Status</th>
+                                                        <th>Option</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    {% for animal in animals %}
+                                                    <tr>
+                                                        <td>
+                                                            <div class="table-image">
+                                                                <img src="{{ animal.image.url }}" class="img-fluid"
+                                                                    alt="">
+                                                            </div>
+                                                        </td>
+
+                                                        <td>{{ animal.tag }}</td>
+
+                                                        <td>{{ animal.category }}</td>
+
+                                                        <td>{{ animal.age }}</td>
+
+                                                        <td>{{ animal.get_sex_display }}</td>
+
+                                                        <td class="status-danger">
+                                                            <span>{{ animal.get_status_display }}</span>
+                                                        </td>
+
+                                                        <td>
+                                                            <ul>
+                                                              <li>
+                                                                <a href="{% url 'dairy_farm:animal_detail' animal.pk %}">
+                                                                    <i class="ri-eye-line"></i>
+                                                                </a>
+                                                            </li>
+                                                            
+
+                                                                <li>
+                                                                    <a href="#">
+                                                                        <i class="ri-pencil-line"></i>
+                                                                    </a>
+                                                                </li>
+
+                                                                <li>
+                                                                    <a href="#" data-bs-toggle="modal"
+                                                                        data-bs-target="#exampleModalToggle">
+                                                                        <i class="ri-delete-bin-line"></i>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                              </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Container-fluid Ends-->
+    
+                </div>
+            </div>
+        </div>
+        <!-- page-wrapper End-->
+    
+    </body>
+    
+    </html>
+    {% endblock %}
+    

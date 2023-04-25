@@ -1,0 +1,13 @@
+Add Milk Record
+Animal instance with tag 1 does not exist.
+This error apear once want to add milk record from the main page
+http://127.0.0.1:8000/dairy-farm/milk_records/add/
+2nd issue 
+Farm member funcionality not working 
+
+3rd issue 
+
+Once click on Income in side bar the following option disaear
+
+Create Income Category
+Income Categories

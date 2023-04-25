@@ -1,0 +1,12 @@
+<form id="editMilkRecordForm" method="post" action="{% url 'dairy_farm:edit_milk_record' milk_record.id %}">
+    {% csrf_token %}
+    
+    {% for field in form %}
+    <div class="form-group">
+        <label for="{{ field.auto_id }}">{{ field.label }}</label>
+        {{ field }}
+    </div>
+    {% endfor %}
+    
+    <button type="submit" class="btn btn-primary">Save changes</button>
+</form>

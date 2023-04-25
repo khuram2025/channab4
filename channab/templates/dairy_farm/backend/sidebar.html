@@ -1,0 +1,163 @@
+{%load static %}
+
+<div class="sidebar-wrapper">
+    <div id="sidebarEffect"></div>
+    <div>
+        <div class="logo-wrapper logo-wrapper-center">
+            <a href="index.html" data-bs-original-title="" title="">
+                <img class="img-fluid for-white" src="{% static 'be/assets/images/logo/full-white.png' %}" alt="logo">
+            </a>
+            <div class="back-btn">
+                <i class="fa fa-angle-left"></i>
+            </div>
+            <div class="toggle-sidebar">
+                <i class="ri-apps-line status_toggle middle sidebar-toggle"></i>
+            </div>
+        </div>
+        <div class="logo-icon-wrapper">
+            <a href="index.html">
+                <img class="img-fluid main-logo main-white" src="{% static 'be/assets/images/logo/1-white.png' %}"
+                    alt="logo">
+                <img class="img-fluid main-logo main-dark" src="{% static 'be/assets/images/logo/logo-white.png' %}"
+                    alt="logo">
+            </a>
+        </div>
+        <nav class="sidebar-main">
+            <div class="left-arrow" id="left-arrow">
+                <i data-feather="arrow-left"></i>
+            </div>
+
+            <div id="sidebar-menu">
+                <ul class="sidebar-links" id="simple-bar">
+                    <li class="back-btn"></li>
+
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav" href="index.html">
+                            <i class="ri-home-line"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-list">
+                        <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-store-3-line"></i>
+                            <span>Animal</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li>
+                                <a href="{%url 'dairy_farm:animal_list' %}">Animals</a>
+                            </li>
+
+                            <li>
+                                <a href="{%url 'dairy_farm:add_animal' %}">Add New Animal</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="sidebar-list">
+                        <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-list-check-2"></i>
+                            <span>Category</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li>
+                                <a href="{%url 'dairy_farm:animalcategory_list' %}">Category List</a>
+                            </li>
+
+                            <li>
+                                <a href="{%url 'dairy_farm:animalcategory_create' %}">Add New Category</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-list-check-2"></i>
+                            <span>Farm</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li>
+                                <a href="{%url 'dairy_farm:farm_list' %}">Farm List</a>
+                            </li>
+
+                            <li>
+                                <a href="{%url 'dairy_farm:add_farm' %}">Add New Farm</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-list-check-2"></i>
+                            <span>Inomce</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li>
+                                {% for farm in farms %}
+                                <!-- Display farm details -->
+                                <a href="{% url 'farm_finances:create_income_category' farm_id=farm.id %}">Create Income
+                                    Category</a>
+                                {% endfor %}
+
+
+                            </li>
+
+                            <li>
+                                {% for farm in farms %}
+                                <a href="{% url 'farm_finances:income_categories' farm_id=farm.id %}">Income
+                                    Categories</a>
+                                {% endfor %}
+
+
+                            </li>
+                            <li>
+                                {% for farm in farms %}
+                                <a href="{% url 'farm_finances:income_list' farm_id=farm.id %}">Income
+                                    List</a>
+                                {% endfor %}
+                                
+
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-list-check-2"></i>
+                            <span>Expense</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li>
+                                {% for farm in farms %}
+                                <!-- Display farm details -->
+                                <a href="{% url 'farm_finances:create_expense_category' farm_id=farm.id %}">Create Expense
+                                    Category</a>
+                                {% endfor %}
+
+
+                            </li>
+
+                            <li>
+                                {% for farm in farms %}
+                                <a href="{% url 'farm_finances:expense_categories' farm_id=farm.id %}">Expense
+                                    Categories</a>
+                                {% endfor %}
+
+
+                            </li>
+                            <li>
+                                {% for farm in farms %}
+                                <a href="{% url 'farm_finances:expense_list' farm_id=farm.id %}">Expense
+                                    List</a>
+                                {% endfor %}
+                                
+
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="right-arrow" id="right-arrow">
+                <i data-feather="arrow-right"></i>
+            </div>
+        </nav>
+    </div>
+</div>

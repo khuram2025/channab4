@@ -1,0 +1,8 @@
+{% if user.is_authenticated %}
+    <h2>Welcome, {{ user.mobile }}!</h2>
+    <a class="btn btn-primary" href="{% url 'accounts:logout' %}">Logout</a>
+  {% else %}
+    <h2>Welcome to the home page!</h2>
+    <p><a class="btn btn-primary" href="{% url 'accounts:login' %}">Login</a></p>
+    <p><a class="btn btn-primary" href="{% url 'accounts:signup' %}">Sign Up</a></p>
+  {% endif %}

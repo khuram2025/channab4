@@ -1,0 +1,58 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h1 class="my-4">Add Milk Record for {{ animal.name }}</h1>
+      
+      <form method="post" action="{% url 'dairy_farm:add_milk_record' animal.id %}" onsubmit="alert('Form submitted');">
+
+        {% csrf_token %}
+        
+        <div class="form-group">
+          <label for="date">Date</label>
+          <input type="date" class="form-control" name="date" id="date" value="{{ form.date.value|default:'' }}" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="first_time">First Time (liters)</label>
+          <input type="number" step="0.01" class="form-control" name="first_time" id="first_time" value="{{ form.first_time.value|default:'' }}" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="second_time">Second Time (liters)</label>
+          <input type="number" step="0.01" class="form-control" name="second_time" id="second_time" value="{{ form.second_time.value|default:'' }}">
+        </div>
+        
+        <div class="form-group">
+          <label for="third_time">Third Time (liters)</label>
+          <input type="number" step="0.01" class="form-control" name="third_time" id="third_time" value="{{ form.third_time.value|default:'' }}">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Add Milk Record</button>
+      </form>
+      
+      <script>
+        document.getElementById('date').addEventListener('change', function () {
+          var selectedDate = this.value;
+          var url = '{% url "dairy_farm:get_milk_record" animal.id "0000-00-00" %}'.replace('0000-00-00', selectedDate);
+
+          fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('first_time').value = data.first_time;
+              document.getElementById('second_time').value = data.second_time;
+              document.getElementById('third_time').value = data.third_time;
+            })
+            .catch(error => {
+              console.error('Error fetching milk record data:', error);
+            });
+        });
+      </script>
+      
+    </div>
+  </div>
+</div>
+{% endblock %}
+
