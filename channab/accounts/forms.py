@@ -42,9 +42,24 @@ from .models import Profile
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['profile_picture', 'first_name', 'last_name', 'role', 'city', 'email', 'facebook', 'youtube']
+        fields = ['profile_picture', 'first_name', 'last_name', 'city', 'email', 'facebook', 'youtube']
 
 class ProfileUpdateForm(forms.ModelForm):
+    role = forms.ChoiceField(choices=CustomUser.ROLE_CHOICES, initial='read_only', required=False)
+
     class Meta:
         model = Profile
-        fields = ('profile_picture', 'first_name', 'last_name', 'role', 'city', 'email', 'facebook', 'youtube')
+        fields = ('profile_picture', 'first_name', 'last_name', 'city', 'email', 'facebook', 'youtube')
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileUpdateForm, self).__init__(*args, **kwargs)
+        if self.instance.user:
+            self.fields['role'].initial = self.instance.user.role
+
+    def save(self, commit=True):
+        profile = super(ProfileUpdateForm, self).save(commit=False)
+        profile.user.role = self.cleaned_data['role']
+        if commit:
+            profile.save()
+            profile.user.save()
+        return profile

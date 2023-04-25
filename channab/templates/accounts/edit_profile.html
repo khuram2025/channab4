@@ -50,10 +50,15 @@
                     <div class="row g-4">
                         <div class="col-xxl-12 text-center mb-4">
                             <div style="position: relative;">
-                                <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture" id="profile_picture_preview" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                                {% if request.user.profile.profile_picture %}
+                                    <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture" id="profile_picture_preview" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                                {% else %}
+                                    <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Profile Picture" id="profile_picture_preview" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                                {% endif %}
                                 <i class="fa fa-pencil" id="change_picture_icon" style="position: absolute; bottom: 0; right: 0; background-color: rgba(0,0,0,0.5); color: white; padding: 5px; cursor: pointer;"></i>
                             </div>
                         </div>
+                        
                         <div class="col-xxl-12">
                             <div class="form-floating theme-form-floating" style="display: none;">
                                 <label for="{{ form.profile_picture.auto_id }}">Change Profile Picture</label>

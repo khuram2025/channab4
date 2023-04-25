@@ -41,7 +41,7 @@ def login_view(request):
 
 
 from .forms import ProfileForm
-from .models import Profile
+from .models import Profile, CustomUser
 
 def user_profile(request):
     if not request.user.is_authenticated:
@@ -61,7 +61,13 @@ def user_profile(request):
     else:
         form = ProfileUpdateForm(instance=profile)
 
-    return render(request, 'accounts/profile.html', {'form': form, 'profile': profile})
+    # Fetch farm members if the user is an admin
+    farm_members = []
+    if request.user.role == 'admin':
+        farm_members = CustomUser.objects.filter(farm=request.user.farm)
+
+    return render(request, 'accounts/profile.html', {'form': form, 'profile': profile, 'farm_members': farm_members})
+
 
 from .forms import ProfileUpdateForm
 

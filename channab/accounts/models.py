@@ -2,6 +2,15 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.core.validators import RegexValidator
 from django.db import models
 
+class Farm(models.Model):
+    name = models.CharField(max_length=100)
+    admin = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name='admin_farms')
+    description = models.TextField(blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
+    
+    def __str__(self):
+        return self.name
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, mobile, password=None, **extra_fields):
         if not mobile:
@@ -18,6 +27,10 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(mobile, password, **extra_fields)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    ROLE_CHOICES = (
+        ('admin', 'Admin'),
+        ('read_only', 'Read Only'),
+    )
     mobile_validator = RegexValidator(
         regex=r'^\+?1?\d{9,15}$',
         message="Mobile number must be entered in the format: '+999999999'. Up to 15 digits allowed."
@@ -26,6 +39,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=True, null=True)
     first_name = models.CharField(max_length=30, blank=True, null=True)
     last_name = models.CharField(max_length=30, blank=True, null=True)
+    farm = models.ForeignKey(Farm, on_delete=models.SET_NULL, null=True, blank=True)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='read_only')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     groups = models.ManyToManyField(
@@ -49,6 +64,25 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'mobile'
     REQUIRED_FIELDS = []
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = 'admin'
+            # Create a new farm and set the user as the admin
+        super().save(*args, **kwargs)
+        if self.role == 'admin' and self.farm is None:
+        # Create a new farm and set the user as the admin
+            farm = Farm(name=f"{self.first_name}'s Farm", admin=self)
+            farm.save()
+
+            # Update the CustomUser instance with the new farm reference and save again
+            self.farm = farm
+        super().save(*args, **kwargs)
+
+    def add_member(self, member):
+        member.farm = self.farm
+        member.save()
+
+
     def __str__(self):
         return self.mobile
 
@@ -57,7 +91,6 @@ class Profile(models.Model):
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    role = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     email = models.EmailField()
     facebook = models.URLField(max_length=200, blank=True, null=True)  
