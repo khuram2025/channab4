@@ -10,20 +10,22 @@ from .forms import  FarmMemberCreationForm, MobileAuthenticationForm, CustomUser
 
 
 class SignupView(CreateView):
-    form_class = CustomUserCreationForm
+    form_class = FarmMemberCreationForm
     success_url = reverse_lazy('accounts:login')
     template_name = 'accounts/signup.html'
 
     def form_valid(self, form):
         print("Form is valid")
-        response = super().form_valid(form)
+        self.object = form.save()
         print("User created:", self.object)
-        return response
+        return HttpResponseRedirect(self.get_success_url())
+
 
     def form_invalid(self, form):
         print("Form is invalid")
         print(form.errors)
         return super().form_invalid(form)
+
 
 def login_view(request):
     if request.method == 'POST':
