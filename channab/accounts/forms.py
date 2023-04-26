@@ -66,10 +66,11 @@ class ProfileUpdateForm(forms.ModelForm):
 class FarmMemberCreationForm(forms.ModelForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Confirm Password", widget=forms.PasswordInput)
+    farm_name = forms.CharField(label="Farm Name", required=False)
 
     class Meta:
         model = CustomUser
-        fields = ('mobile', 'first_name', 'last_name')
+        fields = ('mobile', 'first_name', 'last_name', 'farm_name')
         labels = {
             'mobile': 'Mobile Number',
         }
@@ -82,10 +83,11 @@ class FarmMemberCreationForm(forms.ModelForm):
         return password2
 
     def save(self, commit=True):
-        user = super().save(commit=False)
+        user = super(FarmMemberCreationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
         if commit:
             user.save()
         return user
+
 
 

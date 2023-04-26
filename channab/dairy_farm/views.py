@@ -14,6 +14,50 @@ from django.db.models import F, FloatField, ExpressionWrapper, Window
 from django.db.models.functions.window import Lag
 
 
+@login_required
+def animal_category_list(request):
+    farm = get_object_or_404(Farm, owner=request.user)
+    categories = AnimalCategory.objects.filter(farm=farm)
+    return render(request, 'dairy_farm/animal_category_list.html', {'categories': categories})
+
+@login_required
+def animal_category_create(request):
+    farm = get_object_or_404(Farm, owner=request.user)
+    if request.method == 'POST':
+        form = AnimalCategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            category = form.save(commit=False)
+            category.farm = farm
+            category.save()
+            return redirect('dairy_farm:animal_category_list')
+    else:
+        form = AnimalCategoryForm()
+    return render(request, 'dairy_farm/animal_category_form.html', {'form': form})
+
+@login_required
+def animal_category_edit(request, pk):
+    category = get_object_or_404(AnimalCategory, pk=pk, farm__owner=request.user)
+    if request.method == 'POST':
+        form = AnimalCategoryForm(request.POST, request.FILES, instance=category)
+        if form.is_valid():
+            form.save()
+            return redirect('dairy_farm:animal_category_list')
+    else:
+        form = AnimalCategoryForm(instance=category)
+    return render(request, 'dairy_farm/animal_category_form.html', {'form': form})
+
+@login_required
+def animal_category_delete(request, pk):
+    category = get_object_or_404(AnimalCategory, pk=pk, farm__owner=request.user)
+    if request.method == 'POST':
+        category.delete()
+        return redirect('dairy_farm:animal_category_list')
+    return render(request, 'dairy_farm/animal_category_confirm_delete.html', {'category': category})
+
+
+
+
+
 class AnimalCategoryListView(ListView):
     model = AnimalCategory
     template_name = 'dairy_farm/backend/animalcategory_list.html'
@@ -69,9 +113,13 @@ def category_list(request):
 
 @login_required
 def animal_list(request):
-    animals = Animal.objects.filter(user=request.user)
+    farm = get_object_or_404(Farm, admin=request.user)  # Filter the Farm by the current user
+    animals = Animal.objects.filter(farm=farm)  # Filter the animals by the farm instance
     context = {'animals': animals}
     return render(request, 'dairy_farm/animal_list.html', context)
+
+
+
 
 
 from django.db.models import F, FloatField, ExpressionWrapper, Window

@@ -43,12 +43,12 @@ INSTALLED_APPS = [
     'accounts',
     'crispy_forms',
     'django.forms',
-    'dairy_farm',
+    'dairy',
     'taggit',
     'dal',
     'dal_select2',
     'widget_tweaks',
-    'farm_finances',
+    # 'farm_finances',
 
 ]
 

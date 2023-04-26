@@ -23,7 +23,7 @@
                                 <div class="col-md-12 mb-3">
                                     
                                     <h2>Sign Up</h2>
-                                    <p>Enter your email and password to register</p>
+                                    <p>Enter your mobile number, password, and farm name to register</p>
                                     
                                 </div>
                                 <form method="post" action="{% url 'accounts:signup' %}">
@@ -36,10 +36,11 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="mb-3">
-                                            {{ form.email.label_tag }}
-                                            {{ form.email}}
+                                            {{ form.farm_name.label_tag }}
+                                            {{ form.farm_name }}
                                         </div>
                                     </div>
+                                    
                                     <div class="col-12">
                                         <div class="mb-3">
                                             {{ form.password1.label_tag }}

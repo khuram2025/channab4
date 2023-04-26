@@ -1,2 +1,1 @@
-delete_member_confirm.html
-code with the templates which  are using 
+No Farm is being createed but not with correct name which i givin during sighnup it showing the name  in DB None's Farm

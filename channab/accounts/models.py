@@ -4,12 +4,15 @@ from django.db import models
 
 class Farm(models.Model):
     name = models.CharField(max_length=100)
-    admin = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name='admin_farms')
+    admin = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name='owned_farms')
     description = models.TextField(blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
-    
+
     def __str__(self):
         return self.name
+
+
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, mobile, password=None, **extra_fields):
@@ -70,11 +73,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if is_new and self.role == 'admin' and self.farm is None:
             self.create_farm_and_save()
 
-    def create_farm_and_save(self):
-        farm = Farm(name=f"{self.first_name}'s Farm", admin=self)
-        farm.save()
+    def create_farm_and_save(self, farm_name=None):
+        if not farm_name:
+            farm_name = f"{self.first_name}'s Farm"
+        farm = Farm.objects.create(name=farm_name, admin=self)
         self.farm = farm
         super().save()
+
+
 
     def add_member(self, member):
         member.farm = self.farm

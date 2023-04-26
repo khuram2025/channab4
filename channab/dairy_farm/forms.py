@@ -4,7 +4,8 @@ from .models import Animal, AnimalCategory, MilkRecord
 class AnimalCategoryForm(forms.ModelForm):
     class Meta:
         model = AnimalCategory
-        fields = ['title', 'category_image',]
+        fields = ['title', 'image']
+
 
 
 

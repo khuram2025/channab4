@@ -21,8 +21,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls', namespace='accounts')),
-    path('dairy-farm/', include('dairy_farm.urls', namespace='dairy_farm')),
-    path('erp/', include('farm_finances.urls', namespace='farm_finances')),  # Change the namespace here
+    path('dairy/', include('dairy.urls', namespace='dairy')),
+    # path('erp/', include('farm_finances.urls', namespace='farm_finances')),  # Change the namespace here
     path('', include('home.urls', namespace='home')),
 ]
 
