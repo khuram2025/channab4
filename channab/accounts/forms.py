@@ -81,14 +81,11 @@ class FarmMemberCreationForm(forms.ModelForm):
             raise forms.ValidationError("Passwords don't match")
         return password2
 
-    def save(self, commit=True, admin_user=None):
+    def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
-        if admin_user:
-            user.role = 'read_only'
-            user.farm = admin_user.farm
-        else:
-            user.role = 'admin'
         if commit:
             user.save()
         return user
+
+

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Delete Member</h1>
+        <p>Are you sure you want to delete "{{ member.first_name }} {{ member.last_name }}"?</p>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, delete</button>
+            <a href="{% url 'accounts:user_profile' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+{% endblock content %}

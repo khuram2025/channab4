@@ -65,23 +65,20 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            self.role = 'admin'
-            # Create a new farm and set the user as the admin
+        is_new = not self.pk
         super().save(*args, **kwargs)
-        if self.role == 'admin' and self.farm is None:
-        # Create a new farm and set the user as the admin
-            farm = Farm(name=f"{self.first_name}'s Farm", admin=self)
-            farm.save()
+        if is_new and self.role == 'admin' and self.farm is None:
+            self.create_farm_and_save()
 
-            # Update the CustomUser instance with the new farm reference and save again
-            self.farm = farm
-        super().save(*args, **kwargs)
+    def create_farm_and_save(self):
+        farm = Farm(name=f"{self.first_name}'s Farm", admin=self)
+        farm.save()
+        self.farm = farm
+        super().save()
 
     def add_member(self, member):
         member.farm = self.farm
         member.save()
-
 
     def __str__(self):
         return self.mobile

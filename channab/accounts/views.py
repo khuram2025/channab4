@@ -7,6 +7,7 @@ from django.views.generic import CreateView
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from .forms import  FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm
+from django.shortcuts import render, redirect, get_object_or_404
 
 
 class SignupView(CreateView):
@@ -16,15 +17,27 @@ class SignupView(CreateView):
 
     def form_valid(self, form):
         print("Form is valid")
-        self.object = form.save()
+
+        user = form.save(commit=False)
+
+        if self.request.user.is_authenticated and hasattr(self.request.user, 'farm') and self.request.user.role == 'admin':
+            user.role = 'read_only'
+            user.farm = self.request.user.farm
+        else:
+            user.role = 'admin'
+        
+        user.save()
+        self.object = user
         print("User created:", self.object)
         return HttpResponseRedirect(self.get_success_url())
-
 
     def form_invalid(self, form):
         print("Form is invalid")
         print(form.errors)
         return super().form_invalid(form)
+
+
+
 
 
 def login_view(request):
@@ -88,23 +101,61 @@ def edit_profile(request):
         form = ProfileUpdateForm(instance=request.user.profile)
     return render(request, 'accounts/edit_profile.html', {'form': form})
 
+
 @login_required
 def create_farm_member(request):
-    if request.user.role != 'admin':
-        return redirect('home:home')
-
     if request.method == 'POST':
         form = FarmMemberCreationForm(request.POST)
         if form.is_valid():
-            form.save(admin_user=request.user)
+            user = form.save(commit=False)
+            user.role = 'read_only'
+            user.farm = request.user.farm
+            user.save()
             return redirect('accounts:user_profile')
-        else:
-            print("Form is invalid")
-            print(form.errors)
     else:
         form = FarmMemberCreationForm()
 
     return render(request, 'accounts/create_farm_member.html', {'form': form})
+
+def edit_member(request, pk):
+    user = get_object_or_404(CustomUser, pk=pk)
+
+    if not hasattr(user, 'profile'):
+        Profile.objects.create(user=user)
+
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=user.profile)
+
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:user_profile')
+
+    else:
+        form = ProfileUpdateForm(instance=user.profile)
+
+    context = {
+        'form': form,
+        'member': user
+    }
+
+    return render(request, 'accounts/edit_member.html', context)
+
+
+
+def delete_member(request, pk):
+    member = get_object_or_404(CustomUser, pk=pk)
+
+    if request.method == 'POST':
+        member.delete()
+        # Redirect to the member list page or any other page after successful deletion
+        return redirect('accounts:user_profile')
+
+    context = {
+        'member': member
+    }
+
+    return render(request, 'accounts/delete_member_confirm.html', context)
+
 
 
 

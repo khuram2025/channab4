@@ -1,1 +1,2 @@
-okay user created by farm admin and login but the default role for them should be read-only which are created by farm Admin but if user is sighnup by himeself then his role should be admin 
+delete_member_confirm.html
+code with the templates which  are using 

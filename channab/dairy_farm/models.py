@@ -7,6 +7,7 @@ from django.utils.text import slugify
 from datetime import date
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
+from accounts.models import Farm
 
 
 class AnimalCategory(models.Model):
@@ -40,7 +41,7 @@ class FemaleAnimalManager(models.Manager):
         return super().get_queryset().filter(sex='Female')
     
 class Animal(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='animals')
     tag = models.CharField(max_length=100)
     image = models.ImageField(upload_to='animals/', blank=True, null=True)
     dob = models.DateField(blank=True, null=True)

@@ -1,10 +1,46 @@
 {% extends "home/base.html" %}
 
 {% block content %}
-    <h2>Create Farm Member</h2>
-    <form method="post">
+{% load static %}
+{% load widget_tweaks %}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Create Farm Member</h2>
+    <form method="post" class="mb-3">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create Farm Member</button>
+        <div class="row g-4">
+            <div class="col-xxl-6">
+                <div class="form-floating theme-form-floating">
+                    {{ form.first_name|add_class:"form-control" }}
+                    <label for="{{ form.first_name.auto_id }}">First Name</label>
+                </div>
+            </div>
+            <div class="col-xxl-6">
+                <div class="form-floating theme-form-floating">
+                    {{ form.last_name|add_class:"form-control" }}
+                    <label for="{{ form.last_name.auto_id }}">Last Name</label>
+                </div>
+            </div>
+            <div class="col-xxl-12">
+                <div class="form-floating theme-form-floating">
+                    {{ form.mobile|add_class:"form-control" }}
+                    <label for="{{ form.mobile.auto_id }}">Mobile Number</label>
+                </div>
+            </div>
+            <div class="col-xxl-6">
+                <div class="form-floating theme-form-floating">
+                    {{ form.password1|add_class:"form-control" }}
+                    <label for="{{ form.password1.auto_id }}">Password</label>
+                </div>
+            </div>
+            <div class="col-xxl-6">
+                <div class="form-floating theme-form-floating">
+                    {{ form.password2|add_class:"form-control" }}
+                    <label for="{{ form.password2.auto_id }}">Confirm Password</label>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light mt-3">Create Farm Member</button>
     </form>
+</div>
 {% endblock %}
