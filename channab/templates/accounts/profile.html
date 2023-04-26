@@ -133,6 +133,7 @@
                     <!-- Tasks content goes here -->
                   </div>
                   {% if request.user.role == "admin" %}
+                  <a href="{% url 'accounts:create_farm_member' %}">Create Farm Member</a>
                   <div class="tab-pane fade" id="farm_members" role="tabpanel" aria-labelledby="farm-members-tab">
                     <div class="table-responsive">
                       <table class="table table-striped">

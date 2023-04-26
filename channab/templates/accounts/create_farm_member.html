@@ -1,0 +1,10 @@
+{% extends "home/base.html" %}
+
+{% block content %}
+    <h2>Create Farm Member</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create Farm Member</button>
+    </form>
+{% endblock %}

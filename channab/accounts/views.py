@@ -6,7 +6,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from .forms import  MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm
+from .forms import  FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm
 
 
 class SignupView(CreateView):
@@ -86,6 +86,23 @@ def edit_profile(request):
         form = ProfileUpdateForm(instance=request.user.profile)
     return render(request, 'accounts/edit_profile.html', {'form': form})
 
+@login_required
+def create_farm_member(request):
+    if request.user.role != 'admin':
+        return redirect('home:home')
+
+    if request.method == 'POST':
+        form = FarmMemberCreationForm(request.POST)
+        if form.is_valid():
+            form.save(admin_user=request.user)
+            return redirect('accounts:user_profile')
+        else:
+            print("Form is invalid")
+            print(form.errors)
+    else:
+        form = FarmMemberCreationForm()
+
+    return render(request, 'accounts/create_farm_member.html', {'form': form})
 
 
 
