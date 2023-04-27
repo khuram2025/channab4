@@ -29,13 +29,14 @@
                 <div class="title-header option-title">
                   <h5>All Category</h5>
                   <form class="d-inline-flex">
-                    <a
-                      href="add-new-category.html"
-                      class="align-items-center btn btn-theme d-flex"
-                    >
-                      <i data-feather="plus-square"></i>Add New
-                    </a>
-                  </form>
+  <a href="{% url 'dairy:animal_category_create' %}"
+    class="align-items-center btn btn-add-category d-flex"
+    style="background-color: green; color: white; padding: 5px 10px; border-radius: 3px;">
+    Add Category
+  </a>
+</form>
+
+
                 </div>
 
                 <div class="table-responsive category-table">
@@ -150,4 +151,5 @@
     </div>
   </div>
 </div>
+
 {%endblock%}

@@ -46,19 +46,22 @@
                       <div class="mb-4 row align-items-center">
                         <label class="col-sm-3 col-form-label form-label-title">Category Image</label>
                         <div class="form-group col-sm-9">
-                          <div class="dropzone-wrapper">
-                            <div class="dropzone-desc">
+                          <div class="dropzone-wrapper" id="dropzone-wrapper">
+                            <input type="file" class="dropzone" name="{{ form.image.name }}" id="image-input" style="display: none;" />
+                            <div class="dropzone-desc" id="dropzone-desc">
                               <i class="ri-upload-2-line"></i>
                               <p>Choose an image file or drag it here.</p>
                             </div>
-                            <input type="file" class="dropzone" name="{{ form.image.name }}" />
                             {{ form.image.errors }}
+                            <img id="image-preview" src="#" alt="Image Preview" style="display: none; max-width: 100%; max-height: 200px; margin-top: 10px;">
                           </div>
                         </div>
                       </div>
 
-                      <button type="submit" class="btn btn-primary">Save</button>
-                      <a href="{% url 'dairy:animal_category_list' %}" class="btn btn-secondary">Cancel</a>
+                      <div class="mb-4 d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary btn-form">Save</button>
+                        <a href="{% url 'dairy:animal_category_list' %}" class="btn btn-secondary btn-form">Cancel</a>
+                      </div>
                     </form>
                   </div>
                 </div>
@@ -77,9 +80,11 @@
 
     <!-- Page Body End -->
   </div>
-  <!-- Page Body End -->
+    <!-- Page Body End -->
 </div>
 <!-- page-wrapper End-->
 
 </div>
 {% endblock %}
+
+

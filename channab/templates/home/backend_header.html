@@ -129,12 +129,7 @@
                 <span>Users</span>
               </a>
             </li>
-            <li>
-              <a href="order-list.html">
-                <i data-feather="archive"></i>
-                <span>Orders</span>
-              </a>
-            </li>
+
             <li>
               <a href="support-ticket.html">
                 <i data-feather="phone"></i>
@@ -142,7 +137,7 @@
               </a>
             </li>
             <li>
-              <a href="profile-setting.html">
+              <a href="{% url 'accounts:user_profile' %}">
                 <i data-feather="settings"></i>
                 <span>Settings</span>
               </a>
