@@ -33,6 +33,8 @@ class SignupView(CreateView):
 
         if user.role == 'admin' and user.farm is None:
             self.create_farm_for_user(user, form)
+        else:
+            print("Farm creation condition not met")
 
         self.object = user
         print("User created:", self.object)

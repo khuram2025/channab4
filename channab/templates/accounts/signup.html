@@ -1,97 +1,93 @@
-{% extends "accounts/base.html" %}
+{% extends "home/base.html" %}
+
+{% load static %}
 
 {% block content %}
-<body class="form">
 
-    <!-- BEGIN LOADER -->
-    <div id="load_screen"> <div class="loader"> <div class="loader-content">
-        <div class="spinner-grow align-self-center"></div>
-    </div></div></div>
-    <!--  END LOADER -->
 
-    <div class="auth-container d-flex">
+<body>
 
-        <div class="container mx-auto align-self-center">
-    
+    <!-- Loader Start -->
+    <div class="fullpage-loader">
+        <span></span>
+        <span></span>
+
+    </div>
+    <!-- Loader End -->
+    <!-- mobile fix menu start -->
+    {% include 'home/mobile_menu.html' %}
+    <!-- mobile fix menu end -->
+    <!-- log in section start -->
+    <section class="log-in-section background-image-2 section-b-space">
+        <div class="container-fluid-lg w-100">
             <div class="row">
-    
-                <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-8 col-12 d-flex flex-column align-self-center mx-auto">
-                    <div class="card mt-3 mb-3">
-                        <div class="card-body">
-    
-                            <div class="row">
-                                <div class="col-md-12 mb-3">
-                                    
-                                    <h2>Sign Up</h2>
-                                    <p>Enter your mobile number, password, and farm name to register</p>
-                                    
-                                </div>
-                                <form method="post" action="{% url 'accounts:signup' %}">
-                                    {% csrf_token %}
-                                    <div class="col-md-12">
-                                        <div class="mb-3">
-                                            {{ form.mobile.label_tag }}
-                                            {{ form.mobile }}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="mb-3">
-                                            {{ form.farm_name.label_tag }}
-                                            {{ form.farm_name }}
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-12">
-                                        <div class="mb-3">
-                                            {{ form.password1.label_tag }}
-                                            {{ form.password1}}
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="mb-3">
-                                            {{ form.password2.label_tag }}
-                                            {{ form.password2}}
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="mb-4">
-                                            <button class="btn btn-secondary w-100">SIGN UP</button>
-                                        </div>
-                                    </div>
-                                </form>
-                                
-                                <div class="col-12 mb-4">
-                                    <div class="">
-                                        <div class="seperator">
-                                            <hr>
-                                            <div class="seperator-text"> <span>Or continue with</span></div>
-                                        </div>
+                <div class="col-xxl-6 col-xl-5 col-lg-6 d-lg-block d-none ms-auto">
+                    <div class="image-contain">
+                        <img src="../assets/images/inner-page/log-in.png" class="img-fluid" alt="">
+                    </div>
+                </div>
+                <div class="col-xxl-4 col-xl-5 col-lg-6 col-sm-8 mx-auto">
+                    <div class="log-in-box">
+                        <div class="log-in-title">
+                            <h3>Welcome To Channab</h3>
+                        </div>
+
+                        <div class="input-box">
+                            <form method="post" action="{% url 'accounts:signup' %}" class="row g-4">
+                                {% csrf_token %}
+                                <div class="col-12">
+                                    <div class="form-floating theme-form-floating log-in-form">
+                                        <input type="text" class="form-control" name="{{ form.mobile.html_name }}"
+                                            id="{{ form.mobile.auto_id }}" placeholder="Mobile Number">
+                                        <label for="{{ form.mobile.auto_id }}">Mobile Number</label>
                                     </div>
                                 </div>
-                                
-                                <!-- Add your social login buttons here -->
 
                                 <div class="col-12">
-                                    <div class="text-center">
-                                        <p class="mb-0">Already have an account ? <a href="javascript:void(0);" class="text-warning">Sign in</a></p>
+                                    <div class="form-floating theme-form-floating log-in-form">
+                                        <input type="text" class="form-control" name="{{ form.farm_name.html_name }}"
+                                            id="{{ form.farm_name.auto_id }}" placeholder="Farm Name">
+                                        <label for="{{ form.farm_name.auto_id }}">Farm Name</label>
                                     </div>
                                 </div>
-                                
-                            </div>
-                            
+
+                                <div class="col-12">
+                                    <div class="form-floating theme-form-floating log-in-form">
+                                        <input type="password" class="form-control" name="{{ form.password1.html_name }}"
+                                            id="{{ form.password1.auto_id }}" placeholder="Password">
+                                        <label for="{{ form.password1.auto_id }}">Password</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-floating theme-form-floating log-in-form">
+                                        <input type="password" class="form-control" name="{{ form.password2.html_name }}"
+                                            id="{{ form.password2.auto_id }}" placeholder="Confirm Password">
+                                        <label for="{{ form.password2.auto_id }}">Confirm Password</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button class="btn btn-animation w-100 justify-content-center" type="submit">Sign
+                                        Up</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="other-log-in">
+                            <h6></h6>
+                        </div>
+
+                        <div class="sign-up-box">
+                            <h4>Already have an account?</h4>
+                            <a href="{% url 'accounts:login' %}">Log In</a>
                         </div>
                     </div>
                 </div>
-                
             </div>
-            
         </div>
-
-    </div>
-    
-    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
-    <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <!-- END GLOBAL MANDATORY SCRIPTS -->
-
+    </section>
+    <!-- log in section end -->
 </body>
+
+</html>
 {% endblock %}
