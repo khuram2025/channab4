@@ -1,3 +1,4 @@
+{%load static %}
 <div class="page-header">
   <div class="header-wrapper m-0">
     <div class="header-logo-wrapper p-0">
@@ -5,12 +6,12 @@
         <a href="index.html">
           <img
             class="img-fluid main-logo"
-            src="assets/images/logo/1.png"
+            src="{% static 'be/assets/images/logo/1.png' %}"
             alt="logo"
           />
           <img
             class="img-fluid white-logo"
-            src="assets/images/logo/1-white.png"
+            src="{% static 'be/assets/images/logo/1-white.png' %}"
             alt="logo"
           />
         </a>
@@ -21,11 +22,14 @@
           data-feather="align-center"
         ></i>
         <a href="index.html">
-          <img src="assets/images/logo/1.png" class="img-fluid" alt="" />
+          <img
+            src="{% static 'be/assets/images/logo/1.png' %}"
+            class="img-fluid"
+            alt=""
+          />
         </a>
       </div>
     </div>
-
     <form
       class="form-inline search-full"
       action="javascript:void(0)"
@@ -99,7 +103,6 @@
             </li>
           </ul>
         </li>
-
         <li>
           <div class="mode">
             <i class="ri-moon-line"></i>
@@ -109,7 +112,7 @@
           <div class="media profile-media">
             <img
               class="user-profile rounded-circle"
-              src="assets/images/users/4.jpg"
+              src="{% static 'be/assets/images/users/4.jpg' %}"
               alt=""
             />
             <div class="user-name-hide media-body">

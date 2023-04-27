@@ -1,3 +1,4 @@
+{%load static %}
 <div class="sidebar-wrapper">
   <div id="sidebarEffect"></div>
   <div>
@@ -5,7 +6,7 @@
       <a href="index.html" data-bs-original-title="" title="">
         <img
           class="img-fluid for-white"
-          src="assets/images/logo/full-white.png"
+          src="{% static 'be/assets/images/logo/full-white.png' %}"
           alt="logo"
         />
       </a>
@@ -20,12 +21,12 @@
       <a href="index.html">
         <img
           class="img-fluid main-logo main-white"
-          src="assets/images/logo/1-white.png"
+          src="{% static 'be/assets/images/logo/logo.png' %}"
           alt="logo"
         />
         <img
           class="img-fluid main-logo main-dark"
-          src="assets/images/logo/logo-white.png"
+          src="{% static 'be/assets/images/logo/logo-white.png' %}"
           alt="logo"
         />
       </a>
@@ -34,18 +35,15 @@
       <div class="left-arrow" id="left-arrow">
         <i data-feather="arrow-left"></i>
       </div>
-
       <div id="sidebar-menu">
         <ul class="sidebar-links" id="simple-bar">
           <li class="back-btn"></li>
-
           <li class="sidebar-list">
             <a class="sidebar-link sidebar-title link-nav" href="index.html">
               <i class="ri-home-line"></i>
               <span>Dashboard</span>
             </a>
           </li>
-
           <li class="sidebar-list">
             <a
               class="linear-icon-link sidebar-link sidebar-title"
@@ -58,13 +56,11 @@
               <li>
                 <a href="products.html">Prodcts</a>
               </li>
-
               <li>
                 <a href="add-new-product.html">Add New Products</a>
               </li>
             </ul>
           </li>
-
           <li class="sidebar-list">
             <a
               class="linear-icon-link sidebar-link sidebar-title"
@@ -75,15 +71,17 @@
             </a>
             <ul class="sidebar-submenu">
               <li>
-                <a href="category.html">Category List</a>
+                <a href="{% url 'dairy:animal_category_list' %}"
+                  >Category List</a
+                >
               </li>
-
               <li>
-                <a href="add-new-category.html">Add New Category</a>
+                <a href="{% url 'dairy:animal_category_create' %}"
+                  >Add New Category</a
+                >
               </li>
             </ul>
           </li>
-
           <li class="sidebar-list">
             <a
               class="linear-icon-link sidebar-link sidebar-title"
@@ -96,13 +94,11 @@
               <li>
                 <a href="attributes.html">Attributes</a>
               </li>
-
               <li>
                 <a href="add-new-attributes.html">Add Attributes</a>
               </li>
             </ul>
           </li>
-
           <li class="sidebar-list">
             <a class="sidebar-link sidebar-title" href="javascript:void(0)">
               <i class="ri-user-3-line"></i>
@@ -117,7 +113,6 @@
               </li>
             </ul>
           </li>
-
           <li class="sidebar-list">
             <a class="sidebar-link sidebar-title" href="javascript:void(0)">
               <i class="ri-user-3-line"></i>
@@ -132,14 +127,12 @@
               </li>
             </ul>
           </li>
-
           <li class="sidebar-list">
             <a class="sidebar-link sidebar-title link-nav" href="media.html">
               <i class="ri-price-tag-3-line"></i>
               <span>Media</span>
             </a>
           </li>
-
           <li class="sidebar-list">
             <a class="sidebar-link sidebar-title" href="javascript:void(0)">
               <i class="ri-archive-line"></i>
@@ -157,7 +150,6 @@
               </li>
             </ul>
           </li>
-
           <li class="sidebar-list">
             <a
               class="linear-icon-link sidebar-link sidebar-title"
@@ -170,13 +162,11 @@
               <li>
                 <a href="translation.html">Translation</a>
               </li>
-
               <li>
                 <a href="currency-rates.html">Currency Rates</a>
               </li>
             </ul>
           </li>
-
           <li class="sidebar-list">
             <a
               class="linear-icon-link sidebar-link sidebar-title"
@@ -189,20 +179,17 @@
               <li>
                 <a href="coupon-list.html">Coupon List</a>
               </li>
-
               <li>
                 <a href="create-coupon.html">Create Coupon</a>
               </li>
             </ul>
           </li>
-
           <li class="sidebar-list">
             <a class="sidebar-link sidebar-title link-nav" href="taxes.html">
               <i class="ri-price-tag-3-line"></i>
               <span>Tax</span>
             </a>
           </li>
-
           <li class="sidebar-list">
             <a
               class="sidebar-link sidebar-title link-nav"
@@ -212,7 +199,6 @@
               <span>Product Review</span>
             </a>
           </li>
-
           <li class="sidebar-list">
             <a
               class="sidebar-link sidebar-title link-nav"
@@ -222,7 +208,6 @@
               <span>Support Ticket</span>
             </a>
           </li>
-
           <li class="sidebar-list">
             <a
               class="linear-icon-link sidebar-link sidebar-title"
@@ -237,14 +222,12 @@
               </li>
             </ul>
           </li>
-
           <li class="sidebar-list">
             <a class="sidebar-link sidebar-title link-nav" href="reports.html">
               <i class="ri-file-chart-line"></i>
               <span>Reports</span>
             </a>
           </li>
-
           <li class="sidebar-list">
             <a
               class="sidebar-link sidebar-title link-nav"
@@ -256,7 +239,6 @@
           </li>
         </ul>
       </div>
-
       <div class="right-arrow" id="right-arrow">
         <i data-feather="arrow-right"></i>
       </div>
