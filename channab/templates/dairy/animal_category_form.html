@@ -1,4 +1,6 @@
-{%extends 'main/base.html'%} {%block content%} {%load static%}
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
 <!-- tap on top start -->
 <div class="tap-top">
   <span class="lnr lnr-chevron-up"></span>
@@ -7,15 +9,15 @@
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
   <!-- Page Header Start-->
-  {%include 'home/backend_header.html'%}
+  {% include 'home/backend_header.html' %}
   <!-- Page Header Ends-->
   <!-- mobile fix menu start -->
-  {%include 'home/mobile_menu.html'%}
+  {% include 'home/mobile_menu.html' %}
   <!-- mobile fix menu end -->
   <!-- Page Body Start-->
   <div class="page-body-wrapper">
     <!-- Page Sidebar Start-->
-    {%include 'home/backend_sidebar.html'%}
+    {% include 'home/backend_sidebar.html' %}
     <!-- Page Sidebar Ends-->
     <!-- Page Body Start -->
     <div class="page-body">
@@ -28,150 +30,35 @@
                 <div class="card">
                   <div class="card-body">
                     <div class="card-header-2">
-                      <h5>Category Information</h5>
+                      <h5>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Animal Category</h5>
                     </div>
 
-                    <form class="theme-form theme-form-2 mega-form">
+                    <form method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
                       <div class="mb-4 row align-items-center">
-                        <label class="form-label-title col-sm-3 mb-0"
-                          >Category Name</label
-                        >
+                        <label class="form-label-title col-sm-3 mb-0">Category Name</label>
                         <div class="col-sm-9">
-                          <input
-                            class="form-control"
-                            type="text"
-                            placeholder="Category Name"
-                          />
+                          <input class="form-control" type="text" name="{{ form.title.name }}" placeholder="Category Name" value="{{ form.title.value|default:'' }}" />
+                          {{ form.title.errors }}
                         </div>
                       </div>
 
                       <div class="mb-4 row align-items-center">
-                        <label class="col-sm-3 col-form-label form-label-title"
-                          >Category Image</label
-                        >
+                        <label class="col-sm-3 col-form-label form-label-title">Category Image</label>
                         <div class="form-group col-sm-9">
                           <div class="dropzone-wrapper">
                             <div class="dropzone-desc">
                               <i class="ri-upload-2-line"></i>
                               <p>Choose an image file or drag it here.</p>
                             </div>
-                            <input type="file" class="dropzone" />
+                            <input type="file" class="dropzone" name="{{ form.image.name }}" />
+                            {{ form.image.errors }}
                           </div>
                         </div>
                       </div>
 
-                      <div class="mb-4 row align-items-center">
-                        <div class="col-sm-3 form-label-title">
-                          Select Category Icon
-                        </div>
-                        <div class="col-sm-9">
-                          <div class="dropdown icon-dropdown">
-                            <button
-                              class="btn dropdown-toggle"
-                              type="button"
-                              id="dropdownMenuButton1"
-                              data-bs-toggle="dropdown"
-                            >
-                              Select Icon
-                            </button>
-                            <ul
-                              class="dropdown-menu"
-                              aria-labelledby="dropdownMenuButton1"
-                            >
-                              <li>
-                                <a class="dropdown-item" href="#">
-                                  <img
-                                    src="../assets/svg/1/vegetable.svg"
-                                    class="img-fluid"
-                                    alt=""
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a class="dropdown-item" href="#">
-                                  <img
-                                    src="../assets/svg/1/cup.svg"
-                                    class="blur-up lazyload"
-                                    alt=""
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a class="dropdown-item" href="#">
-                                  <img
-                                    src="../assets/svg/1/meats.svg"
-                                    class="img-fluid"
-                                    alt=""
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a class="dropdown-item" href="#">
-                                  <img
-                                    src="../assets/svg/1/breakfast.svg"
-                                    class="img-fluid"
-                                    alt=""
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a class="dropdown-item" href="#">
-                                  <img
-                                    src="../assets/svg/1/frozen.svg"
-                                    class="img-fluid"
-                                    alt=""
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a class="dropdown-item" href="#">
-                                  <img
-                                    src="../assets/svg/1/biscuit.svg"
-                                    class="img-fluid"
-                                    alt=""
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a class="dropdown-item" href="#">
-                                  <img
-                                    src="../assets/svg/1/grocery.svg"
-                                    class="img-fluid"
-                                    alt=""
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a class="dropdown-item" href="#">
-                                  <img
-                                    src="../assets/svg/1/drink.svg"
-                                    class="img-fluid"
-                                    alt=""
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a class="dropdown-item" href="#">
-                                  <img
-                                    src="../assets/svg/1/milk.svg"
-                                    class="img-fluid"
-                                    alt=""
-                                  />
-                                </a>
-                              </li>
-                              <li>
-                                <a class="dropdown-item" href="#">
-                                  <img
-                                    src="../assets/svg/1/pet.svg"
-                                    class="img-fluid"
-                                    alt=""
-                                  />
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
+                      <button type="submit" class="btn btn-primary">Save</button>
+                      <a href="{% url 'dairy:animal_category_list' %}" class="btn btn-secondary">Cancel</a>
                     </form>
                   </div>
                 </div>
@@ -183,7 +70,7 @@
       <!-- New Product Add End -->
 
       <!-- footer Start -->
-   
+
       <!-- footer En -->
     </div>
     <!-- Container-fluid End -->
@@ -195,4 +82,4 @@
 <!-- page-wrapper End-->
 
 </div>
-{%endblock%}
+{% endblock %}
