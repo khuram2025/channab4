@@ -75,7 +75,7 @@
                                                         <td>{{ animal.get_sex_display }}</td>
                                                         <td>{{ animal.dob|animal_age }}</td>
                                                         <td class="td-price">${{ animal.purchase_cost }}</td>
-                                                        <td class="{% if animal.status == 'active' %}status-active{% elif animal.status == 'expired' %}status-danger{% else %}status-warning{% endif %}">
+                                                        <td class="{% if animal.status == 'active' %}status-close{% elif animal.status == 'expired' %}status-danger{% else %}status-warning{% endif %}">
                                                             <span>{{ animal.get_status_display }}</span>
                                                         </td>
                                                         <td>{{ animal.get_animal_type_display }}</td>
@@ -92,9 +92,13 @@
                                                                     </a>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="{% url 'dairy:animal_delete' animal.pk %}">
-                                                                        <i class="ri-delete-bin-line"></i>
-                                                                    </a>
+                                                                <li>
+                                                                <form method="post" action="{% url 'dairy:animal_delete' animal.pk %}" class="delete-form" id="delete-form-{{ animal.pk }}" data-delete-url="{% url 'dairy:animal_delete' animal.pk %}">
+                                                                    {% csrf_token %}
+                                                                    <button type="submit" class="delete-btn border-0 bg-transparent" style="display:none;"></button>
+                                                                    <i class="ri-delete-bin-line" style="cursor:pointer;"></i>
+                                                                </form>
+                                                                </li>
                                                                 </li>
                                                             </ul>
                                                         </td>
@@ -128,6 +132,7 @@
   <!-- Page Body End -->
 </div>
 <!-- page-wrapper End-->
+{% include 'dairy/delete.html' %}
 <!-- Modal Start -->
 <div
   class="modal fade"
