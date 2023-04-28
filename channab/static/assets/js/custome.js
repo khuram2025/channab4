@@ -20,3 +20,29 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    var editAnimalModal = new bootstrap.Modal(document.getElementById('editAnimal'), {});
+    editAnimalModal.show();
+});
+
+document.getElementById('submit-form').addEventListener('click', function () {
+    document.getElementById('animal-form').submit();
+});
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var editAnimalModal = new bootstrap.Modal(document.getElementById('editAnimal'), {});
+            editAnimalModal.show();
+        });
+    </script>
+    <script>
+$(document).ready(function() {
+    $("#{{ form.dob.auto_id }}").datepicker({
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "1900:2100"
+    });
+});
+</script>

@@ -1,0 +1,163 @@
+{%extends 'main/base.html'%}
+{% load dairy_extras %}
+ {%load static%}
+{%block content%}
+
+
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {%include 'home/backend_header.html'%}
+  <!-- Page Header Ends-->
+  <!-- mobile fix menu start -->
+  {%include 'home/mobile_menu.html'%}
+  <!-- mobile fix menu end -->
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {%include 'home/backend_sidebar.html'%}
+    <!-- Page Sidebar Ends-->
+    <!-- Page Body Start -->
+    <!-- Container-fluid starts-->
+    <div class="page-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card card-table">
+                                <div class="card-body">
+                                    <div class="title-header option-title d-sm-flex d-block">
+                                        <h5>Products List</h5>
+                                        <div class="right-options">
+                                            <ul>
+                                                <li>
+                                                    <a href="javascript:void(0)">import</a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:void(0)">Export</a>
+                                                </li>
+                                                <li>
+                                                    <a class="btn btn-solid" href="{% url 'dairy:animal_create' %}">Add Animal</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="table-responsive">
+                                            <table class="table all-package theme-table table-product" id="table_id">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Animal Image</th>
+                                                        <th>TAG#</th>
+                                                        <th>Category</th>
+                                                        <th>Sex</th>
+                                                        <th>Age</th>
+                                                        <th>Price</th>
+                                                        <th>Status</th>
+                                                        <th>Type</th>
+                                                        <th>Option</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for animal in animals %}
+                                                    <tr>
+                                                        <td>
+                                                            <div class="table-image">
+                                                                <img src="{{ animal.image.url }}" class="img-fluid" alt="{{ animal.tag }} Image">
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ animal.tag }}</td>
+                                                        <td>{{ animal.category.title }}</td>
+                                                        <td>{{ animal.get_sex_display }}</td>
+                                                        <td>{{ animal.dob|animal_age }}</td>
+                                                        <td class="td-price">${{ animal.purchase_cost }}</td>
+                                                        <td class="{% if animal.status == 'active' %}status-active{% elif animal.status == 'expired' %}status-danger{% else %}status-warning{% endif %}">
+                                                            <span>{{ animal.get_status_display }}</span>
+                                                        </td>
+                                                        <td>{{ animal.get_animal_type_display }}</td>
+                                                        <td>
+                                                            <ul>
+                                                                <li>
+                                                                    <a href="{% url 'dairy:animal_edit' animal.pk %}">
+                                                                        <i class="ri-eye-line"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="{% url 'dairy:animal_edit' animal.pk %}">
+                                                                        <i class="ri-pencil-line"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="{% url 'dairy:animal_delete' animal.pk %}">
+                                                                        <i class="ri-delete-bin-line"></i>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Container-fluid Ends-->
+
+                <div class="container-fluid">
+                    <!-- footer start-->
+                    <footer class="footer">
+                        <div class="row">
+                            <div class="col-md-12 footer-copyright text-center">
+                                <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+    <!-- Container-fluid end -->
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
+<!-- Modal Start -->
+<div
+  class="modal fade"
+  id="staticBackdrop"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+        <p>Are you sure you want to log out?</p>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">
+            No
+          </button>
+          <button type="button" class="btn btn--yes btn-primary">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{%endblock%}

@@ -1,0 +1,111 @@
+{% extends "home/base.html" %} {% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Add any extra CSS or JavaScript imports here -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var editAnimalModal = new bootstrap.Modal(document.getElementById('editAnimal'), {});
+            editAnimalModal.show();
+        });
+    </script>
+    <script>
+$(document).ready(function() {
+    $("#{{ form.dob.auto_id }}").datepicker({
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "1900:2100"
+    });
+});
+</script>
+
+  </head>
+  <body>
+    {% include 'home/mobile_menu.html' %}
+    <div class="modal fade theme-modal" id="editAnimal" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel2">{% if edit_mode %}Edit{% else %}Add{% endif %} Animal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data" action="{% if edit_mode %}{% url 'dairy:animal_edit' animal.pk %}{% else %}{% url 'dairy:animal_create' %}{% endif %}">
+                        {% csrf_token %}
+                        <div class="row g-4">
+                            <div class="col-xxl-12">
+                                <div class="form-floating theme-form-floating">
+                                    {{ form.image|add_class:"form-control" }}
+                                    <label for="{{ form.image.auto_id }}">Animal Image</label>
+                                </div>
+                            </div>
+                            <div class="col-xxl-6">
+                                <div class="form-floating theme-form-floating">
+                                    {{ form.tag|add_class:"form-control" }}
+                                    <label for="{{ form.tag.auto_id }}">TAG#</label>
+                                </div>
+                            </div>
+                            <div class="col-xxl-6">
+                                <div class="form-floating theme-form-floating">
+                                    {{ form.category|add_class:"form-control" }}
+                                    <label for="{{ form.category.auto_id }}">Category</label>
+                                </div>
+                            </div>
+                            <div class="col-xxl-6">
+                                <div class="form-floating theme-form-floating">
+                                    {{ form.sex|add_class:"form-control" }}
+                                    <label for="{{ form.sex.auto_id }}">Sex</label>
+                                </div>
+                            </div>
+                            <div class="col-xxl-6">
+                                <div class="form-floating theme-form-floating">
+                                    {{ form.purchase_cost|add_class:"form-control" }}
+                                    <label for="{{ form.purchase_cost.auto_id }}">Price</label>
+                                </div>
+                            </div>
+                            <div class="col-xxl-6">
+                                <div class="form-floating theme-form-floating">
+                                    {{ form.dob|add_class:"form-control" }}
+                                    <label for="{{ form.dob.auto_id }}">Date of Birth</label>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-6">
+                                <div class="form-floating theme-form-floating">
+                                    {{ form.status|add_class:"form-control" }}
+                                    <label for="{{ form.status.auto_id }}">Status</label>
+                                </div>
+                            </div>
+                            <div class="col-xxl-6">
+                                <div class="form-floating theme-form-floating">
+                                    {{ form.animal_type|add_class:"form-control" }}
+                                    <label for="{{ form.animal_type.auto_id }}">Type</label>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+<!-- Edit Animal End -->
+</body>
+</html>
+ {% endblock %}
+
+                   

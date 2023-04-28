@@ -6,3 +6,24 @@
 .btn-primary {
   background-color: #0da487;
 }
+.status-active span {
+    background-color: greenish;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.status-danger span {
+    background-color: redish;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.status-warning span {
+    background-color: yellow;
+    color: black;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+

@@ -18,3 +18,34 @@ class AnimalCategory(models.Model):
     def __str__(self):
         return self.title
 
+class Animal(models.Model):
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='animals')
+    tag = models.CharField(max_length=100, unique=True)
+    image = models.ImageField(upload_to='animals/', blank=True, null=True)
+    dob = models.DateField(verbose_name='Date of Birth')
+    purchase_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('expired', 'Expired'),
+        ('sold', 'Sold'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
+    SEX_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+    ]
+    sex = models.CharField(max_length=6, choices=SEX_CHOICES)
+    category = models.ForeignKey(AnimalCategory, on_delete=models.CASCADE, related_name='animals')
+    TYPE_CHOICES = [
+        ('breeder', 'Breeder'),
+        ('pregnant', 'Pregnant'),
+        ('dry', 'Dry'),
+        ('milking', 'Milking'),
+        ('preg_milking', 'Pregnant Milking'),
+        ('calf', 'Calf'),
+        ('other', 'Other'),
+    ]
+    animal_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='other')
+
+    def __str__(self):
+        return f'{self.tag} ({self.category.title})'
