@@ -1,6 +1,16 @@
+// Datepicker script
+$(document).ready(function() {
+  $("#{{ form.dob.auto_id }}").datepicker({
+    dateFormat: 'yy-mm-dd',
+    changeMonth: true,
+    changeYear: true,
+    yearRange: "1900:2100"
+  });
+});
+
 document.addEventListener("DOMContentLoaded", function() {
   const imageInput = document.getElementById("image-input");
-  const dropzoneWrapper = document.getElementById("dropzone-desc"); // Change the ID here
+  const dropzoneWrapper = document.getElementById("dropzone-desc");
   const imagePreview = document.getElementById("image-preview");
 
   dropzoneWrapper.addEventListener("click", function() {
@@ -14,35 +24,31 @@ document.addEventListener("DOMContentLoaded", function() {
       reader.onload = function(e) {
         imagePreview.src = e.target.result;
         imagePreview.style.display = "block";
-        dropzoneWrapper.style.display = "none"; // Also update the ID here
+        dropzoneWrapper.style.display = "none";
       }
       reader.readAsDataURL(file);
     }
   });
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+  const deleteIcons = document.querySelectorAll('.delete-btn + .ri-delete-bin-line');
 
-document.addEventListener('DOMContentLoaded', function () {
-    var editAnimalModal = new bootstrap.Modal(document.getElementById('editAnimal'), {});
-    editAnimalModal.show();
-});
-
-document.getElementById('submit-form').addEventListener('click', function () {
-    document.getElementById('animal-form').submit();
-});
-<script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var editAnimalModal = new bootstrap.Modal(document.getElementById('editAnimal'), {});
-            editAnimalModal.show();
-        });
-    </script>
-    <script>
-$(document).ready(function() {
-    $("#{{ form.dob.auto_id }}").datepicker({
-        dateFormat: 'yy-mm-dd',
-        changeMonth: true,
-        changeYear: true,
-        yearRange: "1900:2100"
+  deleteIcons.forEach(function(deleteIcon) {
+    deleteIcon.addEventListener('click', function(event) {
+      event.preventDefault();
+      const deleteForm = deleteIcon.parentElement;
+      const deleteUrl = deleteForm.getAttribute('data-delete-url');
+      const deleteModalForm = document.getElementById('delete-modal-form');
+      deleteModalForm.setAttribute('action', deleteUrl);
+      const deleteModal = new bootstrap.Modal(document.getElementById('exampleModalToggle'), {});
+      deleteModal.show();
     });
+  });
+
+  const cancelButton = document.querySelector('#exampleModalToggle .btn-md[data-bs-dismiss="modal"]');
+  cancelButton.addEventListener('click', function() {
+    const deleteModal = bootstrap.Modal.getInstance(document.getElementById('exampleModalToggle'));
+    deleteModal.hide();
+  });
 });
-</script>

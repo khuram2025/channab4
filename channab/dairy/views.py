@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 from .models import AnimalCategory, Animal
 from .forms import AnimalCategoryForm, AnimalForm
 from accounts.models import Farm
@@ -90,10 +91,12 @@ def animal_edit(request, pk):
     return render(request, 'dairy/animal_form.html', {'form': form, 'edit_mode': edit_mode})
 
 
+from django.http import HttpResponseRedirect, JsonResponse
+
 @login_required
 def animal_delete(request, pk):
     animal = get_object_or_404(Animal, pk=pk, farm__admin=request.user)
     if request.method == 'POST':
         animal.delete()
-        return redirect('dairy:animal_list')
-    return render(request, 'dairy/animal_confirm_delete.html', {'animal': animal})
+        return HttpResponseRedirect(reverse('dairy:animal_list'))
+    return render(request, 'dairy/delete.html', {'animal': animal})
