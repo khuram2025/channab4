@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
   const imageInput = document.getElementById("image-input");
-  const dropzoneWrapper = document.getElementById("dropzone-wrapper");
-  const dropzoneDesc = document.getElementById("dropzone-desc");
+  const dropzoneWrapper = document.getElementById("dropzone-desc"); // Change the ID here
   const imagePreview = document.getElementById("image-preview");
 
   dropzoneWrapper.addEventListener("click", function() {
@@ -15,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
       reader.onload = function(e) {
         imagePreview.src = e.target.result;
         imagePreview.style.display = "block";
-        dropzoneDesc.style.display = "none";
+        dropzoneWrapper.style.display = "none"; // Also update the ID here
       }
       reader.readAsDataURL(file);
     }
