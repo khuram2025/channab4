@@ -44,11 +44,19 @@ $(document).ready(function() {
                         {% csrf_token %}
                         <div class="row g-4">
                             <div class="col-xxl-12">
+                                <div id="image-preview" class="mb-3">
+                                    {% if edit_mode and animal.image %}
+                                        <img src="{{ animal.image.url }}" alt="Animal Image" id="animal-image" class="img-fluid">
+                                    {% else %}
+                                        <img src="#" alt="Animal Image" id="animal-image" class="img-fluid d-none">
+                                    {% endif %}
+                                </div>
                                 <div class="form-floating theme-form-floating">
                                     {{ form.image|add_class:"form-control" }}
                                     <label for="{{ form.image.auto_id }}">Animal Image</label>
                                 </div>
                             </div>
+
                             <div class="col-xxl-6">
                                 <div class="form-floating theme-form-floating">
                                     {{ form.tag|add_class:"form-control" }}

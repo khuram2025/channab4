@@ -1,0 +1,102 @@
+{% extends "home/base.html" %} {% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Add any extra CSS or JavaScript imports here -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var editMilkModal = new bootstrap.Modal(document.getElementById('editMilk'), {});
+            editMilkModal.show();
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#{{ form.date.auto_id }}").datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "1900:2100",
+                onSelect: function(dateText) {
+                    var selectedDate = dateText;
+                    var url = '{% url "dairy:get_milk_record" animal.id "0000-00-00" %}'.replace("0000-00-00", selectedDate);
+
+                    fetch(url)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            document.getElementById("{{ form.first_time.auto_id }}").value = data.first_time;
+                            document.getElementById("{{ form.second_time.auto_id }}").value = data.second_time;
+                            document.getElementById("{{ form.third_time.auto_id }}").value = data.third_time;
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching milk record data:", error);
+                        });
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+{% include 'home/mobile_menu.html' %}
+<div class="modal fade theme-modal" id="editMilk" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">Add Milk Record for {{ animal.name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                
+<form method="post" enctype="multipart/form-data" action="{% url 'dairy:add_milk_record' animal.id %}">
+    {% csrf_token %}
+    <div class="row g-4">
+        <div class="col-xxl-6">
+            <div class="form-floating theme-form-floating">
+                <input type="date" name="{{ form.date.html_name }}" class="form-control" id="{{ form.date.auto_id }}"
+                data-animal-id="{{ animal.id }}" data-get-milk-record-url="{% url 'dairy:get_milk_record' animal.id '0000-00-00' %}"
+                data-second-time-input-id="{{ form.second_time.auto_id }}" data-third-time-input-id="{{ form.third_time.auto_id }}"
+                value="{{ form.date.value }}">
+                <label for="{{ form.date.auto_id }}">Date</label>
+            </div>
+        </div>
+        <div class="form-floating theme-form-floating">
+            <input             type="number" step="0.01" name="{{ form.first_time.html_name }}" class="form-control" id="{{ form.first_time.auto_id }}" value="{{ form.first_time.value|default:'' }}" required />
+            <label for="{{ form.first_time.auto_id }}">First Time (liters)</label>
+        </div>
+
+        <div class="col-xxl-4">
+            <div class="form-floating theme-form-floating">
+                <input type="number" step="0.01" name="{{ form.second_time.html_name }}" class="form-control" id="{{ form.second_time.auto_id }}" value="{{ form.second_time.value|default:'' }}" />
+                <label for="{{ form.second_time.auto_id }}">Second Time (liters)</label>
+            </div>
+        </div>
+
+        <div class="col-xxl-4">
+            <div class="form-floating theme-form-floating">
+                <input type="number" step="0.01" name="{{ form.third_time.html_name }}" class="form-control" id="{{ form.third_time.auto_id }}" value="{{ form.third_time.value|default:'' }}" />
+                <label for="{{ form.third_time.auto_id }}">Third Time (liters)</label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+    <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Add Milk Record</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+<!-- Add Milk Record End -->
+</body>
+</html>
+{% endblock %}
+

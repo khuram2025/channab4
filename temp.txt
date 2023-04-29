@@ -1,1 +1,1 @@
-working on animal form submit part segragating JS file now 
+actually i m using same script and delete.html file for delte animal where it is working but for category delete not working 

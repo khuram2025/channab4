@@ -1,7 +1,7 @@
 from django.db import models
 
 from django.utils.text import slugify
-
+from django.utils import timezone
 from accounts.models import Farm
 
 class AnimalCategory(models.Model):
@@ -49,3 +49,15 @@ class Animal(models.Model):
 
     def __str__(self):
         return f'{self.tag} ({self.category.title})'
+    
+
+class MilkRecord(models.Model):
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE, limit_choices_to={'sex': 'Female'})
+    date = models.DateField(default=timezone.now)
+    first_time = models.DecimalField(max_digits=5, decimal_places=2)
+    second_time = models.DecimalField(max_digits=5, decimal_places=2)
+    third_time = models.DecimalField(max_digits=5, decimal_places=2)
+
+    @property
+    def total_milk(self):
+        return self.first_time + self.second_time + self.third_time
