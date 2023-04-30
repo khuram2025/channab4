@@ -1,81 +1,63 @@
-{% extends 'dairy_farm/backend/backendbase.html' %}
-{% load static %}
-{% block content %}
-
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-
-<body>
-    <!-- tap on top start -->
-    <div class="tap-top">
-        <span class="lnr lnr-chevron-up"></span>
-    </div>
-    <!-- tap on tap end -->
-
-    <!-- page-wrapper start -->
-    <div class="page-wrapper compact-wrapper" id="pageWrapper">
-        <!-- Page Header Start-->
-        {% include 'dairy_farm/backend/header.html' %}
-        <!-- Page Header Ends-->
-
-        <!-- Page Body start -->
-        <div class="page-body-wrapper">
-            <!-- Page Sidebar Start-->
-            {% include 'dairy_farm/backend/sidebar.html' %}
-            <!-- Page Sidebar Ends-->
-
-            <div class="page-body">
-
-                <!-- New Income Category Add Start -->
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row">
-                                <div class="col-sm-8 m-auto">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="card-header-2">
-                                                <h5>Income Category Information</h5>
-                                            </div>
-
-                                            {% load static %}
-                                            <form class="theme-form theme-form-2 mega-form" method="POST" action="{% url 'farm_finances:create_income_category' farm_id=farm.id %}" enctype="multipart/form-data">
-
-                                                {% csrf_token %}
-                                                <div class="mb-4 row align-items-center">
-                                                    <label class="form-label-title col-sm-3 mb-0">Category Name</label>
-                                                    <div class="col-sm-9">
-                                                        <input class="form-control" type="text" name="name" placeholder="Income Category Name" required>
-                                                    </div>
-                                                </div>
-                                            
-                                                <div class="mb-4 row">
-                                                    <div class="col-sm-9 offset-sm-3">
-                                                        <button type="submit" class="btn btn-primary">Add Income Category</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+{% extends 'main/base.html' %} {% load static %} {% block content %}
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {% include 'home/backend_header.html' %}
+  <!-- Page Header Ends-->
+  <!-- mobile fix menu start -->
+  {% include 'home/mobile_menu.html' %}
+  <!-- mobile fix menu end -->
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {% include 'home/backend_sidebar.html' %}
+    <!-- Page Sidebar Ends-->
+    <!-- Page Body Start -->
+    <div class="page-body">
+      <!-- New Income Category Add Start -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="row">
+              <div class="col-sm-8 m-auto">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="card-header-2">
+                      <h5>Income Category Information</h5>
                     </div>
+
+                    <form method="POST" action="{% url 'farm_finances:create_income_category' %}" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <div class="mb-4 row align-items-center">
+                        <label class="form-label-title col-sm-3 mb-0">Category Name</label>
+                        <div class="col-sm-9">
+                          <input class="form-control" type="text" name="name" placeholder="Income Category Name" required />
+                        </div>
+                      </div>
+
+                      <div class="mb-4 row">
+                        <div class="col-sm-9 offset-sm-3">
+                          <button type="submit" class="btn btn-primary">Add Income Category</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
                 </div>
-                <!-- New Income Category Add End -->
-
-                <!-- footer En -->
+              </div>
             </div>
-            <!-- Container-fluid End -->
+          </div>
         </div>
-        <!-- Page Body End -->
+      </div>
+      <!-- New Income Category Add End -->
     </div>
-    <!-- page-wrapper End -->
-
-    <!-- Modal End -->
-
-</body>
-
-</html>
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
 {% endblock %}

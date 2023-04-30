@@ -1,36 +1,111 @@
 from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from .models import  IncomeCategory, ExpenseCategory
 from accounts.models import Farm
 from .forms import IncomeCategoryForm, ExpenseCategoryForm
 
 # Other imports and views
 
-def income_categories(request, farm_id):
-    farm = get_object_or_404(Farm, pk=farm_id)
+@login_required
+def income_categories(request):
+    farm = request.user.farm
     income_categories = IncomeCategory.objects.filter(farm=farm)
 
     return render(request, 'farm_finances/income_categories.html', {'farm': farm, 'income_categories': income_categories})
 
-def create_income_category(request, farm_id):
-    farm = get_object_or_404(Farm, pk=farm_id)
+@login_required
+def create_income_category(request):
+    farm = request.user.farm
     if request.method == 'POST':
         form = IncomeCategoryForm(request.POST)
         if form.is_valid():
             income_category = form.save(commit=False)
             income_category.farm = farm
             income_category.save()
-            return redirect('farm_finances:income_categories', farm_id=farm.id)
+            return redirect('farm_finances:income_categories')
     else:
         form = IncomeCategoryForm()
 
     return render(request, 'farm_finances/create_income_category.html', {'form': form, 'farm': farm})
 
-def expense_categories(request, farm_id):
-    farm = get_object_or_404(Farm, pk=farm_id)
+@login_required
+def create_expense_category(request):
+    farm = request.user.farm
+    if request.method == 'POST':
+        form = ExpenseCategoryForm(request.POST)
+        if form.is_valid():
+            expense_category = form.save(commit=False)
+            expense_category.farm = farm
+            expense_category.save()
+            return redirect('farm_finances:expense_categories')
+    else:
+        form = ExpenseCategoryForm()
+
+    return render(request, 'farm_finances/create_expense_category.html', {'form': form, 'farm': farm})
+
+@login_required
+def update_income_category(request, income_category_id):
+    farm = request.user.farm
+    income_category = get_object_or_404(IncomeCategory, pk=income_category_id, farm=farm)
+    if request.method == 'POST':
+        form = IncomeCategoryForm(request.POST, instance=income_category)
+        if form.is_valid():
+            form.save()
+            return redirect('farm_finances:income_categories')
+    else:
+        form = IncomeCategoryForm(instance=income_category)
+    return render(request, 'farm_finances/update_income_category.html', {'form': form, 'farm': farm, 'income_category': income_category})
+
+
+@login_required
+def update_expense_category(request, expense_category_id):
+    farm = request.user.farm
+    expense_category = get_object_or_404(ExpenseCategory, pk=expense_category_id, farm=farm)
+    if request.method == 'POST':
+        form = ExpenseCategoryForm(request.POST, instance=expense_category)
+        if form.is_valid():
+            form.save()
+            return redirect('farm_finances:expense_categories')
+    else:
+        form = ExpenseCategoryForm(instance=expense_category)
+    return render(request, 'farm_finances/update_expense_category.html', {'form': form, 'farm': farm, 'expense_category': expense_category})
+
+@login_required
+def delete_income_category(request, income_category_id):
+    farm = request.user.farm
+    income_category = get_object_or_404(IncomeCategory, pk=income_category_id, farm=farm)
+    if request.method == 'POST':
+        print('Deleting income category:', income_category_id) # Add this line
+        income_category.delete()
+        return redirect('farm_finances:all_income_categories')
+    return redirect('farm_finances:all_income_categories')
+
+
+
+@login_required
+def delete_expense_category(request, expense_category_id):
+    farm = request.user.farm
+    expense_category = get_object_or_404(ExpenseCategory, pk=expense_category_id, farm=farm)
+    if request.method == 'POST':
+        expense_category.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+@login_required
+def income_categories(request):
+    farm = request.user.farm
+    income_categories = IncomeCategory.objects.filter(farm=farm)
+
+    return render(request, 'farm_finances/income_categories.html', {'farm': farm, 'income_categories': income_categories})
+
+@login_required
+def expense_categories(request):
+    farm = request.user.farm
     expense_categories = ExpenseCategory.objects.filter(farm=farm)
 
     return render(request, 'farm_finances/expense_categories.html', {'farm': farm, 'expense_categories': expense_categories})
+
 
 
 
@@ -50,17 +125,7 @@ def create_expense_category(request, farm_id):
 
 from django.http import JsonResponse
 
-def update_income_category(request, farm_id, income_category_id):
-    farm = get_object_or_404(Farm, pk=farm_id)
-    income_category = get_object_or_404(IncomeCategory, pk=income_category_id, farm=farm)
-    if request.method == 'POST':
-        form = IncomeCategoryForm(request.POST, instance=income_category)
-        if form.is_valid():
-            form.save()
-            return redirect('farm_finances:income_categories', farm_id=farm.id)
-    else:
-        form = IncomeCategoryForm(instance=income_category)
-    return render(request, 'farm_finances/update_income_category.html', {'form': form, 'farm': farm, 'income_category': income_category})
+
 
 def update_expense_category(request, farm_id, expense_category_id):
     farm = get_object_or_404(Farm, pk=farm_id)
@@ -74,13 +139,6 @@ def update_expense_category(request, farm_id, expense_category_id):
         form = ExpenseCategoryForm(instance=expense_category)
     return render(request, 'farm_finances/update_expense_category.html', {'form': form, 'farm': farm, 'expense_category': expense_category})
 
-def delete_income_category(request, farm_id, income_category_id):
-    farm = get_object_or_404(Farm, pk=farm_id)
-    income_category = get_object_or_404(IncomeCategory, pk=income_category_id, farm=farm)
-    if request.method == 'POST':
-        income_category.delete()
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
 
 def delete_expense_category(request, farm_id, expense_category_id):
     farm = get_object_or_404(Farm, pk=farm_id)
@@ -176,3 +234,4 @@ def expense_list(request, farm_id):
     farm = get_object_or_404(Farm, pk=farm_id)
     expenses = Expense.objects.filter(farm=farm).order_by('-date')
     return render(request, 'farm_finances/expense_list.html', {'expenses': expenses, 'farm': farm})
+       

@@ -1,58 +1,61 @@
-{% extends 'dairy_farm/backend/backendbase.html' %}
-{% load static %}
-{% block content %}
-
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-
-<body>
-    <div class="tap-top">
-        <span class="lnr lnr-chevron-up"></span>
-    </div>
-
-    <div class="page-wrapper compact-wrapper" id="pageWrapper">
-        {% include 'dairy_farm/backend/header.html' %}
-        <div class="page-body-wrapper">
-            {% include 'dairy_farm/backend/sidebar.html' %}
-
-            <div class="page-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row">
-                                <div class="col-sm-8 m-auto">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="card-header-2">
-                                                <h5>Update Income Category Information</h5>
-                                            </div>
-
-                                            {% load static %}
-                                            <form class="theme-form theme-form-2 mega-form" method="POST" action="{% url 'farm_finances:update_income_category' farm_id=farm.id income_category_id=income_category.id %}" enctype="multipart/form-data">
-                                                {% csrf_token %}
-                                                <div class="mb-4 row align-items-center">
-                                                    <label class="form-label-title col-sm-3 mb-0">Category Name</label>
-                                                    <div class="col-sm-9">
-                                                        {{ form.name }}
-                                                    </div>
-                                                </div>
-
-                                                <div class="mb-4 row">
-                                                    <div class="col-sm-9 offset-sm-3">
-                                                        <button type="submit" class="btn btn-primary">Update Income Category</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+{% extends 'main/base.html' %} {% load static %} {% block content %}
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {% include 'home/backend_header.html' %}
+  <!-- Page Header Ends-->
+  <!-- mobile fix menu start -->
+  {% include 'home/mobile_menu.html' %}
+  <!-- mobile fix menu end -->
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {% include 'home/backend_sidebar.html' %}
+    <!-- Page Sidebar Ends-->
+    <!-- Page Body Start -->
+    <div class="page-body">
+      <!-- Update Income Category Information Start -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="row">
+              <div class="col-sm-8 m-auto">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="card-header-2">
+                      <h5>Update Income Category Information</h5>
                     </div>
+
+                    <form method="POST" action="{% url 'farm_finances:update_income_category'  income_category_id=income_category.id %}" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <div class="mb-4 row align-items-center">
+                        <label class="form-label-title col-sm-3 mb-0">Category Name</label>
+                        <div class="col-sm-9">{{ form.name }}</div>
+                      </div>
+
+                      <div class="mb-4 row">
+                        <div class="col-sm-9 offset-sm-3">
+                          <button type="submit" class="btn btn-primary">Update Income Category</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+      <!-- Update Income Category Information End -->
     </div>
-</body>
-</html>
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
 {% endblock %}

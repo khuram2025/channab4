@@ -32,28 +32,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  const deleteIcons = document.querySelectorAll(".delete-btn + .ri-delete-bin-line");
-
-  deleteIcons.forEach(function (deleteIcon) {
-    deleteIcon.addEventListener("click", function (event) {
-      event.preventDefault();
-      const deleteForm = deleteIcon.parentElement;
-      const deleteUrl = deleteForm.getAttribute("data-delete-url");
-      const deleteModalForm = document.getElementById("delete-modal-form");
-      deleteModalForm.setAttribute("action", deleteUrl);
-      const deleteModal = new bootstrap.Modal(document.getElementById("exampleModalToggle"), {});
-      deleteModal.show();
-    });
-  });
-
-  const cancelButton = document.querySelector('#exampleModalToggle .btn-md[data-bs-dismiss="modal"]');
-  cancelButton.addEventListener("click", function () {
-    const deleteModal = bootstrap.Modal.getInstance(document.getElementById("exampleModalToggle"));
-    deleteModal.hide();
-  });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
   var editMilkModal = new bootstrap.Modal(document.getElementById("editMilk"), {});
   editMilkModal.show();
 });
