@@ -50,6 +50,7 @@
                           <th>Date</th>
                           <th>Animal TAG#</th>
                           <th>Morning Milk (L)</th>
+                          <th>Afternoon Milk (L)</th>
                           <th>Evening Milk (L)</th>
                           <th>Total Milk (L)</th>
                           <th>Option</th>
@@ -60,8 +61,9 @@
                         <tr>
                           <td>{{ milk_record.date }}</td>
                           <td>{{ milk_record.animal.tag }}</td>
-                          <td>{{ milk_record.morning_milk }}</td>
-                          <td>{{ milk_record.evening_milk }}</td>
+                          <td>{{ milk_record.first_time }}</td>
+                          <td>{{ milk_record.second_time }}</td>
+                          <td>{{ milk_record.third_time }}</td>
                           <td>{{ milk_record.total_milk }}</td>
                           <td>
                             <ul>

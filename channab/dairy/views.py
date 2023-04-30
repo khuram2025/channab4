@@ -104,11 +104,14 @@ def animal_edit(request, pk):
 
 from django.http import HttpResponseRedirect, JsonResponse
 
+
 @login_required
 def animal_detail(request, pk):
-    animal = get_object_or_404(Animal, pk=pk, farm__admin=request.user)
+    farm = request.user.farm
+    animal = get_object_or_404(Animal, pk=pk, farm=farm)
     milk_records = MilkRecord.objects.filter(animal=animal)
     return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records})
+
 
 @login_required
 def animal_delete(request, pk):

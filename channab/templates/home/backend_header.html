@@ -4,48 +4,22 @@
     <div class="header-logo-wrapper p-0">
       <div class="logo-wrapper">
         <a href="index.html">
-          <img
-            class="img-fluid main-logo"
-            src="{% static 'be/assets/images/logo/1.png' %}"
-            alt="logo"
-          />
-          <img
-            class="img-fluid white-logo"
-            src="{% static 'be/assets/images/logo/1-white.png' %}"
-            alt="logo"
-          />
+          <img class="img-fluid main-logo" src="{% static 'be/assets/images/logo/1.png' %}" alt="logo" />
+          <img class="img-fluid white-logo" src="{% static 'be/assets/images/logo/1-white.png' %}" alt="logo" />
         </a>
       </div>
       <div class="toggle-sidebar">
-        <i
-          class="status_toggle middle sidebar-toggle"
-          data-feather="align-center"
-        ></i>
+        <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i>
         <a href="index.html">
-          <img
-            src="{% static 'be/assets/images/logo/1.png' %}"
-            class="img-fluid"
-            alt=""
-          />
+          <img src="{% static 'be/assets/images/logo/1.png' %}" class="img-fluid" alt="" />
         </a>
       </div>
     </div>
-    <form
-      class="form-inline search-full"
-      action="javascript:void(0)"
-      method="get"
-    >
+    <form class="form-inline search-full" action="javascript:void(0)" method="get">
       <div class="form-group w-100">
         <div class="Typeahead Typeahead--twitterUsers">
           <div class="u-posRelative">
-            <input
-              class="demo-input Typeahead-input form-control-plaintext w-100"
-              type="text"
-              placeholder="Search Fastkart .."
-              name="q"
-              title=""
-              autofocus
-            />
+            <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text" placeholder="Search Fastkart .." name="q" title="" autofocus />
             <i class="close-search" data-feather="x"></i>
             <div class="spinner-border Typeahead-spinner" role="status">
               <span class="sr-only">Loading...</span>
@@ -73,33 +47,19 @@
               <h6 class="f-18 mb-0">Notitications</h6>
             </li>
             <li>
-              <p>
-                <i class="fa fa-circle me-2 font-primary"></i>Delivery
-                processing <span class="pull-right">10 min.</span>
-              </p>
+              <p><i class="fa fa-circle me-2 font-primary"></i>Delivery processing <span class="pull-right">10 min.</span></p>
             </li>
             <li>
-              <p>
-                <i class="fa fa-circle me-2 font-success"></i>Order
-                Complete<span class="pull-right">1 hr</span>
-              </p>
+              <p><i class="fa fa-circle me-2 font-success"></i>Order Complete<span class="pull-right">1 hr</span></p>
             </li>
             <li>
-              <p>
-                <i class="fa fa-circle me-2 font-info"></i>Tickets
-                Generated<span class="pull-right">3 hr</span>
-              </p>
+              <p><i class="fa fa-circle me-2 font-info"></i>Tickets Generated<span class="pull-right">3 hr</span></p>
             </li>
             <li>
-              <p>
-                <i class="fa fa-circle me-2 font-danger"></i>Delivery
-                Complete<span class="pull-right">6 hr</span>
-              </p>
+              <p><i class="fa fa-circle me-2 font-danger"></i>Delivery Complete<span class="pull-right">6 hr</span></p>
             </li>
             <li>
-              <a class="btn btn-primary" href="javascript:void(0)"
-                >Check all notification</a
-              >
+              <a class="btn btn-primary" href="javascript:void(0)">Check all notification</a>
             </li>
           </ul>
         </li>
@@ -110,15 +70,16 @@
         </li>
         <li class="profile-nav onhover-dropdown pe-0 me-0">
           <div class="media profile-media">
-            <img
-              class="user-profile rounded-circle"
-              src="{% static 'be/assets/images/users/4.jpg' %}"
-              alt=""
-            />
+            <img class="user-profile rounded-circle" src="{% static 'be/assets/images/users/4.jpg' %}" alt="" />
             <div class="user-name-hide media-body">
-              <span>Emay Walter</span>
+              {% if user.first_name %}
+              <span>{{ user.first_name }}</span>
+              {% else %}
+              <span>User</span>
+              {% endif %}
               <p class="mb-0 font-roboto">
-                Admin<i class="middle ri-arrow-down-s-line"></i>
+                {% if user.role == 'admin' %} Admin {% else %} Member {% endif %}
+                <i class="middle ri-arrow-down-s-line"></i>
               </p>
             </div>
           </div>
@@ -142,19 +103,42 @@
                 <span>Settings</span>
               </a>
             </li>
+            {% load static %} {% if user.is_authenticated %}
             <li>
-              <a
-                data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop"
-                href="javascript:void(0)"
-              >
+              <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" href="javascript:void(0)">
                 <i data-feather="log-out"></i>
                 <span>Log out</span>
               </a>
             </li>
+            {% else %}
+            <li>
+              <a href="{% url 'accounts:login' %}">
+                <i data-feather="log-in"></i>
+                <span>Log in</span>
+              </a>
+            </li>
+            {% endif %}
           </ul>
         </li>
       </ul>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+        <p>Are you sure you want to log out?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+          <form method="post" action="{% url 'accounts:logout' %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn--yes btn-primary">Yes</button>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>

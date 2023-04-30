@@ -150,6 +150,7 @@
                                 <tr>
                                   <th>Date</th>
                                   <th>Morning Milk</th>
+                                  <th>Aternoon Milk</th>
                                   <th>Evening Milk</th>
                                   <th>Total Milk</th>
                                   <th>Option</th>
@@ -162,6 +163,7 @@
                                   <td>{{ milk_record.first_time }}</td>
                                   <td>{{ milk_record.second_time }}</td>
                                   <td>{{ milk_record.third_time }}</td>
+                                  <td>{{ milk_record.total_milk }}</td>
                                   <td>
                                     <a href="{% url 'dairy:milk_edit' milk_record.pk %}" class="btn btn-link btn-sm text-success">
                                       <i class="fas fa-pencil-alt"></i>
