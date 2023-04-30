@@ -1,1 +1,14 @@
-actually i m using same script and delete.html file for delte animal where it is working but for category delete not working 
+from django.urls import path
+from . import views
+
+app_name = 'farm_finances'
+
+urlpatterns = [
+    # Your other URL patterns
+
+    path('<int:farm_id>/income-categories/', views.income_categories, name='income_categories'),
+    path('<int:farm_id>/expense-categories/', views.expense_categories, name='expense_categories'),
+    path('income_list/<int:farm_id>/', views.income_list, name='income_list'),
+    path('expense_list/<int:farm_id>/', views.expense_list, name='expense_list'),
+
+]

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Farm, IncomeCategory, ExpenseCategory
+from .models import  IncomeCategory, ExpenseCategory
+from accounts.models import Farm
 from .forms import IncomeCategoryForm, ExpenseCategoryForm
 
 # Other imports and views
@@ -10,12 +11,6 @@ def income_categories(request, farm_id):
     income_categories = IncomeCategory.objects.filter(farm=farm)
 
     return render(request, 'farm_finances/income_categories.html', {'farm': farm, 'income_categories': income_categories})
-
-def expense_categories(request, farm_id):
-    farm = get_object_or_404(Farm, pk=farm_id)
-    expense_categories = ExpenseCategory.objects.filter(farm=farm)
-
-    return render(request, 'farm_finances/expense_categories.html', {'farm': farm, 'expense_categories': expense_categories})
 
 def create_income_category(request, farm_id):
     farm = get_object_or_404(Farm, pk=farm_id)
@@ -30,6 +25,14 @@ def create_income_category(request, farm_id):
         form = IncomeCategoryForm()
 
     return render(request, 'farm_finances/create_income_category.html', {'form': form, 'farm': farm})
+
+def expense_categories(request, farm_id):
+    farm = get_object_or_404(Farm, pk=farm_id)
+    expense_categories = ExpenseCategory.objects.filter(farm=farm)
+
+    return render(request, 'farm_finances/expense_categories.html', {'farm': farm, 'expense_categories': expense_categories})
+
+
 
 def create_expense_category(request, farm_id):
     farm = get_object_or_404(Farm, pk=farm_id)
