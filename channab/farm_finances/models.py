@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from dairy_farm.models import Farm
+from accounts.models import Farm
 from datetime import date
 from django.conf import settings
 

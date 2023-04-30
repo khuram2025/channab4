@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'dal',
     'dal_select2',
     'widget_tweaks',
-    # 'farm_finances',
+    'farm_finances',
 
 ]
 

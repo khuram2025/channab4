@@ -74,6 +74,26 @@
               </li>
             </ul>
           </li>
+          <li class="sidebar-list">
+            <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
+              <i class="ri-bank-line"></i>
+              <span>Farm Finances</span>
+            </a>
+            <ul class="sidebar-submenu">
+              <li>
+                <a href="{% url 'farm_finances:income_categories' user.farm.pk %}">Income Categories</a>
+              </li>
+              <li>
+                <a href="{% url 'farm_finances:expense_categories' user.farm.pk %}">Expense Categories</a>
+              </li>
+              <li>
+                <a href="{% url 'farm_finances:income_list' user.farm.pk %}">Income List</a>
+              </li>
+              <li>
+                <a href="{% url 'farm_finances:expense_list' user.farm.pk %}">Expense List</a>
+              </li>
+            </ul>
+          </li>
 
           <li class="sidebar-list">
             <a class="sidebar-link sidebar-title" href="javascript:void(0)">
