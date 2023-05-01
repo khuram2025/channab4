@@ -1,180 +1,121 @@
-{% extends 'dairy_farm/backend/backendbase.html' %}
-
-{% block content %}
-
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-
-<body>
-    <!-- tap on top start -->
-    <div class="tap-top">
-        <span class="lnr lnr-chevron-up"></span>
-    </div>
-    <!-- tap on tap end -->
-
-    <!-- page-wrapper Start-->
-    <div class="page-wrapper compact-wrapper" id="pageWrapper">
-        <!-- Page Header Start-->
-        {%include 'dairy_farm/backend/header.html' %}
-        <!-- Page Header Ends-->
-
-        <!-- Page Body Start -->
-        <div class="page-body-wrapper">
-            <!-- Page Sidebar Start-->
-            {%include 'dairy_farm/backend/sidebar.html' %}
-            <!-- Page Sidebar Ends-->
-
-            <!-- Container-fluid starts-->
-            <div class="page-body">
-                <!-- All Income List Start -->
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="card card-table">
-                                <div class="card-body">
-                                    <div class="title-header option-title">
-                                        <h5>All Incomes</h5>
-                                        <form class="d-inline-flex">
-                                            <a href="{%url 'farm_finances:create_income' farm_id=farm.id %}"
-                                                class="align-items-center btn btn-theme d-flex">
-                                                <i data-feather="plus-square"></i>Add New
-                                            </a>
-                                        </form>
-                                    </div>
-
-                                    <div class="table-responsive income-table">
-                                        <div>
-                                            <table class="table all-package theme-table" id="table_id">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Date</th>
-                                                        <th>Description</th>
-                                                        <th>Amount</th>
-                                                        <th>Category</th>
-                                                        <th>Image</th>
-                                                        <th>Option</th>
-                                                    </tr>
-                                                </thead>
-
-                                                <tbody>
-                                                    {% for income in incomes %}
-                                                    <tr>
-                                                        <td>{{ income.date }}</td>
-                                                        <td>{{ income.description }}</td>
-                                                        <td>{{ income.amount }}</td>
-                                                        <td>{{ income.category }}</td>
-                                                        <td>
-                                                            {% if income.image %}
-                                                                <img src="{{ income.image.url }}" alt="{{ income.description }}" width="100" />
-                                                            {% else %}
-                                                                No image
-                                                            {% endif %}
-                                                        </td>
-                                                        <td>
-                                                            <ul>
-                                                                <li>
-                                                                    <a
-                                                                        href="{% url 'farm_finances:update_income' farm_id=farm.id income_id=income.id %}">
-                                                                        <i class="ri-pencil-line"></i>
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    {% csrf_token %}
-
-                                                                    <a href="#" class="delete-button"
-                                                                        data-id="{{ income.id }}"
-                                                                        data-url="{% url 'farm_finances:delete_income' farm_id=income.farm.id income_id=income.id %}">
-                                                                        <i class="ri-delete-bin-line"></i>
-                                                                    </a>
-
-                                                                </li>
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+{% extends 'main/base.html' %} {% block content %} {% load static %}
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {% include 'home/backend_header.html' %}
+  <!-- Page Header Ends-->
+  <!-- mobile fix menu start -->
+  {% include 'home/mobile_menu.html' %}
+  <!-- mobile fix menu end -->
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {% include 'home/backend_sidebar.html' %}
+    <!-- Page Sidebar Ends-->
+    <!-- Page Body Start -->
+    <!-- Container-fluid starts-->
+    <div class="page-body">
+      <!-- All Incomes Table Start -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card card-table">
+              <div class="card-body">
+                <div class="title-header option-title">
+                  <h5>All Incomes</h5>
+                  <a class="btn btn-solid" href="{% url 'farm_finances:create_income' %}">Add Income</a>
                 </div>
-                <!-- All Income List Ends-->
 
-                <div class="container-fluid">
-                    <!-- footer start-->
+                <div class="table-responsive income-table">
+                  <div>
+                    <table class="table all-package theme-table" id="table_id">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Description</th>
+                          <th>Amount</th>
+                          <th>Category</th>
+                          <th>Option</th>
+                        </tr>
+                      </thead>
 
-                    <!-- footer end-->
+                      <tbody>
+                        {% for income in incomes %}
+                        <tr>
+                          <td>{{ income.date }}</td>
+                          <td>{{ income.description }}</td>
+                          <td>{{ income.amount }}</td>
+                          <td>{{ income.category }}</td>
+                          <td>
+                            <ul>
+                              <li>
+                                <a href="{% url 'farm_finances:update_income' income_id=income.id %}">
+                                  <i class="ri-pencil-line"></i>
+                                </a>
+                              </li>
+                              <li>
+                                <form method="post" action="{% url 'farm_finances:delete_income' income_id=income.pk %}" class="delete-form">
+                                  {% csrf_token %}
+                                  <input type="hidden" name="income_id" value="{{ income.pk }}" />
+                                  <button type="submit" class="delete-btn border-0 bg-transparent">
+                                    <i class="ri-delete-bin-line" style="cursor: pointer"></i>
+                                  </button>
+                                </form>
+                              </li>
+                            </ul>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
+              </div>
             </div>
-            <!-- Container-fluid end -->
+          </div>
         </div>
+      </div>
+      <!-- All Incomes Table Ends-->
 
+      <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+          <div class="row">
+            <div class="col-md-12 footer-copyright text-center">
+              <p class="mb-0">Copyright 2023 © Fastkart theme by pixelstrap</p>
+            </div>
+          </div>
+        </footer>
+        <!-- footer end-->
+      </div>
     </div>
+    <!-- Container-fluid end -->
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
+{% endblock %} {% block extra_js %}
 
-    <!-- Delete Modal Box End -->
-    <script>
-        document.addEventListener    ('DOMContentLoaded', function () {
-        let deleteButtons = document.querySelectorAll('.delete-button');
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function (event) {
-                event.preventDefault();
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const deleteButtons = document.querySelectorAll(".delete-btn");
 
-                // Add a confirmation dialog
-                let confirmation = confirm('Are you sure you want to delete this income?');
-                if (!confirmation) {
-                    return;
-                }
-
-                let csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                let url = event.target.closest('a').dataset.url;
-
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken
-                    },
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Remove the income element from the DOM
-                            let tableRow = event.target.closest('tr');
-                            tableRow.remove();
-
-                            // Show a success notification
-                            showNotification('Income deleted successfully.', 'success');
-                        } else {
-                            // Show an error message or handle the error in another way
-                            console.error('Error: Could not delete the income');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            });
-        });
+    deleteButtons.forEach(function (button) {
+      button.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const confirmation = confirm("Are you sure you want to delete this income?");
+        if (confirmation) {
+          button.closest("form").submit();
+        }
+      });
     });
-
-    function showNotification(message, type) {
-        let notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
-
-        document.body.appendChild(notification);
-
-        setTimeout(function () {
-            notification.remove();
-        }, 3000);
-    }
-
-
+  });
 </script>
-</body>
-</html>
 {% endblock %}
-

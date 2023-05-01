@@ -1,10 +1,64 @@
-{% extends 'base.html' %}
+{% extends 'home/base.html' %}
 
 {% block content %}
-  <h2>Update Income</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Update</button>
-  </form>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h1 class="my-4">Update Income Record</h1>
+
+      <form method="post" action="{% url 'farm_finances:update_income' income_id=income.id %}" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.date.id_for_label }}">Date</label>
+            {{ form.date }}
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="{{ form.amount.id_for_label }}">Amount</label>
+              <input type="number" step="0.01" class="form-control" name="{{ form.amount.html_name }}" id="{{ form.amount.auto_id }}" value="{{ form.amount.value|default:'' }}" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="{{ form.category.id_for_label }}">Category</label>
+              <select class="form-control" name="{{ form.category.html_name }}" id="{{ form.category.auto_id }}" required>
+                {% for category in form.category.field.queryset %}
+                  <option value="{{ category.pk }}" {% if category.pk == form.category.value %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.description.id_for_label }}">Description</label>
+          <input type="text" class="form-control" name="{{ form.description.html_name }}" id="{{ form.description.auto_id }}" value="{{ form.description.value|default:'' }}">
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.attachment.id_for_label }}">Attachment</label>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" name="{{ form.attachment.html_name }}" id="{{ form.attachment.auto_id }}" value="{{ form.attachment.value|default:'' }}">
+            <label class="custom-file-label" for="{{ form.attachment.auto_id }}">Choose file</label>
+          </div>
+        </div>
+
+        <div class="form-group mt-4">
+          <div class="row d-flex justify-content-between">
+            <div class="col-md-6 col-sm-6 mb-2">
+              <button type="submit" class="btn btn-primary flex-fill">Update Income Record</button>
+            </div>
+            <div class="col-md-6 col-sm-6">
+              <a href="{% url 'farm_finances:income_list' %}" class="btn btn-secondary flex-fill">Cancel</a>
+            </div>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
 {% endblock %}

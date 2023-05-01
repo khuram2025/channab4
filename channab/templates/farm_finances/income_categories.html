@@ -114,9 +114,6 @@
 <script>
   function submitForm(categoryId) {
     const deleteForm = document.getElementById("delete-form-" + categoryId);
-
-    console.log("Submitting form for category id:", categoryId); // Add this line
-
     deleteForm.submit();
   }
 
@@ -130,9 +127,7 @@
 
         // Show the confirmation modal
         const modal = new bootstrap.Modal(document.getElementById("deleteIncomeCategoryModal"));
-        console.log("Showing modal");
         modal.show();
-        console.log("Modal shown");
 
         // Get the "Yes" button in the modal
         const yesButton = document.querySelector(".btn--yes");
@@ -144,7 +139,6 @@
         document.querySelector(".btn--yes").addEventListener("click", function (event) {
           event.preventDefault();
           event.stopPropagation();
-          console.log("Clicked Yes button");
           submitForm(categoryId);
           modal.hide();
         });

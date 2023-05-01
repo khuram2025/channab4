@@ -22,12 +22,10 @@ urlpatterns = [
     path('delete_expense/<int:expense_id>/', views.delete_expense, name='delete_expense'),
 
     path('create-income-category/', views.create_income_category, name='create_income_category'),
-    path('create-expense-category/', views.create_expense_category, name='create_expense_category'),
-
-   
-    path('update_expense_category/<int:expense_category_id>/', views.update_expense_category, name='update_expense_category'),
 
     
+    path('create-expense-category/', views.create_expense_category, name='create_expense_category'),
+    path('update_expense_category/<int:expense_category_id>/', views.update_expense_category, name='update_expense_category'),
     path('delete_expense_category/<int:expense_category_id>/', views.delete_expense_category, name='delete_expense_category'),
 
     # Add update and delete URL patterns for income and expense categories
