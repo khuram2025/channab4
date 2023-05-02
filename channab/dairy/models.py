@@ -61,3 +61,12 @@ class MilkRecord(models.Model):
     @property
     def total_milk(self):
         return self.first_time + self.second_time + self.third_time
+    
+class AnimalWeight(models.Model):
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name='weights')
+    weight_kg = models.DecimalField(max_digits=5, decimal_places=2)
+    date = models.DateField(default=timezone.now)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.animal.tag} - {self.weight_kg} kg on {self.date}'

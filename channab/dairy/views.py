@@ -2,11 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from .models import AnimalCategory, Animal
-from .forms import AnimalCategoryForm, AnimalForm
+from .forms import AnimalCategoryForm, AnimalForm, AnimalWeightForm, MilkRecordForm
 from accounts.models import Farm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import MilkRecord, Animal
-from .forms import MilkRecordForm
+from .models import MilkRecord, Animal, AnimalWeight
 
 @login_required
 def animal_category_list(request):
@@ -247,4 +246,39 @@ def delete_milk_record(request, milk_record_id):
     animal_id = milk_record.animal.id
     milk_record.delete()
     return redirect('dairy/animal_detail.html', pk=animal_id)
-
+@login_required
+def animal_weight_list(request):
+    weights = AnimalWeight.objects.all()
+    return render(request, 'dairy/animal_weight_list.html', {'weights': weights})
+@login_required
+def animal_weight_detail(request, pk):
+    weight = get_object_or_404(AnimalWeight, pk=pk)
+    return render(request, 'dairy/animal_weight_detail.html', {'weight': weight})
+@login_required
+def animal_weight_new(request):
+    if request.method == "POST":
+        form = AnimalWeightForm(request.POST)
+        if form.is_valid():
+            weight = form.save(commit=False)
+            weight.save()
+            return redirect('animal_weight_detail', pk=weight.pk)
+    else:
+        form = AnimalWeightForm()
+    return render(request, 'dairy/animal_weight_edit.html', {'form': form})
+@login_required
+def animal_weight_edit(request, pk):
+    weight = get_object_or_404(AnimalWeight, pk=pk)
+    if request.method == "POST":
+        form = AnimalWeightForm(request.POST, instance=weight)
+        if form.is_valid():
+            weight = form.save(commit=False)
+            weight.save()
+            return redirect('animal_weight_detail', pk=weight.pk)
+    else:
+        form = AnimalWeightForm(instance=weight)
+    return render(request, 'dairy/animal_weight_edit.html', {'form': form})
+@login_required
+def animal_weight_delete(request, pk):
+    weight = get_object_or_404(AnimalWeight, pk=pk)
+    weight.delete()
+    return redirect('animal_weight_list')

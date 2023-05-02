@@ -27,4 +27,11 @@ urlpatterns = [
     path('animal/<int:animal_id>/add_milk_record/', views.add_milk_record, name='add_milk_record'),
     path('animal/<int:animal_id>/get_milk_record/<str:date>/', views.get_milk_record, name='get_milk_record'),
 
+
+    path('animal_weights/', views.animal_weight_list, name='animal_weight_list'),
+    path('animal_weights/<int:pk>/', views.animal_weight_detail, name='animal_weight_detail'),
+    path('animal_weights/new/', views.animal_weight_new, name='animal_weight_new'),
+    path('animal_weights/<int:pk>/edit/', views.animal_weight_edit, name='animal_weight_edit'),
+    path('animal_weights/<int:pk>/delete/', views.animal_weight_delete, name='animal_weight_delete'),
+
 ]

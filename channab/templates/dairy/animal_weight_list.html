@@ -1,0 +1,120 @@
+{% extends 'main/base.html' %} {% block content %} {% load static %}
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {% include 'home/backend_header.html' %}
+  <!-- Page Header Ends-->
+  <!-- mobile fix menu start -->
+  {% include 'home/mobile_menu.html' %}
+  <!-- mobile fix menu end -->
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {% include 'home/backend_sidebar.html' %}
+    <!-- Page Sidebar Ends-->
+    <!-- Page Body Start -->
+    <!-- Container-fluid starts-->
+    <div class="page-body">
+      <!-- Animal Weights Table Start -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card card-table">
+              <div class="card-body">
+                <div class="title-header option-title">
+                  <h5>Animal Weights</h5>
+                  <a class="btn btn-solid" href="{% url 'dairy:animal_weight_new' %}">Add Weight</a>
+                </div>
+                <div class="table-responsive weight-table">
+                  <div>
+                    <table class="table all-package theme-table" id="table_id">
+                      <thead>
+                        <tr>
+                          <th>TAG#</th>
+                          <th>Weight (KG)</th>
+                          <th>Date</th>
+                          <th>Description</th>
+                          <th>Option</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {% for weight in weights %}
+                        <tr>
+                          <td>{{ weight.animal.tag }}</td>
+                          <td>{{ weight.weight_kg }}</td>
+                          <td>{{ weight.date }}</td>
+                          <td>{{ weight.description }}</td>
+                          <td>
+                            <ul>
+                              <li>
+                                <a href="{% url 'dairy:animal_weight_edit' weight.pk %}">
+                                  <i class="ri-pencil-line"></i>
+                                </a>
+                              </li>
+                              <li>
+                                <form method="post" action="{% url 'dairy:animal_weight_delete' weight.pk %}" class="delete-form">
+                                  {% csrf_token %}
+                                  <input type="hidden" name="weight_id" value="{{ weight.pk }}" />
+                                  <button type="submit" class="delete-btn border-0 bg-transparent">
+                                    <i class="ri-delete-bin-line" style="cursor: pointer"></i>
+                                  </button>
+                                </form>
+                              </li>
+                            </ul>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Animal Weights Table Ends-->
+
+      <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+          <div class="row">
+            <div class="col-md-12 footer-copyright text-center">
+              <p class="mb-0">Copyright 2023 © Fastkart theme by pixelstrap</p>
+            </div>
+          </div>
+        </footer>
+        <!-- footer end-->
+      </div>
+    </div>
+    <!-- Container-fluid end -->
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
+{% endblock %} {% block extra_js %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+
+    deleteButtons.forEach(function (button) {
+      button.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const confirmation = confirm("Are you sure you want to delete this weight?");
+        if (confirmation) {
+          button.closest("form").submit();
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

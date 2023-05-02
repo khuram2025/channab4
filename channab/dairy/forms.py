@@ -13,7 +13,7 @@ class AnimalForm(forms.ModelForm):
         fields = ['tag', 'image', 'dob', 'purchase_cost', 'status', 'sex', 'category', 'animal_type']
 
 
-from .models import MilkRecord, Animal
+from .models import MilkRecord, Animal, AnimalWeight
 
 class MilkRecordForm(forms.ModelForm):
     class Meta:
@@ -30,3 +30,9 @@ class MilkRecordForm(forms.ModelForm):
         if commit:
             milk_record.save()
         return milk_record
+
+
+class AnimalWeightForm(forms.ModelForm):
+    class Meta:
+        model = AnimalWeight
+        fields = ['animal', 'weight_kg', 'date', 'description']
