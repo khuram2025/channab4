@@ -251,6 +251,101 @@
             </div>
           </div>
           <!-- chart card section End -->
+          <div class="col-xxl-6 col-md-6">
+            <div class="card o-hidden card-hover">
+              <div class="card-header card-header-top card-header--2 px-0 pt-0">
+                <div class="card-header-title">
+                  <h4>Income</h4>
+                </div>
+                <div class="best-selling-box d-sm-flex d-none">
+                  <span>Short By:</span>
+                  <div class="dropdown">
+                    <!-- home/index.html -->
+                    <button class="btn p-0 dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" data-bs-auto-close="true">{% if time_filter == 'last_7_days' %} Last 7 days {% elif time_filter == 'last_30_days' %} Last 30 days {% elif time_filter == 'this_month' %} This month {% elif time_filter == 'this_year' %} This year {% else %} Today {% endif %}</button>
+
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                      <li><a class="dropdown-item" href="?time_filter=last_7_days">Last 7 days</a></li>
+                      <li><a class="dropdown-item" href="?time_filter=last_30_days">Last 30 days</a></li>
+                      <li><a class="dropdown-item" href="?time_filter=this_month">This month</a></li>
+                      <li><a class="dropdown-item" href="?time_filter=this_year">This year</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body pt-0">
+                <div>
+                  <div class="table-responsive">
+                    <table class="user-table transactions-table table border-0">
+                      <tbody>
+                        {% for item in summary %}
+                        <tr>
+                          <td>
+                            <div class="transactions-icon">
+                              <i class="ri-shield-line"></i>
+                            </div>
+                            <div class="transactions-name">
+                              <h6>{{ item.category.name }}</h6>
+                            </div>
+                          </td>
+                          <td class="{% if item.total_amount >= 0 %}success{% else %}lost{% endif %}">PKR. {{ item.total_amount|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-6 col-md-6">
+            <div class="card o-hidden card-hover">
+              <div class="card-header card-header-top card-header--2 px-0 pt-0">
+                <div class="card-header-title">
+                  <h4>Expense Summary</h4>
+                </div>
+                <div class="best-selling-box d-sm-flex d-none">
+                  <span>Short By:</span>
+                  <div class="dropdown">
+                    <!-- home/index.html -->
+                    <button class="btn p-0 dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" data-bs-auto-close="true">{% if time_filter == 'last_7_days' %} Last 7 days {% elif time_filter == 'last_30_days' %} Last 30 days {% elif time_filter == 'this_month' %} This month {% elif time_filter == 'this_year' %} This year {% else %} Today {% endif %}</button>
+
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                      <li><a class="dropdown-item" href="?time_filter=last_7_days">Last 7 days</a></li>
+                      <li><a class="dropdown-item" href="?time_filter=last_30_days">Last 30 days</a></li>
+                      <li><a class="dropdown-item" href="?time_filter=this_month">This month</a></li>
+                      <li><a class="dropdown-item" href="?time_filter=this_year">This year</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-body pt-0">
+                <div>
+                  <div class="table-responsive">
+                    <table class="user-table transactions-table table border-0">
+                      <tbody>
+                        {% for item in expense_summary %}
+                        <tr>
+                          <td>
+                            <div class="transactions-icon">
+                              <i class="ri-shield-line"></i>
+                            </div>
+                            <div class="transactions-name">
+                              <h6>{{ item.category.name }}</h6>
+                            </div>
+                          </td>
+                          <td class="{% if item.total_amount >= 0 %}success{% else %}lost{% endif %}">PKR. {{ item.total_amount|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Earning chart star-->
           <div class="col-xl-6">
             <div class="card o-hidden card-hover">
@@ -599,105 +694,10 @@
           </div>
           <!-- Earning chart end-->
           <!-- Transactions start-->
-          <div class="col-xxl-4 col-md-6">
-            <div class="card o-hidden card-hover">
-              <div class="card-header border-0">
-                <div class="card-header-title">
-                  <h4>Transactions</h4>
-                </div>
-              </div>
-              <div class="card-body pt-0">
-                <div>
-                  <div class="table-responsive">
-                    <table class="user-table transactions-table table border-0">
-                      <tbody>
-                        <tr>
-                          <td>
-                            <div class="transactions-icon">
-                              <i class="ri-shield-line"></i>
-                            </div>
-                            <div class="transactions-name">
-                              <h6>Wallets</h6>
-                              <p>Starbucks</p>
-                            </div>
-                          </td>
-                          <td class="lost">-$74</td>
-                        </tr>
-                        <tr>
-                          <td class="td-color-1">
-                            <div class="transactions-icon">
-                              <i class="ri-check-line"></i>
-                            </div>
-                            <div class="transactions-name">
-                              <h6>Bank Transfer</h6>
-                              <p>Add Money</p>
-                            </div>
-                          </td>
-                          <td class="success">+$125</td>
-                        </tr>
-                        <tr>
-                          <td class="td-color-2">
-                            <div class="transactions-icon">
-                              <i class="ri-exchange-dollar-line"></i>
-                            </div>
-                            <div class="transactions-name">
-                              <h6>Paypal</h6>
-                              <p>Add Money</p>
-                            </div>
-                          </td>
-                          <td class="lost">-$50</td>
-                        </tr>
-                        <tr>
-                          <td class="td-color-3">
-                            <div class="transactions-icon">
-                              <i class="ri-bank-card-line"></i>
-                            </div>
-                            <div class="transactions-name">
-                              <h6>Mastercard</h6>
-                              <p>Ordered Food</p>
-                            </div>
-                          </td>
-                          <td class="lost">-$40</td>
-                        </tr>
-                        <tr>
-                          <td class="td-color-4 pb-0">
-                            <div class="transactions-icon">
-                              <i class="ri-bar-chart-grouped-line"></i>
-                            </div>
-                            <div class="transactions-name">
-                              <h6>Transfer</h6>
-                              <p>Refund</p>
-                            </div>
-                          </td>
-                          <td class="success pb-0">+$90</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <!-- your_template.html -->
+
           <!-- Transactions end-->
-          <!-- visitors chart start-->
-          <div class="col-xxl-4 col-md-6">
-            <div class="h-100">
-              <div class="card o-hidden card-hover">
-                <div class="card-header border-0">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="card-header-title">
-                      <h4>Visitors</h4>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-body pt-0">
-                  <div class="pie-chart">
-                    <div id="pie-chart-visitors"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+
           <!-- visitors chart end-->
           <!-- To Do List start-->
           <div class="col-xxl-4 col-md-6">

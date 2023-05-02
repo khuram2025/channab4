@@ -27,7 +27,7 @@
         <ul class="sidebar-links" id="simple-bar">
           <li class="back-btn"></li>
           <li class="sidebar-list">
-            <a class="sidebar-link sidebar-title link-nav" href="index.html">
+            <a class="sidebar-link sidebar-title link-nav" href="{%url 'home:home' %}">
               <i class="ri-home-line"></i>
               <span>Dashboard</span>
             </a>
@@ -42,7 +42,10 @@
                 <a href="{% url 'dairy:animal_list' %}">Animals List</a>
               </li>
               <li>
-                <a href="add-new-product.html">Add New Products</a>
+                <a href="add-new-product.html">Add New Animal</a>
+              </li>
+              <li>
+                <a href="{% url 'dairy:animal_list' %}">Weight </a>
               </li>
             </ul>
           </li>

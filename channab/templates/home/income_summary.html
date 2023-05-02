@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Income Summary</h1>
+<form method="get">
+  <label for="time_filter">Time Range:</label>
+  <select id="time_filter" name="time_filter" onchange="this.form.submit()">
+    <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 Days</option>
+    <option value="last_30_days" {% if time_filter == 'last_30_days' %}selected{% endif %}>Last 30 Days</option>
+    <option value="last_year" {% if time_filter == 'last_year' %}selected{% endif %}>Last Year</option>
+  </select>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Total Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in summary %}
+    <tr>
+      <td>{{ item.category.name }}</td>
+      <td>{{ item.total_amount }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
