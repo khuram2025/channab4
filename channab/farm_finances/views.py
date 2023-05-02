@@ -5,6 +5,7 @@ from .models import  IncomeCategory, ExpenseCategory
 from accounts.models import Farm
 from .forms import IncomeCategoryForm, ExpenseCategoryForm
 from datetime import date
+from django.db.models import F
 
 
 # Other imports and views
@@ -162,11 +163,18 @@ def delete_income(request, income_id):
 from django.shortcuts import render
 from .models import Income
 
+
+
 @login_required
 def income_list(request):
     farm = request.user.farm
-    incomes = Income.objects.filter(farm=farm).order_by('-date')
-    return render(request, 'farm_finances/income_list.html', {'incomes': incomes, 'farm': farm})
+    sort_by = request.GET.get('sort_by', 'date')
+    sort_order = request.GET.get('sort_order', 'desc')
+    if sort_order == 'asc':
+        incomes = Income.objects.filter(farm=farm).order_by(sort_by)
+    else:
+        incomes = Income.objects.filter(farm=farm).order_by(F(sort_by).desc(nulls_last=True))    
+    return render(request, 'farm_finances/income_list.html', {'incomes': incomes, 'farm': farm, 'sort_by': sort_by, 'sort_order': sort_order})
 
 @login_required
 def create_expense(request):
@@ -212,5 +220,10 @@ def delete_expense(request, expense_id):
 @login_required
 def expense_list(request):
     farm = request.user.farm
-    expenses = Expense.objects.filter(farm=farm).order_by('-date')
-    return render(request, 'farm_finances/expense_list.html', {'expenses': expenses, 'farm': farm})
+    sort_by = request.GET.get('sort_by', 'date')
+    sort_order = request.GET.get('sort_order', 'desc')
+    if sort_order == 'asc':
+        expenses = Expense.objects.filter(farm=farm).order_by(sort_by)
+    else:
+        expenses = Expense.objects.filter(farm=farm).order_by(F(sort_by).desc(nulls_last=True))
+    return render(request, 'farm_finances/expense_list.html', {'expenses': expenses, 'farm': farm, 'sort_by': sort_by, 'sort_order': sort_order})

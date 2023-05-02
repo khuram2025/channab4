@@ -22,6 +22,9 @@
   -webkit-appearance: none;
   margin: 0;
 }
+.dropdown-menu {
+  min-width: auto;
+}
 
 .custom-select {
   appearance: none;

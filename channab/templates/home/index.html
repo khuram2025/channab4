@@ -1,4 +1,5 @@
-{%extends 'main/base.html'%} {%block content%} {%load static%}
+{%extends 'main/base.html'%} {%block content%} {%load static%}{% load custom_tags %}
+
 <!-- tap on top start -->
 <div class="tap-top">
   <span class="lnr lnr-chevron-up"></span>
@@ -27,9 +28,9 @@
               <div class="custome-1-bg b-r-4 card-body">
                 <div class="media align-items-center static-top-widget">
                   <div class="media-body p-0">
-                    <span class="m-0">Total Revenue</span>
+                    <span class="m-0">Total Income</span>
                     <h4 class="mb-0 counter">
-                      $6659
+                      {{ total_income }}
                       <span class="badge badge-light-primary grow"> <i data-feather="trending-up"></i>8.5%</span>
                     </h4>
                   </div>
@@ -42,17 +43,17 @@
           </div>
           <div class="col-sm-6 col-xxl-3 col-lg-6">
             <div class="main-tiles border-5 card-hover border-0 card o-hidden">
-              <div class="custome-2-bg b-r-4 card-body">
+              <div class="custome-3-bg b-r-4 card-body">
                 <div class="media static-top-widget">
                   <div class="media-body p-0">
-                    <span class="m-0">Total Orders</span>
+                    <span class="m-0">Total Expenses</span>
                     <h4 class="mb-0 counter">
-                      9856
-                      <span class="badge badge-light-danger grow"> <i data-feather="trending-down"></i>8.5%</span>
+                      {{ total_expense }}
+                      <span class="badge badge-light-primary grow"> <i data-feather="trending-up"></i>8.5%</span>
                     </h4>
                   </div>
                   <div class="align-self-center text-center">
-                    <i class="ri-shopping-bag-3-line"></i>
+                    <i class="ri-database-2-line"></i>
                   </div>
                 </div>
               </div>
@@ -60,22 +61,23 @@
           </div>
           <div class="col-sm-6 col-xxl-3 col-lg-6">
             <div class="main-tiles border-5 card-hover border-0 card o-hidden">
-              <div class="custome-3-bg b-r-4 card-body">
+              <div class="{{ status|floatformat:0|bg_color }} b-r-4 card-body">
                 <div class="media static-top-widget">
                   <div class="media-body p-0">
-                    <span class="m-0">Total Products</span>
+                    <span class="m-0">Status</span>
                     <h4 class="mb-0 counter">
-                      893
-                      <a href="add-new-product.html" class="badge badge-light-secondary grow"> ADD NEW</a>
+                      {{ status }}
+                      <span class="badge badge-light-danger grow"> <i data-feather="trending-down"></i>8.5%</span>
                     </h4>
                   </div>
                   <div class="align-self-center text-center">
-                    <i class="ri-chat-3-line"></i>
+                    <i class="ri-database-2-line"></i>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
           <div class="col-sm-6 col-xxl-3 col-lg-6">
             <div class="main-tiles border-5 card-hover border-0 card o-hidden">
               <div class="custome-4-bg b-r-4 card-body">
@@ -94,6 +96,7 @@
               </div>
             </div>
           </div>
+
           <div class="col-12">
             <div class="card o-hidden card-hover">
               <div class="card-header border-0 pb-1">
