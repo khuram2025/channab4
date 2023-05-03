@@ -46,7 +46,7 @@
                       <tbody>
                         {% for weight in weights %}
                         <tr>
-                          <td>{{ weight.animal.tag }}</td>
+                          <td><a href="{% url 'dairy:animal_detail' weight.animal.pk %}">{{ weight.animal.tag }}</a></td>
                           <td>{{ weight.weight_kg }}</td>
                           <td>{{ weight.date }}</td>
                           <td>{{ weight.description }}</td>
@@ -58,13 +58,9 @@
                                 </a>
                               </li>
                               <li>
-                                <form method="post" action="{% url 'dairy:animal_weight_delete' weight.pk %}" class="delete-form">
-                                  {% csrf_token %}
-                                  <input type="hidden" name="weight_id" value="{{ weight.pk }}" />
-                                  <button type="submit" class="delete-btn border-0 bg-transparent">
-                                    <i class="ri-delete-bin-line" style="cursor: pointer"></i>
-                                  </button>
-                                </form>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteWeightModal" data-weight-id="{{ weight.pk }}">
+                                  <i class="ri-delete-bin-line"></i>
+                                </a>
                               </li>
                             </ul>
                           </td>
@@ -98,23 +94,39 @@
   </div>
   <!-- Page Body End -->
 </div>
+<!-- Delete Animal Weight Modal -->
+<div class="modal fade" id="deleteWeightModal" tabindex="-1" aria-labelledby="deleteWeightModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteWeightModalLabel">Confirm Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">Are you sure you want to delete this animal weight record?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a id="confirm-delete-button" class="btn btn-danger" href="#">Yes, delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Delete Animal Weight Modal -->
+
 <!-- page-wrapper End-->
 {% endblock %} {% block extra_js %}
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const deleteButtons = document.querySelectorAll(".delete-btn");
+  $(document).ready(function () {
+    // ...
 
-    deleteButtons.forEach(function (button) {
-      button.addEventListener("click", function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        const confirmation = confirm("Are you sure you want to delete this weight?");
-        if (confirmation) {
-          button.closest("form").submit();
-        }
-      });
+    $("#deleteWeightModal").on("show.bs.modal", function (event) {
+      var button = $(event.relatedTarget);
+      var weightId = button.data("weight-id");
+      var url = "{% url 'dairy:animal_weight_delete' 0 %}".replace("0", weightId);
+      url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
+      $("#confirm-delete-button").attr("href", url);
     });
   });
 </script>
+
 {% endblock %}

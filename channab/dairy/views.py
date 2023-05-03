@@ -108,8 +108,9 @@ from django.http import HttpResponseRedirect, JsonResponse
 def animal_detail(request, pk):
     farm = request.user.farm
     animal = get_object_or_404(Animal, pk=pk, farm=farm)
+    weights = AnimalWeight.objects.filter(animal=animal)
     milk_records = MilkRecord.objects.filter(animal=animal)
-    return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records})
+    return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 'weights': weights})
 
 
 @login_required
@@ -250,35 +251,61 @@ def delete_milk_record(request, milk_record_id):
 def animal_weight_list(request):
     weights = AnimalWeight.objects.all()
     return render(request, 'dairy/animal_weight_list.html', {'weights': weights})
+
 @login_required
 def animal_weight_detail(request, pk):
-    weight = get_object_or_404(AnimalWeight, pk=pk)
-    return render(request, 'dairy/animal_weight_detail.html', {'weight': weight})
+    animal = get_object_or_404(Animal, pk=pk)
+    weights = AnimalWeight.objects.filter(animal=animal)
+    return render(request, 'dairy/animal_weight_detail.html', {'weights': weights, 'animal': animal})
+
+
+@login_required
+def animal_detail_weight_new(request, pk):  # Add the 'pk' argument here
+    edit_mode = False
+    animal = get_object_or_404(Animal, pk=pk)  # Get the Animal instance using the 'pk' argument
+
+    if request.method == "POST":
+        form = AnimalWeightForm(request.POST)
+        if form.is_valid():
+            weight = form.save(commit=False)
+            weight.animal = animal  # Set the animal attribute of the weight instance
+            weight.save()
+            return redirect('dairy:animal_weight_list')
+    else:
+        form = AnimalWeightForm(initial={'animal': animal})  # Set the initial value of the 'animal' field
+
+    return render(request, 'dairy/animal_weight_edit.html', {'form': form})
+
 @login_required
 def animal_weight_new(request):
+    edit_mode = False
     if request.method == "POST":
         form = AnimalWeightForm(request.POST)
         if form.is_valid():
             weight = form.save(commit=False)
             weight.save()
-            return redirect('animal_weight_detail', pk=weight.pk)
+            return redirect('dairy:animal_weight_list')
     else:
         form = AnimalWeightForm()
     return render(request, 'dairy/animal_weight_edit.html', {'form': form})
+
 @login_required
 def animal_weight_edit(request, pk):
     weight = get_object_or_404(AnimalWeight, pk=pk)
+    edit_mode = True
     if request.method == "POST":
         form = AnimalWeightForm(request.POST, instance=weight)
         if form.is_valid():
             weight = form.save(commit=False)
             weight.save()
-            return redirect('animal_weight_detail', pk=weight.pk)
+            return redirect('dairy:animal_weight_list')
     else:
-        form = AnimalWeightForm(instance=weight)
-    return render(request, 'dairy/animal_weight_edit.html', {'form': form})
+        form = AnimalWeightForm(instance=weight, initial={'animal': weight.animal.pk})
+    return render(request, 'dairy/animal_weight_edit.html', {'form': form, 'edit_mode': edit_mode, 'animal_weight_record': weight})
+
+
 @login_required
 def animal_weight_delete(request, pk):
     weight = get_object_or_404(AnimalWeight, pk=pk)
     weight.delete()
-    return redirect('animal_weight_list')
+    return redirect('dairy:animal_weight_list')
