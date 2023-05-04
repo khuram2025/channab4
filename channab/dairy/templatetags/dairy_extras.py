@@ -16,3 +16,19 @@ def animal_age(dob):
         return f"{months} Month{'s' if months > 1 else ''} {days} Day{'s' if days > 1 else ''}"
     else:
         return f"{days} Day{'s' if days > 1 else ''}"
+    
+@register.filter(name='get_item')
+def get_item(dictionary, key):
+    return dictionary.get(key)
+
+@register.filter
+def subtract(value, arg):
+    return value - arg
+
+@register.filter
+def div(value, arg):
+    return value / arg if arg != 0 else 0
+
+@register.filter
+def mul(value, arg):
+    return value * arg

@@ -6,6 +6,8 @@ from .forms import AnimalCategoryForm, AnimalForm, AnimalWeightForm, MilkRecordF
 from accounts.models import Farm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import MilkRecord, Animal, AnimalWeight
+from django.db.models import F
+
 
 @login_required
 def animal_category_list(request):
@@ -108,9 +110,23 @@ from django.http import HttpResponseRedirect, JsonResponse
 def animal_detail(request, pk):
     farm = request.user.farm
     animal = get_object_or_404(Animal, pk=pk, farm=farm)
-    weights = AnimalWeight.objects.filter(animal=animal)
+
+    sort_by = request.GET.get('sort_by', 'date')
+    sort_order = request.GET.get('sort_order', 'desc')
+
+    if sort_order == 'asc':
+        weights = AnimalWeight.objects.filter(animal=animal).select_related('animal').order_by(sort_by)
+    else:
+        weights = AnimalWeight.objects.filter(animal=animal).select_related('animal').order_by(F(sort_by).desc(nulls_last=True))
+
+    prev_weights = {}
+    for weight in weights:
+        prev_weight = AnimalWeight.objects.filter(animal=weight.animal, date__lt=weight.date).order_by('-date').first()
+        prev_weights[weight.pk] = prev_weight 
+
     milk_records = MilkRecord.objects.filter(animal=animal)
-    return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 'weights': weights})
+    return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order})
+
 
 
 @login_required
@@ -247,10 +263,38 @@ def delete_milk_record(request, milk_record_id):
     animal_id = milk_record.animal.id
     milk_record.delete()
     return redirect('dairy/animal_detail.html', pk=animal_id)
+
 @login_required
 def animal_weight_list(request):
-    weights = AnimalWeight.objects.all()
-    return render(request, 'dairy/animal_weight_list.html', {'weights': weights})
+    sort_by = request.GET.get('sort_by', 'date')
+    sort_order = request.GET.get('sort_order', 'desc')
+
+    # Map sort_by parameter to the correct field
+    sort_by_mapping = {
+        'tag': 'animal__tag',
+        'date': 'date',
+        'weight_kg': 'weight_kg',
+        'weight_change_kg': '',  # This will be handled separately
+        'weight_change_percent': '',  # This will be handled separately
+    }
+    sort_by_field = sort_by_mapping.get(sort_by, 'date')
+    
+    if sort_order == 'asc':
+        weights = AnimalWeight.objects.all().select_related('animal').order_by(sort_by_field)
+    else:
+        weights = AnimalWeight.objects.all().select_related('animal').order_by(F(sort_by_field).desc(nulls_last=True))
+    
+    prev_weights = {}
+    for weight in weights:
+        prev_weight = AnimalWeight.objects.filter(animal=weight.animal, date__lt=weight.date).order_by('-date').first()
+        prev_weights[weight.pk] = prev_weight
+
+    return render(request, 'dairy/animal_weight_list.html', {'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order})
+
+
+
+
+
 
 @login_required
 def animal_weight_detail(request, pk):
