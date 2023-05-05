@@ -1,4 +1,5 @@
 {% extends 'main/base.html' %} {% block content %} {% load static %}
+
 <!-- tap on top start -->
 <div class="tap-top">
   <span class="lnr lnr-chevron-up"></span>
@@ -39,10 +40,10 @@
                                           <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>One year</option>
                                           <option value="custom" {% if time_filter == 'custom' %}selected{% endif %}>Custom</option>
                                       </select>
-                              <div class="date-inputs-wrapper">
+                              
                                   <input type="date" name="start_date" id="start_date" class="me-2" {% if start_date %}value="{{ start_date|date:"Y-m-d" }}"{% endif %}>
                                   <input type="date" name="end_date" id="end_date" class="me-2" {% if end_date %}value="{{ end_date|date:"Y-m-d" }}"{% endif %}>
-                              </div>
+                              
                               <button type="submit" class="btn btn-solid me-3">Filter</button>
                           </form>
                       </div>

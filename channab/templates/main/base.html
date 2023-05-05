@@ -17,6 +17,8 @@
     <!-- Linear Icon css -->
     <link rel="stylesheet" href="{% static 'be/assets/css/linearicon.css' %}" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <!-- Include Bootstrap Datepicker CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
 
     <!-- fontawesome css -->
     <link rel="stylesheet" type="text/css" href="{% static 'be/assets/css/vendors/font-awesome.css' %}" />
@@ -39,11 +41,6 @@
     <link rel="stylesheet" href="{% static 'be/assets/css/vendors/slick.css' %}" />
     <!-- App css -->
     <link rel="stylesheet" type="text/css" href="{% static 'be/assets/css/style.css' %}" />
-  </head>
-  <body>
-    <!-- Modal End -->
-    {% block content %} {% endblock content %}
-
     <!-- bootstrap css -->
     <link id="rtl-link" rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/bootstrap.css' %}" />
     <!-- wow css -->
@@ -61,7 +58,16 @@
     <!-- Template css -->
     <link id="color-link" rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl7/1L_dstPt3HV5HzF6Gvk/e3S4fpw5fU6oRWJN/7" crossorigin="anonymous" />
+  </head>
+  <body>
+    <!-- Modal End -->
+    {% block content %} {% endblock content %}
 
+    <!-- Include jQuery, Bootstrap, and Bootstrap Datepicker JS files -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <!-- latest js -->
     <script src="{% static 'be/assets/js/jquery-3.6.0.min.js' %}"></script>
     <!-- Bootstrap js -->
