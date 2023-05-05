@@ -14,7 +14,8 @@ urlpatterns = [
     path('animal/<int:pk>/', views.animal_detail, name='animal_detail'),
     path('animals/create/', views.animal_create, name='animal_create'),
     path('animals/edit/<int:pk>/', views.animal_edit, name='animal_edit'),
-    path('animals/delete/<int:pk>/', views.animal_delete, name='animal_delete'),
+    path('animals/<int:pk>/delete/', views.delete_animal, name='delete_animal'),
+
 
     path('milk-record', views.MilkRecordListView.as_view(), name='milk-list'),
     path('milk-record/create/', views.MilkRecordCreateUpdateView.as_view(), name='milk-create'),

@@ -55,15 +55,6 @@ def animal_category_delete(request, pk):
         return HttpResponseRedirect(reverse('dairy:animal_category_list'))
     return render(request, 'dairy/delete.html', {'category': category})
 
-
-@login_required
-def animal_delete(request, pk):
-    animal = get_object_or_404(Animal, pk=pk, farm__admin=request.user)
-    if request.method == 'POST':
-        animal.delete()
-        return HttpResponseRedirect(reverse('dairy:animal_list'))
-    return render(request, 'dairy/delete.html', {'animal': animal})
-
 @login_required
 def animal_list(request):
     farm = request.user.farm
@@ -127,15 +118,11 @@ def animal_detail(request, pk):
     milk_records = MilkRecord.objects.filter(animal=animal)
     return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order})
 
-
-
 @login_required
-def animal_delete(request, pk):
-    animal = get_object_or_404(Animal, pk=pk, farm__admin=request.user)
-    if request.method == 'POST':
-        animal.delete()
-        return HttpResponseRedirect(reverse('dairy:animal_list'))
-    return render(request, 'dairy/delete.html', {'animal': animal})
+def delete_animal(request, pk):
+    animal = get_object_or_404(Animal, pk=pk, farm=request.user.farm)
+    animal.delete()
+    return redirect('dairy:animal_list')
 
 
 class MilkRecordListView(ListView):
