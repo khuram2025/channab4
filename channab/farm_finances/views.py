@@ -151,6 +151,8 @@ from .models import Income
 
 
 
+from datetime import timedelta, datetime
+
 @login_required
 def income_list(request):
     farm = request.user.farm
@@ -159,8 +161,30 @@ def income_list(request):
     if sort_order == 'asc':
         incomes = Income.objects.filter(farm=farm).order_by(sort_by)
     else:
-        incomes = Income.objects.filter(farm=farm).order_by(F(sort_by).desc(nulls_last=True))    
+        incomes = Income.objects.filter(farm=farm).order_by(F(sort_by).desc(nulls_last=True))
+
+    time_filter = request.GET.get('time_filter')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    if time_filter == 'last_7_days':
+        start_date = datetime.today() - timedelta(days=7)
+        end_date = datetime.today()
+    elif time_filter == 'one_month':
+        start_date = datetime.today() - timedelta(days=30)
+        end_date = datetime.today()
+    elif time_filter == 'three_months':
+        start_date = datetime.today() - timedelta(days=90)
+        end_date = datetime.today()
+    elif time_filter == 'one_year':
+        start_date = datetime.today() - timedelta(days=365)
+        end_date = datetime.today()
+
+    if start_date and end_date:
+        incomes = incomes.filter(date__range=(start_date, end_date))
+
     return render(request, 'farm_finances/income_list.html', {'incomes': incomes, 'farm': farm, 'sort_by': sort_by, 'sort_order': sort_order})
+
 
 @login_required
 def create_expense(request):
