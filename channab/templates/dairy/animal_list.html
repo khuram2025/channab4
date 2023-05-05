@@ -67,9 +67,11 @@
                                                     <tr>
                                                         <td>
                                                             <div class="table-image">
-                                                                <a href="{% url 'dairy:animal_detail' animal.pk %}">
-                                                                <img src="{{ animal.image.url }}" class="img-fluid" alt="{{ animal.tag }} Image">
+                                                            <a href="{% url 'dairy:animal_detail' animal.pk %}">
+                                                                <img src="{{ animal.image.url }}" class="img-fluid" alt="{{ animal.tag }} Image" style="width: 350px; height: 350px;">
+                                                            </a>
                                                             </div>
+
                                                         </td>
                                                         <td>
                                                             <a href="{% url 'dairy:animal_detail' animal.pk %}">

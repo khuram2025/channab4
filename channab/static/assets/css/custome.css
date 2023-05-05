@@ -3,6 +3,55 @@
   width: 150px; /* Adjust the width as needed */
 }
 
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.grid-item {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.table-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Mobile view */
+@media (max-width: 767px) {
+  .grid-item {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+
+  .table-image {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .animal-info {
+    grid-row: 2;
+    grid-column: 1;
+  }
+
+  .animal-options {
+    grid-row: 3;
+    grid-column: 1;
+  }
+}
+
+/* Web view */
+@media (min-width: 768px) {
+  .table-image img {
+    max-width: 150%;
+    height: auto;
+  }
+}
+
 .btn-primary {
   background-color: #0da487;
 }
@@ -26,6 +75,26 @@
   min-width: auto;
 }
 
+.btn-soft-secondary {
+  --vz-btn-color: #3577f1;
+  --vz-btn-bg: rgba(53, 119, 241, 0.1);
+  --vz-btn-border-color: transparent;
+  --vz-btn-hover-color: #fff;
+  --vz-btn-hover-bg: #306bd9;
+  --vz-btn-hover-border-color: transparent;
+  --vz-btn-focus-shadow-rgb: 53, 119, 241;
+  --vz-btn-active-color: var(--vz-btn-hover-color);
+  --vz-btn-active-bg: #2a5fc1;
+  --vz-btn-active-border-color: transparent;
+}
+
+.btn-sm,
+.btn-group-sm > .btn {
+  --vz-btn-padding-y: 0.25rem;
+  --vz-btn-padding-x: 0.5rem;
+  --vz-btn-font-size: 0.7109375rem;
+  --vz-btn-border-radius: 0.2rem;
+}
 .custom-select {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23333' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E");

@@ -75,25 +75,20 @@ def update_expense_category(request, expense_category_id):
     return render(request, 'farm_finances/update_expense_category.html', {'form': form, 'farm': farm, 'expense_category': expense_category})
 
 @login_required
-def delete_income_category(request, income_category_id):
-    farm = request.user.farm
-    income_category = get_object_or_404(IncomeCategory, pk=income_category_id, farm=farm)
-    if request.method == 'POST':
-        print('Deleting income category:', income_category_id) # Add this line
-        income_category.delete()
-        return redirect('farm_finances:all_income_categories')
-    return redirect('farm_finances:all_income_categories')
-
+def delete_income_category(request, pk):
+    income_category = get_object_or_404(IncomeCategory, pk=pk, farm=request.user.farm)
+    income_category.delete()
+    return redirect('farm_finances:income_categories')
 
 
 @login_required
-def delete_expense_category(request, expense_category_id):
-    farm = request.user.farm
-    expense_category = get_object_or_404(ExpenseCategory, pk=expense_category_id, farm=farm)
-    if request.method == 'POST':
-        expense_category.delete()
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
+def delete_expense_category(request, pk):
+    expense_category = get_object_or_404(ExpenseCategory, pk=pk, farm=request.user.farm)
+    expense_category.delete()
+    return redirect('farm_finances:expense_categories')
+
+
+
 
 
 
@@ -109,13 +104,6 @@ def expense_categories(request):
 from django.http import JsonResponse
 
 
-def delete_expense_category(request, farm_id, expense_category_id):
-    farm = get_object_or_404(Farm, pk=farm_id)
-    expense_category = get_object_or_404(ExpenseCategory, pk=expense_category_id, farm=farm)
-    if request.method == 'POST':
-        expense_category.delete()
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
 
 from .models import Expense, ExpenseCategory
 from .forms import ExpenseForm, IncomeForm
@@ -152,12 +140,10 @@ def update_income(request, income_id):
 
 
 @login_required
-def delete_income(request, income_id):
-    income = get_object_or_404(Income, id=income_id, user=request.user)
-    if request.method == "POST":
-        income.delete()
-        return redirect('farm_finances:income_list')
-    return render(request, 'farm_finances/delete_income.html', {'income': income})
+def delete_income(request, pk):
+    income = get_object_or_404(Income, pk=pk, farm=request.user.farm)
+    income.delete()
+    return redirect('farm_finances:income_list')
 
 
 from django.shortcuts import render
@@ -210,12 +196,11 @@ def update_expense(request, expense_id):
     return render(request, 'farm_finances/update_expense.html', {'form': form, 'expense': expense, 'today': today_str})
 
 @login_required
-def delete_expense(request, expense_id):
-    expense = get_object_or_404(Expense, id=expense_id, user=request.user)
-    if request.method == "POST":
-        expense.delete()
-        return redirect('farm_finances:expense_list')
-    return render(request, 'farm_finances/delete_expense.html', {'expense': expense})
+def delete_expense(request, pk):
+    expense = get_object_or_404(Expense, pk=pk, farm=request.user.farm)
+    expense.delete()
+    return redirect('farm_finances:expense_list')
+
 
 @login_required
 def expense_list(request):

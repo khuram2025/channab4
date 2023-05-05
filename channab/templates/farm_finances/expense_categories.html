@@ -52,13 +52,9 @@
                                 </a>
                               </li>
                               <li>
-                                <form method="post" action="{% url 'farm_finances:delete_expense_category' expense_category_id=category.pk %}" class="delete-form" id="delete-form-{{ category.pk }}" data-delete-url="{% url 'farm_finances:delete_expense_category' expense_category_id=category.pk %}">
-                                  {% csrf_token %}
-                                  <input type="hidden" name="expense_category_id" value="{{ category.pk }}" />
-                                  <!-- Add this hidden input field -->
-                                  <button type="submit" class="delete-btn border-0 bg-transparent" style="display: none"></button>
-                                  <i class="ri-delete-bin-line" data-id="{{ category.pk }}" style="cursor: pointer"></i>
-                                </form>
+                                  <a href="#" data-bs-toggle="modal" data-bs-target="#deleteExpenseCategoryModal" data-category-id="{{ category.pk }}">
+                                      <i class="ri-delete-bin-line"></i>
+                                  </a>
                               </li>
                             </ul>
                           </td>
@@ -96,51 +92,32 @@
 <!-- page-wrapper End-->
 <!-- Modal Start-->
 <div class="modal fade" id="deleteExpenseCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteExpenseCategoryModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body">
-        <h5 class="modal-title" id="staticBackdropLabel">Delete Expense Category</h5>
-        <p>Are you sure you want to delete this expense category?</p>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="button-box">
-          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-          <button type="button" class="btn btn--yes btn-primary">Yes</button>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="deleteExpenseCategoryModalLabel">Delete Expense Category</h5>
+                <p>Are you sure you want to delete this expense category?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                    <a id="confirm-delete-category-button" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 {% endblock %} {% block extra_js %}
 <script>
-  function submitForm(categoryId) {
-    const deleteForm = document.getElementById("delete-form-" + categoryId);
-    deleteForm.submit();
-  }
-document.addEventListener("DOMContentLoaded", function () {
-const deleteIcons = document.querySelectorAll(".ri-delete-bin-line");
-deleteIcons.forEach(function (icon) {
-  icon.addEventListener("click", function () {
-    const categoryId = this.dataset.id;
-    const deleteForm = document.getElementById("delete-form-" + categoryId);
-    // Show the confirmation modal
-const modal = new bootstrap.Modal(document.getElementById("deleteExpenseCategoryModal"));
-modal.show();
+    $(document).ready(function () {
+        // ...
 
-// Get the "Yes" button in the modal
-const yesButton = document.querySelector(".btn--yes");
-
-// Remove previous event listeners to avoid triggering multiple deletes
-yesButton.replaceWith(yesButton.cloneNode(true));
-
-// Add an event listener to the "Yes" button
-document.querySelector(".btn--yes").addEventListener("click", function (event) {
-  event.preventDefault();
-  event.stopPropagation();
-  submitForm(categoryId);
-  modal.hide();
-});
-});
-});
-});
+        $("#deleteExpenseCategoryModal").on("show.bs.modal", function (event) {
+            var button = $(event.relatedTarget);
+            var categoryId = button.data("category-id");
+            var url = "{% url 'farm_finances:delete_expense_category' 0 %}".replace("0", categoryId);
+            url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
+            $("#confirm-delete-category-button").attr("href", url);
+        });
+    });
 </script>
 {% endblock %}
