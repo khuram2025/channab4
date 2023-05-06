@@ -72,6 +72,52 @@
         </div>
       </div>
       <!-- Member Detail Ends-->
+
+      <!-- Salary Tab Start -->
+      <div class="container">
+        <div class="col-12">
+          <div class="product-section-box">
+            <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="salary-tab" data-bs-toggle="tab" data-bs-target="#salary" type="button" role="tab" aria-controls="salary" aria-selected="false">Salary</button>
+              </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+              <div class="tab-pane fade" id="salary" role="tabpanel" aria-labelledby="salary-tab">
+                <div class="col-sm-12">
+                  <div class="card card-table">
+                    <div class="card-body">
+                      <div class="title-header option-title">
+                        <h5>Salary Information</h5>
+                      </div>
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Salary Component</th>
+                            <th>Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for salary_component in member.salary_components.all %}
+                          <tr>
+                            <td>{{ salary_component.name }}</td>
+                            <td>{{ salary_component.amount }}</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                      <div class="mt-3">
+                        <h6>Total Salary: {{ member.get_total_salary }}</h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Salary Tab End -->
     </div>
     <!-- Container-fluid end -->
     <!-- Page Body End -->
@@ -79,20 +125,4 @@
   <!-- Page Body End -->
 </div>
 <!-- page-wrapper End-->
-<!-- Modal Start -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body">
-        <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-        <p>Are you sure you want to log out?</p>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="button-box">
-          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-          <button type="button" class="btn btn--yes btn-primary">Yes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock %}

@@ -89,5 +89,10 @@ class FarmMemberCreationForm(forms.ModelForm):
             user.save()
         return user
 
+from django import forms
+from .models import SalaryComponent
 
-
+class SalaryComponentForm(forms.ModelForm):
+    class Meta:
+        model = SalaryComponent
+        fields = ['name', 'amount', 'duration']

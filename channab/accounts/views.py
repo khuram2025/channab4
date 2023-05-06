@@ -190,6 +190,41 @@ def member_detail(request, member_id):
     member = get_object_or_404(CustomUser, pk=member_id)  # Use CustomUser instead of FarmMember
     return render(request, 'accounts/member_detail.html', {'member': member})
 
+from .forms import SalaryComponentForm
+from .models import SalaryComponent
+
+@login_required
+def salary_components(request, member_id):
+    member = get_object_or_404(CustomUser, pk=member_id)
+    components = SalaryComponent.objects.filter(member=member)
+
+    context = {
+        'member': member,
+        'components': components,
+    }
+    return render(request, 'accounts/salary_components.html', context)
+
+@login_required
+def add_salary_component(request, member_id):
+    member = get_object_or_404(CustomUser, pk=member_id)
+
+    if request.method == 'POST':
+        form = SalaryComponentForm(request.POST)
+        if form.is_valid():
+            component = form.save(commit=False)
+            component.member = member
+            component.save()
+            return redirect('accounts:salary_components', member_id=member.pk)
+    else:
+        form = SalaryComponentForm()
+
+    context = {
+        'form': form,
+        'member': member
+    }
+    return render(request, 'accounts/add_salary_component.html', context)
+
+
 def logout_view(request):
     logout(request)
     return redirect(reverse('home:home'))
