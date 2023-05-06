@@ -1,29 +1,104 @@
-{% extends 'base.html' %} {% block content %}
-<h2>Farm Members</h2>
-<table class="table">
-  <thead>
-    <tr>
-      <th>First Name</th>
-      <th>Last Name</th>
-      <th>Mobile</th>
-      <th>Email</th>
-      <th>Role</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for member in farm_members %}
-    <tr>
-      <td>{{ member.first_name }}</td>
-      <td>{{ member.last_name }}</td>
-      <td>{{ member.mobile }}</td>
-      <td>{{ member.email }}</td>
-      <td>{{ member.get_role_display }}</td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="5">No farm members found.</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+Here is the adjusted template according to your request: {% extends 'main/base.html' %} {% load dairy_extras %} {% load static %} {% block content %}
+
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {% include 'home/backend_header.html' %}
+  <!-- Page Header Ends-->
+  <!-- mobile fix menu start -->
+  {% include 'home/mobile_menu.html' %}
+  <!-- mobile fix menu end -->
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {% include 'home/backend_sidebar.html' %}
+    <!-- Page Sidebar Ends-->
+    <!-- Page Body Start -->
+    <div class="page-body">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card card-table">
+              <div class="card-body">
+                <div class="title-header option-title d-sm-flex d-block">
+                  <h5>Farm Members</h5>
+                  <div class="right-options">
+                    <ul>
+                      <li>
+                        <a href="javascript:void(0)">Import</a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">Export</a>
+                      </li>
+                      <li>
+                        <a class="btn btn-solid" href="#">Add Farm Member</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div>
+                  <div class="table-responsive">
+                    <table class="table all-package theme-table table-product" id="table_id">
+                      <thead>
+                        <tr>
+                          <th>First Name</th>
+                          <th>Last Name</th>
+                          <th>Mobile</th>
+                          <th>Email</th>
+                          <th>Role</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for member in farm_members %}
+                        <tr>
+                          <td>
+                            <a href="{% url 'accounts:member_detail' member.pk %}">{{ member.first_name }}</a>
+                          </td>
+                          <td>{{ member.last_name }}</td>
+                          <td>{{ member.mobile }}</td>
+                          <td>{{ member.email }}</td>
+                          <td>{{ member.get_role_display }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                          <td colspan="5">No farm members found.</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Container-fluid Ends-->
+      <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+          <div class="row">
+            <div class="col-md-12 footer-copyright text-center">
+              <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
+{% endblock %} {% block extra_js %}
+<script>
+  $(document).ready(function () {
+    // ...
+  });
+</script>
 {% endblock %}

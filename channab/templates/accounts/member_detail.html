@@ -1,0 +1,98 @@
+{% extends 'main/base.html' %} {% block content %} {% load static %}
+
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {% include 'home/backend_header.html' %}
+  <!-- Page Header Ends-->
+  <!-- mobile fix menu start -->
+  {% include 'home/mobile_menu.html' %}
+  <!-- mobile fix menu end -->
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {% include 'home/backend_sidebar.html' %}
+    <!-- Page Sidebar Ends-->
+    <!-- Page Body Start -->
+    <!-- Container-fluid starts-->
+    <div class="page-body">
+      <!-- Member Detail Start -->
+      <div class="container" style="background-color: white">
+        <div class="row">
+          <div class="col-sm-12">
+            <section class="product-section">
+              <div class="col-xxl-12">
+                <div class="row g-4">
+                  <div class="col-xl-6">
+                    <div class="product-left-box">
+                      <div class="row g-2">
+                        <div class="col-xxl-10 col-lg-12 col-md-10 order-xxl-2 order-lg-1 order-md-2">
+                          <div class="product-main-2 no-arrow">
+                            <div>
+                              <div class="slider-image">
+                                {% if member.profile.profile_picture %}
+                                <img src="{{ member.profile.profile_picture.url }}" id="img-1" data-zoom-image="{{ member.profile.profile_picture.url }}" class="img-fluid image_zoom_cls-0 lazyload" alt="Profile Picture" />
+                                {% else %}
+                                <img src="{% static 'path/to/default/image.jpg' %}" id="img-1" data-zoom-image="{% static 'path/to/default/image.jpg' %}" class="img-fluid image_zoom_cls-0 blur-up lazyload" alt="Default Profile Picture" />
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xxl-2 col-lg-12 col-md-2 order-xxl-1 order-lg-2 order-md-1"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xl-6">
+                    <div class="responsive-container">
+                      <div class="right-box-contain">
+                        <div class="d-flex align-items-center">
+                          <h2 class="name mb-0">{{ member.first_name }} {{ member.last_name }}</h2>
+                          <a href="{% url 'accounts:edit_member' member.pk %}" class="btn btn-link btn-sm text-success ms-auto">
+                            <i class="fas fa-pencil-alt"></i>
+                          </a>
+                        </div>
+                        <div class="name-section">
+                          <p>Role: {{ member.role }}</p>
+                          <p>City: {{ member.profile.city }}</p>
+                          <p>Email: {{ member.email }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <!-- Member Detail Ends-->
+    </div>
+    <!-- Container-fluid end -->
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
+<!-- Modal Start -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+        <p>Are you sure you want to log out?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+          <button type="button" class="btn btn--yes btn-primary">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

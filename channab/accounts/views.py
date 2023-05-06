@@ -186,7 +186,9 @@ def farm_member_list(request):
 
     return render(request, 'accounts/farm_member_list.html', context)
 
-
+def member_detail(request, member_id):
+    member = get_object_or_404(CustomUser, pk=member_id)  # Use CustomUser instead of FarmMember
+    return render(request, 'accounts/member_detail.html', {'member': member})
 
 def logout_view(request):
     logout(request)
