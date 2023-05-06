@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+{% extends "home/base.html" %} {% block content %}
+{% load static %}
+{% load widget_tweaks %}
+<html lang="en">
+  <head>
+    <!-- Add any extra CSS or JavaScript imports here -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var editMilkModal = new bootstrap.Modal(document.getElementById('editMilk'), {});
+            editMilkModal.show();
+        });
+
+        $(document).ready(function() {
+            $("#{{ form.date.auto_id }}").datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "1900:2100"
+            });
+
+            $("#close-button").on("click", function() {
+                window.location.href = "{% url 'dairy:animal_milk_list' %}";
+            });
+        });
+    </script>
+
+  </head>
+  <body>
+    {% include 'home/mobile_menu.html' %}
+    <div class="modal fade theme-modal" id="editMilk" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel2">{% if edit_mode %}Edit{% else %}Add{% endif %} Animal Milk Record</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data" action="{% if edit_mode %}{% url 'dairy:animal_milk_edit' milk_record.pk %}{% else %}{% url 'dairy:animal_milk_new' %}{% endif %}">
+                        {% csrf_token %}
+                        <div class="row g-4">
+                            <div class="col-xxl-4">
+                            <div class="form-floating theme-form-floating">
+                                <select id="{{ form.animal.auto_id }}" name="{{ form.animal.html_name }}" class="form-control">
+                                    <option value="">-----</option>
+                                    {% for animal in form.animal.field.queryset %}
+                                        <option value="{{ animal.pk }}" {% if form.animal.value == animal.pk %}selected{% endif %}>{{ animal.tag }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="{{ form.animal.auto_id }}">TAG#</label>
+                            </div>
+                        </div>
+                        <div class="col-xxl-4">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.date|add_class:"form-control" }}
+                                <label for="{{ form.date.auto_id }}">Date</label>
+                            </div>
+                        </div>
+                            <div class="col-xxl-4">
+                                <div class="form-floating theme-form-floating">
+                                  {{ form.first_time|add_class:"form-control" }}
+                                <label for="{{ form.first_time.auto_id }}">First Time Milk (Liters)</label>
+                            </div>
+                        </div>
+                        <div class="col-xxl-4">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.second_time|add_class:"form-control" }}
+                                <label for="{{ form.second_time.auto_id }}">Second Time Milk (Liters)</label>
+                            </div>
+                        </div>
+                        <div class="col-xxl-4">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.third_time|add_class:"form-control" }}
+                                <label for="{{ form.third_time.auto_id }}">Third Time Milk (Liters)</label>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="close-button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Edit Animal Milk Record End -->
+
+  </body>
+</html>
+{% endblock %} {% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var editMilkModal = new bootstrap.Modal(document.getElementById('editMilk'), {});
+        editMilkModal.show();
+    });
+
+    $(document).ready(function() {
+        $("#{{ form.date.auto_id }}").datepicker({
+            dateFormat: 'yy-mm-dd',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1900:2100"
+        });
+
+        $("#{{ form.animal.auto_id }}, #{{ form.date.auto_id }}").on("change", function() {
+            var animal_id = $("#{{ form.animal.auto_id }}").val();
+            var date = $("#{{ form.date.auto_id }}").val();
+
+            if (animal_id && date) {
+                window.location.href = "{% url 'dairy:animal_milk_new' %}?animal=" + animal_id + "&date=" + date;
+            }
+        });
+
+        $("#close-button").on("click", function() {
+            window.location.href = "{% url 'dairy:animal_milk_list' %}";
+        });
+    });
+</script>
+
+{% endblock %}
+

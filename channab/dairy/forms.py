@@ -16,20 +16,18 @@ class AnimalForm(forms.ModelForm):
 from .models import MilkRecord, Animal, AnimalWeight
 
 class MilkRecordForm(forms.ModelForm):
+    animal = forms.ModelChoiceField(queryset=Animal.objects.filter(sex='female'))
+    first_time = forms.DecimalField(max_digits=5, decimal_places=2, required=False)
+    second_time = forms.DecimalField(max_digits=5, decimal_places=2, required=False)
+    third_time = forms.DecimalField(max_digits=5, decimal_places=2, required=False)
+
     class Meta:
         model = MilkRecord
-        fields = ('date', 'first_time', 'second_time', 'third_time')
+        fields = ('animal', 'date', 'first_time', 'second_time', 'third_time')
 
-    def _init_(self, *args, **kwargs):
-        self.animal = kwargs.pop('animal', None)
-        super(MilkRecordForm, self)._init_(*args, **kwargs)
 
-    def save(self, commit=True, *args, **kwargs):
-        milk_record = super(MilkRecordForm, self).save(commit=False)
-        milk_record.animal = kwargs.get('animal')  # Add this line
-        if commit:
-            milk_record.save()
-        return milk_record
+
+   
 
 
 class AnimalWeightForm(forms.ModelForm):

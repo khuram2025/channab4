@@ -1,0 +1,147 @@
+{% extends 'main/base.html' %} {% block content %} {% load static %} {% load dairy_extras %}
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {% include 'home/backend_header.html' %}
+  <!-- Page Header Ends-->
+  <!-- mobile fix menu start -->
+  {% include 'home/mobile_menu.html' %}
+  <!-- mobile fix menu end -->
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {% include 'home/backend_sidebar.html' %}
+    <!-- Page Sidebar Ends-->
+    <!-- Page Body Start -->
+    <!-- Container-fluid starts-->
+    <div class="page-body">
+      <!-- Animal Milk Records Table Start -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card card-table">
+              <div class="card-body">
+                <div class="title-header option-title">
+                  <h5>Animal Milk Records</h5>
+                  <div class="d-flex align-items-center">
+                    <a class="btn btn-primary me-2" href="{% url 'dairy:animal_milk_new' %}">Add Milk Record</a>
+                  </div>
+                </div>
+
+                <div class="table-responsive milk-table">
+                  <div>
+                    <table class="table all-package theme-table" id="table_id">
+                      <thead>
+                        <tr>
+                          <th>
+                            <a href="?sort_by=tag&sort_order={% if sort_by == 'tag' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">TAG# {% if sort_by == 'tag' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                          </th>
+                          <th>
+                            <a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                          </th>
+                          <th>
+                            <a href="?sort_by=first_time&sort_order={% if sort_by == 'first_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">First Time (L) {% if sort_by == 'first_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                          </th>
+                          <th>
+                            <a href="?sort_by=second_time&sort_order={% if sort_by == 'second_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Second Time (L) {% if sort_by == 'second_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                          </th>
+                          <th>
+                            <a href="?sort_by=third_time&sort_order={% if sort_by == 'third_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Third Time (L) {% if sort_by == 'third_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                          </th>
+                          <th>Total Milk (L)</th>
+                          <th>Option</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for milk_record in milk_records %}
+                        <tr>
+                          <td><a href="{% url 'dairy:animal_detail' milk_record.animal.pk %}">{{ milk_record.animal.tag }}</a></td>
+                          <td>{{ milk_record.date }}</td>
+                          <td>{{ milk_record.first_time }}</td>
+                          <td>{{ milk_record.second_time }}</td>
+                          <td>{{ milk_record.third_time }}</td>
+                          <td>{{ milk_record.total_milk }}</td>
+                          <td>
+                            <ul>
+                              <li>
+                                <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}">
+                                  <i class="ri-pencil-line"></i>
+                                </a>
+                              </li>
+                              <li>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteMilkRecordModal" data-milk-record-id="{{ milk_record.pk }}">
+                                  <i class="ri-delete-bin-line"></i>
+                                </a>
+                              </li>
+                            </ul>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Animal Milk Records Table Ends-->
+
+      <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+          <div class="row">
+            <div class="col-md-12 footer-copyright text-center">
+              <p class="mb-0">Copyright 2023 © Fastkart theme by pixelstrap</p>
+            </div>
+          </div>
+        </footer>
+        <!-- footer end-->
+      </div>
+    </div>
+    <!-- Container-fluid end -->
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- Delete Animal Milk Record Modal -->
+<div class="modal fade" id="deleteMilkRecordModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteMilkRecordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="deleteMilkRecordModalLabel">Delete Animal Milk Record</h5>
+        <p>Are you sure you want to delete the animal milk record?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+          <a id="confirm-delete-button" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Delete Animal Milk Record Modal -->
+<!-- page-wrapper End-->
+{% endblock %} {% block extra_js %}
+
+<script>
+  $(document).ready(function () {
+    // ...
+
+    $("#deleteMilkRecordModal").on("show.bs.modal", function (event) {
+      var button = $(event.relatedTarget);
+      var milkRecordId = button.data("milk-record-id");
+      var url = "{% url 'dairy:animal_milk_delete' 0 %}".replace("0", milkRecordId);
+      url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
+      $("#confirm-delete-button").attr("href", url);
+    });
+  });
+</script>
+
+{% endblock %}

@@ -17,10 +17,12 @@ urlpatterns = [
     path('animals/<int:pk>/delete/', views.delete_animal, name='delete_animal'),
 
 
-    path('milk-record', views.MilkRecordListView.as_view(), name='milk-list'),
-    path('milk-record/create/', views.MilkRecordCreateUpdateView.as_view(), name='milk-create'),
-    path('milk-record/update/<int:pk>/', views.MilkRecordCreateUpdateView.as_view(), name='milk-update'),
-    path('milk-record/delete/<int:pk>/', views.MilkRecordDeleteView.as_view(), name='milk-delete'),
+    path('animal_milk/', views.animal_milk_list, name='animal_milk_list'),
+    path('animal_milks/new/', views.animal_milk_new, name='animal_milk_new'),
+    path('animal_milks/<int:pk>/edit/', views.animal_milk_edit, name='animal_milk_edit'),
+    path('animal_milks/<int:pk>/delete/', views.animal_milk_delete, name='animal_milk_delete'),
+
+    
 
     path('milk_record/<int:milk_record_id>/edit/', views.edit_milk_record, name='milk_edit'),
     path('milk_record/<int:milk_record_id>/delete/', views.delete_milk_record, name='milk_delete'),

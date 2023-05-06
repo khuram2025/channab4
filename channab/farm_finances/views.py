@@ -226,13 +226,39 @@ def delete_expense(request, pk):
     return redirect('farm_finances:expense_list')
 
 
+from datetime import timedelta, datetime
+from django.utils import timezone
+
+
 @login_required
 def expense_list(request):
     farm = request.user.farm
     sort_by = request.GET.get('sort_by', 'date')
     sort_order = request.GET.get('sort_order', 'desc')
+
     if sort_order == 'asc':
         expenses = Expense.objects.filter(farm=farm).order_by(sort_by)
     else:
         expenses = Expense.objects.filter(farm=farm).order_by(F(sort_by).desc(nulls_last=True))
+
+    time_filter = request.GET.get('time_filter', 'one_month')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    if time_filter == 'last_7_days':
+        start_date = datetime.today() - timedelta(days=7)
+        end_date = datetime.today()
+    elif time_filter == 'one_month':
+        start_date = datetime.today() - timedelta(days=30)
+        end_date = datetime.today()
+    elif time_filter == 'three_months':
+        start_date = datetime.today() - timedelta(days=90)
+        end_date = datetime.today()
+    elif time_filter == 'one_year':
+        start_date = datetime.today() - timedelta(days=365)
+        end_date = datetime.today()
+
+    if start_date and end_date:
+        expenses = expenses.filter(date__range=(start_date, end_date))
+
     return render(request, 'farm_finances/expense_list.html', {'expenses': expenses, 'farm': farm, 'sort_by': sort_by, 'sort_order': sort_order})

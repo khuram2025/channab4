@@ -52,15 +52,20 @@ class Animal(models.Model):
     
 
 class MilkRecord(models.Model):
-    animal = models.ForeignKey(Animal, on_delete=models.CASCADE, limit_choices_to={'sex': 'Female'})
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE, limit_choices_to={'sex': 'female'})
     date = models.DateField(default=timezone.now)
-    first_time = models.DecimalField(max_digits=5, decimal_places=2)
-    second_time = models.DecimalField(max_digits=5, decimal_places=2)
-    third_time = models.DecimalField(max_digits=5, decimal_places=2)
+    first_time = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    second_time = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    third_time = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
 
+    
     @property
     def total_milk(self):
-        return self.first_time + self.second_time + self.third_time
+        first_time = self.first_time or 0
+        second_time = self.second_time or 0
+        third_time = self.third_time or 0
+        return first_time + second_time + third_time
+
     
 class AnimalWeight(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name='weights')

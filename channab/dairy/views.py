@@ -124,65 +124,6 @@ def delete_animal(request, pk):
     animal.delete()
     return redirect('dairy:animal_list')
 
-
-class MilkRecordListView(ListView):
-    def get(self, request):
-        milk_records = MilkRecord.objects.all()
-        return render(request, 'dairy/milk_records/list.html', {'milk_records': milk_records})
-
-class MilkRecordCreateUpdateView(CreateView):
-    def get(self, request, pk=None):
-        if pk:
-            milk_record = get_object_or_404(MilkRecord, pk=pk)
-            form = MilkRecordForm(instance=milk_record)
-            edit_mode = True
-        else:
-            form = MilkRecordForm()
-            edit_mode = False
-
-        return render(request, 'dairy/milk_records/create_update.html', {'form': form, 'edit_mode': edit_mode})
-
-    def post(self, request, pk=None):
-        print("Post request received")
-        if pk:
-            milk_record = get_object_or_404(MilkRecord, pk=pk)
-            form = MilkRecordForm(request.POST, instance=milk_record)
-            edit_mode = True
-        else:
-            form = MilkRecordForm(request.POST)
-            edit_mode = False
-
-        print("Submitted Data:", request.POST)
-        print("Form Animal Queryset:", form.fields['animal'].queryset)
-
-        if form.is_valid():
-            form.save()
-            print("Form is valid and saved")
-            return redirect('dairy:milk-list')
-        else:
-            print("Form Errors:", form.errors)
-        return render(request, 'dairy/milk_records/create_update.html', {'form': form, 'edit_mode': edit_mode})
-
-class MilkRecordUpdateView(UpdateView):
-    def get(self, request, pk):
-        milk_record = get_object_or_404(MilkRecord, pk=pk)
-        form = MilkRecordForm(instance=milk_record)
-        return render(request, 'dairy/milk_records/update.html', {'form': form})
-
-    def post(self, request, pk):
-        milk_record = get_object_or_404(MilkRecord, pk=pk)
-        form = MilkRecordForm(request.POST, instance=milk_record)
-        if form.is_valid():
-            form.save()
-            return redirect('dairy:milk-list')
-        return render(request, 'dairy/milk_records/update.html', {'form': form})
-
-class MilkRecordDeleteView(DeleteView):
-    def get(self, request, pk):
-        milk_record = get_object_or_404(MilkRecord, pk=pk)
-        milk_record.delete()
-        return redirect('dairy:milk-list')
-
 def milk_create_for_animal(request, animal_pk):
     animal = get_object_or_404(Animal, pk=animal_pk)
 
@@ -252,6 +193,78 @@ def delete_milk_record(request, milk_record_id):
     return redirect('dairy/animal_detail.html', pk=animal_id)
 
 @login_required
+def animal_milk_list(request):
+    sort_by = request.GET.get('sort_by', 'date')
+    sort_order = request.GET.get('sort_order', 'desc')
+
+    # Map sort_by parameter to the correct field
+    sort_by_mapping = {
+        'tag': 'animal__tag',
+        'date': 'date',
+        'first_time': 'first_time',
+        'second_time': 'second_time',
+        'third_time': 'third_time',
+        'total_milk': '',  # This will be handled separately
+    }
+    sort_by_field = sort_by_mapping.get(sort_by, 'date')
+
+    if sort_order == 'asc':
+        milk_records = MilkRecord.objects.all().select_related('animal').order_by(sort_by_field)
+    else:
+        milk_records = MilkRecord.objects.all().select_related('animal').order_by(F(sort_by_field).desc(nulls_last=True))
+
+    # Handle sorting by total_milk separately
+    if sort_by == 'total_milk':
+        milk_records = sorted(milk_records, key=lambda x: x.total_milk, reverse=sort_order == 'desc')
+
+    return render(request, 'dairy/animal_milk_list.html', {'milk_records': milk_records, 'sort_by': sort_by, 'sort_order': sort_order})
+
+@login_required
+def animal_milk_delete(request, pk):
+    milk_record = get_object_or_404(MilkRecord, pk=pk)
+    milk_record.delete()
+    return redirect('dairy:animal_milk_list')
+
+
+@login_required
+def animal_milk_new(request):
+    edit_mode = False
+    milk_record = None
+
+    if request.method == "POST":
+        form = MilkRecordForm(request.POST)
+        if form.is_valid():
+            animal = form.cleaned_data['animal']
+            date = form.cleaned_data['date']
+            milk_record, created = MilkRecord.objects.get_or_create(animal=animal, date=date)
+
+            if not created:
+                edit_mode = True
+
+            form = MilkRecordForm(request.POST, instance=milk_record)
+            if form.is_valid():
+                form.save()
+                return redirect('dairy:animal_milk_list')
+    else:
+        animal_id = request.GET.get('animal')
+        date = request.GET.get('date')
+
+        if animal_id and date:
+            animal = get_object_or_404(Animal, pk=animal_id)
+            milk_record, _ = MilkRecord.objects.get_or_create(animal=animal, date=date)
+            edit_mode = True
+            print(f"Found milk_record: {milk_record}")  # Debugging print statement
+
+        form = MilkRecordForm(instance=milk_record)
+
+    print(f"Returning form: {form}")  # Debugging print statement
+    return render(request, 'dairy/animal_milk_edit.html', {'form': form, 'edit_mode': edit_mode, 'milk_record': milk_record})
+
+
+
+
+
+@login_required
 def animal_weight_list(request):
     sort_by = request.GET.get('sort_by', 'date')
     sort_order = request.GET.get('sort_order', 'desc')
@@ -278,6 +291,21 @@ def animal_weight_list(request):
 
     return render(request, 'dairy/animal_weight_list.html', {'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order})
 
+
+
+@login_required
+def animal_milk_edit(request, pk):
+    milk_record = get_object_or_404(MilkRecord, pk=pk)
+    edit_mode = True
+    if request.method == "POST":
+        form = MilkRecordForm(request.POST, instance=milk_record)
+        if form.is_valid():
+            milk_record = form.save(commit=False)
+            milk_record.save()
+            return redirect('dairy:animal_milk_list')
+    else:
+        form = MilkRecordForm(instance=milk_record, initial={'animal': milk_record.animal.pk})
+    return render(request, 'dairy/animal_milk_edit.html', {'form': form, 'edit_mode': edit_mode, 'milk_record': milk_record})
 
 
 
