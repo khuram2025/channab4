@@ -173,6 +173,18 @@ def delete_member(request, pk):
 
     return render(request, 'accounts/delete_member_confirm.html', context)
 
+@login_required
+def farm_member_list(request):
+    if request.user.role != 'admin':
+        return redirect('home:home')
+
+    farm_members = CustomUser.objects.filter(farm=request.user.farm)
+
+    context = {
+        'farm_members': farm_members,
+    }
+
+    return render(request, 'accounts/farm_member_list.html', context)
 
 
 

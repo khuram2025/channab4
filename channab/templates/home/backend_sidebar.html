@@ -104,9 +104,11 @@
               <span>Users</span>
             </a>
             <ul class="sidebar-submenu">
+              {% if user.is_authenticated and user.role == 'admin' %}
               <li>
-                <a href="all-users.html">All users</a>
+                <a href="{% url 'accounts:farm_member_list' %}">Farm Members</a>
               </li>
+              {% endif %}
               <li>
                 <a href="add-new-user.html">Add new user</a>
               </li>
