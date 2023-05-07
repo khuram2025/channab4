@@ -7,13 +7,14 @@ Basic Salery  --- Some Amount
 Housing Allownce --- Some Amount
 Other Allownce --- Some Amount & duration(daily, Monthly, Yearly)
 ( Farm admin can add many Allowance as he wants and will be added to farm member salery as per  allowance frequency let assume he add food allownce 100  daily then it should be add in his monthly salery with 3000)
-Total Salary for the Employee (sum up of all the above Basic salary with all allowances which defined)
+
 Employe Joining Date ----- so later we can calulate his salery balance 
 
+Total Salary for the Employee (sum up of all the above Basic salary with all allowances which defined)
 
-Salery Transaction Tab
+add another tab Salery Transaction Tab
 
-So now Farm admin will add salery to a farm member 
+So now Farm admin will add salery Transaction to a farm member 
 
 
 Like Farm admin  give Salery to this employee on 12 Jan 2023 2000 (Basic Saelry) -- it will be added in expense also as Salery with auto description Farm member receive 2000 Basic Salery on 12 Jan 2023 
@@ -24,8 +25,8 @@ Employee Salery Status on 1st Feb  2023
 
 Employee Joining Date 1 Jan 2023 
 
-Basic Salery  --- 2500
-Housing Allownce --- 500
+Basic Salery received  --- 2500
+Housing Allownce Received --- 500
 
 Total Salery --- 5500(Basic Salery + All Allownces)
 Received Salery --- 3000
