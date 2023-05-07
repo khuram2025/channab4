@@ -78,10 +78,17 @@
                             </div>
                         </div>
 
-                        <div class="col-xxl-12">
+                        <div class="col-xxl-6">
                             <div class="form-floating theme-form-floating">
                                 {{ form.email|add_class:"form-control" }}
                                 <label for="{{ form.email.auto_id }}">Email address</label>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.joining_date|add_class:"form-control" }}
+                                <label for="{{ form.joining_date.auto_id }}">Joining Date</label>
                             </div>
                         </div>
 

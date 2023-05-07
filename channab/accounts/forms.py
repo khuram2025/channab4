@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from .models import CustomUser
+from .models import CustomUser, SalaryTransaction
 from django.contrib.auth.models import User
 
 class MobileAuthenticationForm(AuthenticationForm):
@@ -42,15 +42,18 @@ from .models import Profile
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['profile_picture', 'first_name', 'last_name', 'city', 'email', 'facebook', 'youtube']
+        fields = ['profile_picture', 'first_name', 'last_name', 'city', 'email', 'facebook', 'youtube', 'joining_date']
 
 class ProfileUpdateForm(forms.ModelForm):
     role = forms.ChoiceField(choices=CustomUser.ROLE_CHOICES, initial='read_only', required=False)
 
     class Meta:
         model = Profile
-        fields = ('profile_picture', 'first_name', 'last_name', 'city', 'email', 'facebook', 'youtube')
+        fields = ('profile_picture', 'first_name', 'last_name', 'city', 'email', 'facebook', 'youtube', 'joining_date')
 
+    joining_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
+    )
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         if self.instance.user:
@@ -96,3 +99,16 @@ class SalaryComponentForm(forms.ModelForm):
     class Meta:
         model = SalaryComponent
         fields = ['name', 'amount', 'duration']
+
+class SalaryTransactionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        farm = kwargs.pop('farm', None)
+        super(SalaryTransactionForm, self).__init__(*args, **kwargs)
+        if farm:
+            self.fields['farm_member'].queryset = FarmMember.objects.filter(farm=farm)
+            self.fields['component'].queryset = Component.objects.filter(farm=farm)
+
+    class Meta:
+        model = SalaryTransaction
+        fields = ('farm_member', 'component', 'amount_paid', 'transaction_date')
+

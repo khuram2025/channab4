@@ -4,6 +4,8 @@ from accounts.models import Farm
 from datetime import date
 from django.conf import settings
 
+from accounts.models import SalaryTransaction
+
 
 class IncomeCategory(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
@@ -41,6 +43,7 @@ class Expense(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(ExpenseCategory, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='invoices/', blank=True, null=True)
+    salary_transaction = models.ForeignKey(SalaryTransaction, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"{self.description} - {self.amount} - {self.category}"

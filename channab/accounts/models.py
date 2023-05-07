@@ -79,8 +79,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         farm = Farm.objects.create(name=farm_name, admin=self)
         self.farm = farm
         super().save()
-
-
+    
+    def total_salary(self):
+        total = 0
+        for component in self.salary_components.all():
+            if component.duration == 'daily':
+                total += component.amount * 30  # Assuming 30 days in a month
+            elif component.duration == 'monthly':
+                total += component.amount
+            elif component.duration == 'yearly':
+                total += component.amount / 12
+        return total
 
     def add_member(self, member):
         member.farm = self.farm
@@ -98,6 +107,7 @@ class Profile(models.Model):
     email = models.EmailField()
     facebook = models.URLField(max_length=200, blank=True, null=True)  
     youtube = models.URLField(max_length=200, blank=True, null=True)
+    joining_date = models.DateField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         super(Profile, self).save(*args, **kwargs)
@@ -109,6 +119,8 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.mobile
 
+
+
 class SalaryComponent(models.Model):
     DURATION_CHOICES = (
         ('daily', 'Daily'),
@@ -119,6 +131,18 @@ class SalaryComponent(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     duration = models.CharField(max_length=10, choices=DURATION_CHOICES, default='monthly')
     member = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='salary_components')
+    
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.duration})"
+
+class SalaryTransaction(models.Model):
+    farm_member = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='salary_transactions')
+    component = models.ForeignKey(SalaryComponent, on_delete=models.CASCADE)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    transaction_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.farm_member} - {self.component.name} - {self.amount_paid} ({self.transaction_date})"

@@ -6,7 +6,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from .forms import  FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm
+from .forms import  FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm, SalaryTransactionForm
 from django.shortcuts import render, redirect, get_object_or_404
 
 class SignupView(CreateView):
@@ -73,7 +73,7 @@ def login_view(request):
 
 
 from .forms import ProfileForm
-from .models import Profile, CustomUser
+from .models import Profile, CustomUser, SalaryTransaction
 
 def user_profile(request):
     if not request.user.is_authenticated:
@@ -186,9 +186,21 @@ def farm_member_list(request):
 
     return render(request, 'accounts/farm_member_list.html', context)
 
+@login_required
 def member_detail(request, member_id):
-    member = get_object_or_404(CustomUser, pk=member_id)  # Use CustomUser instead of FarmMember
-    return render(request, 'accounts/member_detail.html', {'member': member})
+    member = get_object_or_404(CustomUser, pk=member_id)
+    
+    if request.method == 'POST':
+        form = SalaryComponentForm(request.POST)
+        if form.is_valid():
+            salary_component = form.save(commit=False)
+            salary_component.member = member
+            salary_component.save()
+            return redirect('accounts:member_detail', member_id=member_id)
+    else:
+        form = SalaryComponentForm()
+
+    return render(request, 'accounts/member_detail.html', {'member': member, 'form': form})
 
 from .forms import SalaryComponentForm
 from .models import SalaryComponent
@@ -224,6 +236,39 @@ def add_salary_component(request, member_id):
     }
     return render(request, 'accounts/add_salary_component.html', context)
 
+
+def salary_transaction_list(request):
+    transactions = SalaryTransaction.objects.all()
+    return render(request, 'accounts/salary_transaction_list.html', {'transactions': transactions})
+
+@login_required
+def salary_transaction_create(request):
+
+
+    if request.method == 'POST':
+        form = SalaryTransactionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:salary_transaction_list')
+    else:
+        form = SalaryTransactionForm()
+    return render(request, 'accounts/salary_transaction_form.html', {'form': form})
+
+def salary_transaction_update(request, pk):
+    transaction = SalaryTransaction.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = SalaryTransactionForm(request.POST, instance=transaction)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:salary_transaction_list')
+    else:
+        form = SalaryTransactionForm(instance=transaction)
+    return render(request, 'accounts/salary_transaction_form.html', {'form': form})
+
+def salary_transaction_delete(request, pk):
+    transaction = SalaryTransaction.objects.get(pk=pk)
+    transaction.delete()
+    return redirect('accounts:salary_transaction_list')
 
 def logout_view(request):
     logout(request)
