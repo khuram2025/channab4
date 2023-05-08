@@ -216,8 +216,9 @@ def calculate_salary_status(member):
     # Calculate expected salary
     joining_date = member.profile.joining_date
     today = date.today()
-    months_worked = relativedelta(today, joining_date).years * 12 + relativedelta(today, joining_date).months
-    expected_salary_till_now = months_worked * member.total_salary()
+    days_worked = (today - joining_date).days
+    daily_salary = member.total_salary() / 30
+    expected_salary_till_now = round(days_worked * daily_salary)  # Round to the nearest integer
     remaining_salary = expected_salary_till_now - total_salary_received
 
     salary_status["expected_salary_till_now"] = expected_salary_till_now
@@ -294,48 +295,89 @@ def get_salary_components(request, user_id):
 
 
 @login_required
-def salary_transaction_create(request):
-    farm = request.user.farm  # Replace `farm` with the correct attribute to get the farm instance for the logged-in user
+def salary_transaction_update(request, pk=None):
+    farm = request.user.farm
+
+    if pk is not None:
+        transaction = SalaryTransaction.objects.get(pk=pk)
+        print("Existing transaction found:", transaction)
+        edit_mode = True
+    else:
+        transaction = None
+        edit_mode = False
 
     if request.method == 'POST':
-        form = SalaryTransactionForm(request.POST, farm=farm)
+        form = SalaryTransactionForm(request.POST, instance=transaction, farm=farm)
         if form.is_valid():
-            salary_transaction = form.save()
+            if transaction is not None:
+                print("Updating existing transaction")
+                # Update the existing transaction
+                transaction.transaction_date = form.cleaned_data['transaction_date']
+                transaction.farm_member = form.cleaned_data['farm_member']
+                transaction.component = form.cleaned_data['component']
+                transaction.amount_paid = form.cleaned_data['amount_paid']
+                transaction.save()
+            else:
+                print("Creating new transaction")
+                # Create a new transaction
+                transaction = form.save()
 
             # Create or retrieve the salary expense category for the farm
             salary_category, created = ExpenseCategory.objects.get_or_create(farm=farm, name='Salary')
 
-            # Create a new expense instance with the salary transaction data
-            expense = Expense(
-                user=request.user,
-                farm=farm,
-                date=salary_transaction.transaction_date,
-                description=f'Salary for {salary_transaction.farm_member} - {salary_transaction.component.name}',
-                amount=salary_transaction.amount_paid,
-                category=salary_category,
-                salary_transaction=salary_transaction
-            )
+            if transaction is not None and hasattr(transaction, 'expense'):
+                # Update the related expense instance
+                print("Updating existing expense")
+                expense = transaction.expense
+                expense.date = transaction.transaction_date
+                expense.description = f'Salary for {transaction.farm_member} - {transaction.component.name}'
+                expense.amount = transaction.amount_paid
+            else:
+                # Create a new expense instance with the salary transaction data
+                print("Creating new expense")
+                expense = Expense(
+                    user=request.user,
+                    farm=farm,
+                    date=transaction.transaction_date,
+                    description=f'Salary for {transaction.farm_member} - {transaction.component.name}',
+                    amount=transaction.amount_paid,
+                    category=salary_category,
+                    salary_transaction=transaction
+                )
 
-            # Save the new expense instance
+            # Save the expense instance
             expense.save()
 
             return redirect('accounts:salary_transaction_list')
     else:
-        form = SalaryTransactionForm(farm=farm)
-    return render(request, 'accounts/salary_transaction_form.html', {'form': form})
+        form = SalaryTransactionForm(instance=transaction, farm=farm)
+    context = {
+        'form': form,
+        'edit_mode': edit_mode,
+        'salary_transaction': transaction
+    }    
+    return render(request, 'accounts/salary_transaction_form.html', context)
 
 
-@login_required
-def salary_transaction_update(request, pk):
-    transaction = SalaryTransaction.objects.get(pk=pk)
-    if request.method == 'POST':
-        form = SalaryTransactionForm(request.POST, instance=transaction)
-        if form.is_valid():
-            form.save()
-            return redirect('accounts:salary_transaction_list')
-    else:
-        form = SalaryTransactionForm(instance=transaction)
-    return render(request, 'accounts/salary_transaction_form.html', {'form': form})
+from django.urls import reverse_lazy
+from django.views.generic.edit import UpdateView
+
+# Your other views...
+
+class SalaryTransactionUpdateView(UpdateView):
+    model = SalaryTransaction
+    form_class = SalaryTransactionForm
+    template_name = 'accounts/salary_transaction_form.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(SalaryTransactionUpdateView, self).get_form_kwargs()
+        kwargs['farm'] = self.request.user.farm  # Replace `farm` with the correct attribute to get the farm instance for the logged-in user
+        return kwargs
+
+    def get_success_url(self):
+        return reverse_lazy('accounts:salary_transaction_list')
+
+
 
 def salary_transaction_delete(request, pk):
     transaction = SalaryTransaction.objects.get(pk=pk)

@@ -40,7 +40,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form method="post" action="{% if edit_mode %}{% url 'accounts:salary_transaction_edit' salary_transaction.pk %}{% else %}{% url 'accounts:salary_transaction_create' %}{% endif %}">
+                        <form method="post" action="{% if edit_mode %}{% url 'accounts:salary_transaction_update' salary_transaction.pk %}{% else %}{% url 'accounts:salary_transaction_create' %}{% endif %}">
                             {% csrf_token %}
                             <div class="row g-4">
                                 <div class="col-xxl-4">
