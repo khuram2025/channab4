@@ -137,27 +137,18 @@
     </div>
 </div>
 {% endblock %} {% block extra_js %}
-
-<script>
-    $(document).ready(function () {
-        // ...
-
-        $("#deleteIncomeModal").on("show.bs.modal", function (event) {
-            var button = $(event.relatedTarget);
-            var incomeId = button.data("income-id");
-            var url = "{% url 'accounts:salary_transaction_delete' 0 %}".replace("0", incomeId);
-            url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
-            $("#confirm-delete-income-button").attr("href", url);
-        });
-    });
-</script>
 <script>
   $(document).ready(function () {
     // ...
 
     $("#deleteSalaryTransactionModal").on("show.bs.modal", function (event) {
-      // ...
-    });
+    var button = $(event.relatedTarget);
+    var salaryTransactionId = button.data("salary-transaction-id");
+    var url = "{% url 'accounts:salary_transaction_delete' 0 %}".replace("0", salaryTransactionId);
+    url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
+    $("#confirm-delete-salary-transaction-button").attr("href", url);
+});
+
 
     function updateDateInputsVisibility() {
       if ($('#time_filter').val() == 'custom') {

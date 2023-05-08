@@ -347,6 +347,11 @@ def salary_transaction_update(request, pk=None):
 
             # Save the expense instance
             expense.save()
+            print(f"Expense object saved with id {expense.pk} and linked to salary transaction id {transaction.pk}")
+
+            # Verify if the relationship is set correctly
+            test_expense = Expense.objects.get(pk=expense.pk)
+            print(f"Retrieved expense object with id {test_expense.pk}, linked to salary transaction id {test_expense.salary_transaction.pk}")
 
             return redirect('accounts:salary_transaction_list')
     else:
@@ -378,11 +383,29 @@ class SalaryTransactionUpdateView(UpdateView):
         return reverse_lazy('accounts:salary_transaction_list')
 
 
-
+@login_required
 def salary_transaction_delete(request, pk):
     transaction = SalaryTransaction.objects.get(pk=pk)
+    transaction_pk = transaction.pk
+
+    try:
+        expense = Expense.objects.get(salary_transaction=transaction)
+        expense_pk = expense.pk
+        print(f"Related expense found for transaction id {transaction_pk}: Expense id {expense_pk}")
+    except Expense.DoesNotExist:
+        print(f"No related expense found for transaction id {transaction_pk}")
+        expense_pk = None
+
     transaction.delete()
+    print(f"Deleting salary transaction with id {transaction_pk}")
+
+    if expense_pk is not None:
+        expense.delete()
+        print(f"Deleting related expense with id {expense_pk}")
+
     return redirect('accounts:salary_transaction_list')
+
+
 
 def logout_view(request):
     logout(request)
