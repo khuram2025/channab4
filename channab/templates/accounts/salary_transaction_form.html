@@ -5,73 +5,121 @@
 
 {% block content %}
 <html lang="en">
-<head>
-    <!-- Add any extra CSS or JavaScript imports here -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    
-    <script>
-        $(document).ready(function() {
-            $("#{{ form.transaction_date.auto_id }}").datepicker({
-                dateFormat: 'yy-mm-dd',
-                changeMonth: true,
-                changeYear: true,
-                yearRange: "1900:2100"
-            });
 
-            $("#close-button").on("click", function() {
-                window.location.href = "{% url 'accounts:salary_transaction_list' %}";
-            });
-        });
-    </script>
-</head>
-<body>
-    {% include 'home/mobile_menu.html' %}
-    <div class="container">
-        <h2>{% if edit_mode %}Edit{% else %}Add{% endif %} Salary Transaction</h2>
-        <form method="post" action="{% if edit_mode %}{% url 'accounts:salary_transaction_edit' salary_transaction.pk %}{% else %}{% url 'accounts:salary_transaction_create' %}{% endif %}">
-            {% csrf_token %}
-            <div class="row g-4">
-                <div class="col-xxl-4">
-    <div class="form-floating theme-form-floating">
-        <select id="{{ form.farm_member.auto_id }}" name="{{ form.farm_member.html_name }}" class="form-control">
-            <option value="">-----</option>
-            {% for farm_member in form.farm_member.field.queryset %}
-                <option value="{{ farm_member.pk }}" {% if form.farm_member.value == farm_member.pk %}selected{% endif %}>
-                    {{ farm_member.name|default:farm_member.mobile }}
-                </option>
-            {% endfor %}
-        </select>
-        <label for="{{ form.farm_member.auto_id }}">Farm Member</label>
-    </div>
-</div>
+    <head>
+        <!-- Add any extra CSS or JavaScript imports here -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
-                <div class="col-xxl-4">
-                    <div class="form-floating theme-form-floating">
-                        {{ form.component|add_class:"form-control" }}
-                        <label for="{{ form.component.auto_id }}">Component</label>
+        <script>
+            $(document).ready(function () {
+                $("#{{ form.transaction_date.auto_id }}").datepicker({
+                    dateFormat: 'yy-mm-dd',
+                    changeMonth: true,
+                    changeYear: true,
+                    yearRange: "1900:2100"
+                });
+
+                $("#close-button").on("click", function () {
+                    window.location.href = "{% url 'accounts:salary_transaction_list' %}";
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        {% include 'home/mobile_menu.html' %}
+        <div class="modal fade theme-modal" id="editSalaryTransaction" tabindex="-1" aria-labelledby="editSalaryTransactionLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editSalaryTransactionLabel">{% if edit_mode %}Edit{% else %}Add{% endif %} Salary Transaction</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
-                </div>
-                <div class="col-xxl-4">
-                    <div class="form-floating theme-form-floating">
-                        {{ form.amount_paid|add_class:"form-control" }}
-                        <label for="{{ form.amount_paid.auto_id }}">Amount Paid</label>
+                    <div class="modal-body">
+                        <form method="post" action="{% if edit_mode %}{% url 'accounts:salary_transaction_edit' salary_transaction.pk %}{% else %}{% url 'accounts:salary_transaction_create' %}{% endif %}">
+                            {% csrf_token %}
+                            <div class="row g-4">
+                                <div class="col-xxl-4">
+                                    <div class="form-floating theme-form-floating">
+                                        <select id="{{ form.farm_member.auto_id }}" name="{{ form.farm_member.html_name }}" class="form-control">
+                                            <option value="">-----</option>
+                                            {% for farm_member in form.farm_member.field.queryset %}
+                                            <option value="{{ farm_member.pk }}" {% if form.farm_member.value == farm_member.pk %}selected{% endif %}>
+                                                {{ farm_member.name|default:farm_member.mobile }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="{{ form.farm_member.auto_id }}">Farm Member</label>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-4">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.component|add_class:"form-control" }}
+                                        <label for="{{ form.component.auto_id }}">Component</label>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-4">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.amount_paid|add_class:"form-control" }}
+                                        <label for="{{ form.amount_paid.auto_id }}">Amount Paid</label>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-12">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.transaction_date|add_class:"form-control" }}
+                                        <label for="{{ form.transaction_date.auto_id }}">Transaction Date</label>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
-                </div>
-                <div class="col-xxl-12">
-                    <div class="form-floating theme-form-floating">
-                        {{ form.transaction_date|add_class:"form-control" }}
-                        <label for="{{ form.transaction_date.auto_id }}">Transaction Date</label>
+                    <div class="modal-footer">
+                        <button type="button" id="close-button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
                     </div>
+                    </form>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" id="close-button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
-            </div>
-        </form>
-    </div>
-</body>
+        </div>
+
+
+    </body>
+
 </html>
+<script>
+    $(document).ready(function () {
+        $('#editSalaryTransaction').modal('show');
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Function to update the component options based on the selected farm member
+        function updateComponentOptions(farmMemberId) {
+            $.getJSON("{% url 'accounts:get_salary_components' 0 %}".replace('0', farmMemberId), function (components) {
+                let componentSelect = $("#id_component");
+                componentSelect.empty();
+                $.each(components, function (index, component) {
+                    componentSelect.append($('<option>', {
+                        value: component.id,
+                        text: component.name
+                    }));
+                });
+            });
+        }
+        // Update component options when the farm_member field value changes
+        $("#id_farm_member").change(function () {
+            let farmMemberId = $(this).val();
+            updateComponentOptions(farmMemberId);
+        });
+
+        // Update component options on page load based on the initial farm_member value
+        let initialFarmMemberId = $("#id_farm_member").val();
+        if (initialFarmMemberId) {
+            updateComponentOptions(initialFarmMemberId);
+        }
+    });
+</script>
 {% endblock %}

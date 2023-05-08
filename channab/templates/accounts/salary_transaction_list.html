@@ -70,14 +70,14 @@
                         <tbody>
                           {% for salary_transaction in salary_transactions %}
                           <tr>
-                            <td>{{ salary_transaction.date }}</td>
-                    <td>{{ salary_transaction.employee }}</td>
-                    <td>{{ salary_transaction.amount }}</td>
-                    <td>{{ salary_transaction.payment_method }}</td>
+                            <td>{{ salary_transaction.transaction_date }}</td>
+                            <td>{{ salary_transaction.farm_member }}</td>
+                            <td>{{ salary_transaction.amount_paid }}</td>
+                            <td>{{ salary_transaction.component }}</td>
                             <td>
                               <ul>
                                 <li>
-                                  <a href="{% url 'accounts:update_salary_transaction' salary_transaction_id=salary_transaction.id %}">
+                                  <a href="{% url 'accounts:salary_transaction_update' pk=salary_transaction.id %}">
                                     <i class="ri-pencil-line"></i>
                                 </a>
                                 </li>

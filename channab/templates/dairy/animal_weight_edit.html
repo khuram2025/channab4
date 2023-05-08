@@ -3,88 +3,91 @@
 {% load static %}
 {% load widget_tweaks %}
 <html lang="en">
-  <head>
-    <!-- Add any extra CSS or JavaScript imports here -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var editWeightModal = new bootstrap.Modal(document.getElementById('editWeight'), {});
-            editWeightModal.show();
-        });
+    <head>
+        <!-- Add any extra CSS or JavaScript imports here -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
-        $(document).ready(function() {
-            $("#{{ form.date.auto_id }}").datepicker({
-                dateFormat: 'yy-mm-dd',
-                changeMonth: true,
-                changeYear: true,
-                yearRange: "1900:2100"
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var editWeightModal = new bootstrap.Modal(document.getElementById('editWeight'), {});
+                editWeightModal.show();
             });
 
-            $("#close-button").on("click", function() {
-                window.location.href = "{% url 'dairy:animal_weight_list' %}";
-            });
-        });
-    </script>
+            $(document).ready(function () {
+                $("#{{ form.date.auto_id }}").datepicker({
+                    dateFormat: 'yy-mm-dd',
+                    changeMonth: true,
+                    changeYear: true,
+                    yearRange: "1900:2100"
+                });
 
-  </head>
-  <body>
-    {% include 'home/mobile_menu.html' %}
-    <div class="modal fade theme-modal" id="editWeight" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel2">{% if edit_mode %}Edit{% else %}Add{% endif %} Animal Weight Record</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form method="post" enctype="multipart/form-data" action="{% if edit_mode %}{% url 'dairy:animal_weight_edit' animal_weight_record.pk %}{% else %}{% url 'dairy:animal_weight_new' %}{% endif %}">
-                        {% csrf_token %}
-                        <div class="row g-4">
-                            <div class="col-xxl-4">
-                                <div class="form-floating theme-form-floating">
-                                    <select id="{{ form.animal.auto_id }}" name="{{ form.animal.html_name }}" class="form-control">
-                                        <option value="">-----</option>
-                                        {% for animal in form.animal.field.queryset %}
+                $("#close-button").on("click", function () {
+                    window.location.href = "{% url 'dairy:animal_weight_list' %}";
+                });
+            });
+        </script>
+
+    </head>
+
+    <body>
+        {% include 'home/mobile_menu.html' %}
+        <div class="modal fade theme-modal" id="editWeight" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel2">{% if edit_mode %}Edit{% else %}Add{% endif %} Animal Weight Record</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" enctype="multipart/form-data" action="{% if edit_mode %}{% url 'dairy:animal_weight_edit' animal_weight_record.pk %}{% else %}{% url 'dairy:animal_weight_new' %}{% endif %}">
+                            {% csrf_token %}
+                            <div class="row g-4">
+                                <div class="col-xxl-4">
+                                    <div class="form-floating theme-form-floating">
+                                        <select id="{{ form.animal.auto_id }}" name="{{ form.animal.html_name }}" class="form-control">
+                                            <option value="">-----</option>
+                                            {% for animal in form.animal.field.queryset %}
                                             <option value="{{ animal.pk }}" {% if form.animal.value == animal.pk %}selected{% endif %}>{{ animal.tag }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <label for="{{ form.animal.auto_id }}">TAG#</label>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="{{ form.animal.auto_id }}">TAG#</label>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-4">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.date|add_class:"form-control" }}
+                                        <label for="{{ form.date.auto_id }}">Date</label>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-4">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.weight_kg|add_class:"form-control" }}
+                                        <label for="{{ form.weight_kg.auto_id }}">Weight</label>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-12">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.description|add_class:"form-control" }}
+                                        <label for="{{ form.description.auto_id }}">Description</label>
+                                    </div>
                                 </div>
                             </div>
-                        <div class="col-xxl-4">
-                            <div class="form-floating theme-form-floating">
-                                {{ form.date|add_class:"form-control" }}
-                                <label for="{{ form.date.auto_id }}">Date</label>
-                            </div>
-                        </div>
-                        <div class="col-xxl-4">
-                            <div class="form-floating theme-form-floating">
-                                {{ form.weight_kg|add_class:"form-control" }}
-                                <label for="{{ form.weight_kg.auto_id }}">Weight</label>
-                            </div>
-                                                </div>
-                    <div class="col-xxl-12">
-                        <div class="form-floating theme-form-floating">
-                            {{ form.description|add_class:"form-control" }}
-                            <label for="{{ form.description.auto_id }}">Description</label>
-                        </div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" id="close-button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
+                    </div>
+                    </form>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" id="close-button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
-            </div>
-        </form>
         </div>
-    </div>
-</div>
-<!-- Edit Animal Weight Record End -->
-</body>
+        <!-- Edit Animal Weight Record End -->
+    </body>
+
 </html>
 {% endblock %}

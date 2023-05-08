@@ -31,32 +31,32 @@
                   <a class="btn btn-solid" href="{% url 'farm_finances:create_expense' %}">Add Expense</a>
                 </div>
                 <!-- Add this form just before the expense table -->
-                 <div class="filter-form">
-    <form method="GET" action="{% url 'farm_finances:expense_list' %}" class="d-flex">
-        <input type="hidden" name="sort_by" value="{{ sort_by }}" />
-        <input type="hidden" name="sort_order" value="{{ sort_order }}" />
-        <div class="form-group mr-2">
-            <select class="form-control" name="time_filter">
-                <option value="">Select date range</option>
-                <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
-                <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
-                <option value="one_month" {% if time_filter == 'one_month' %}selected{% endif %}>Last 1 month</option>
-                <option value="three_months" {% if time_filter == 'three_months' %}selected{% endif %}>Last 3 months</option>
-                <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>Last 1 year</option>
-                <option value="custom" {% if time_filter == 'custom' %}selected{% endif %}>Custom</option>
-            </select>
-        </div>
-        <div class="form-group mr-2">
-            <input type="date" class="form-control" name="start_date" value="{{ start_date }}" {% if time_filter != 'custom' %}disabled{% endif %} />
-        </div>
-        <div class="form-group mr-2">
-            <input type="date" class="form-control" name="end_date" value="{{ end_date }}" {% if time_filter != 'custom' %}disabled{% endif %} />
-        </div>
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-search"></i>
-        </button>
-    </form>
-</div>
+                <div class="filter-form">
+                  <form method="GET" action="{% url 'farm_finances:expense_list' %}" class="d-flex">
+                    <input type="hidden" name="sort_by" value="{{ sort_by }}" />
+                    <input type="hidden" name="sort_order" value="{{ sort_order }}" />
+                    <div class="form-group mr-2">
+                      <select class="form-control" name="time_filter">
+                        <option value="">Select date range</option>
+                        <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
+                        <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
+                        <option value="one_month" {% if time_filter == 'one_month' %}selected{% endif %}>Last 1 month</option>
+                        <option value="three_months" {% if time_filter == 'three_months' %}selected{% endif %}>Last 3 months</option>
+                        <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>Last 1 year</option>
+                        <option value="custom" {% if time_filter == 'custom' %}selected{% endif %}>Custom</option>
+                      </select>
+                    </div>
+                    <div class="form-group mr-2">
+                      <input type="date" class="form-control" name="start_date" value="{{ start_date }}" {% if time_filter != 'custom' %}disabled{% endif %} />
+                    </div>
+                    <div class="form-group mr-2">
+                      <input type="date" class="form-control" name="end_date" value="{{ end_date }}" {% if time_filter != 'custom' %}disabled{% endif %} />
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </form>
+                </div>
 
 
                 <div class="table-responsive expense-table">
@@ -86,6 +86,7 @@
                           <td>{{ expense.amount }}</td>
                           <td>{{ expense.category }}</td>
                           <td>
+                            {% if expense.category.name != "Salary" %}
                             <ul>
                               <li>
                                 <a href="{% url 'farm_finances:update_expense' expense_id=expense.id %}">
@@ -98,6 +99,7 @@
                                 </a>
                               </li>
                             </ul>
+                            {% endif %}
                           </td>
                         </tr>
                         {% endfor %}
@@ -147,34 +149,27 @@
 </div>
 {% endblock %} {% block extra_js %}
 <script>
-    $(document).ready(function () {
-        // ...
+  $(document).ready(function () {
+    // ...
 
-        $("#deleteExpenseModal").on("show.bs.modal", function (event) {
-            var button = $(event.relatedTarget);
-            var expenseId = button.data("expense-id");
-            var url = "{% url 'farm_finances:delete_expense' 0 %}".replace("0", expenseId);
-            url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
-            $("#confirm-delete-expense-button").attr("href", url);
-        });
-
-        // Add this code to your existing script
-        $("select[name='time_filter']").change(function () {
-            if ($(this).val() === "custom") {
-                $("input[name='start_date'], input[name='end_date']").prop("disabled", false);
-            } else {
-                $("input[name='start_date'], input[name='end_date']").prop("disabled", true);
-            }
-        });
-
+    $("#deleteExpenseModal").on("show.bs.modal", function (event) {
+      var button = $(event.relatedTarget);
+      var expenseId = button.data("expense-id");
+      var url = "{% url 'farm_finances:delete_expense' 0 %}".replace("0", expenseId);
+      url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
+      $("#confirm-delete-expense-button").attr("href", url);
     });
+
+    // Add this code to your existing script
+    $("select[name='time_filter']").change(function () {
+      if ($(this).val() === "custom") {
+        $("input[name='start_date'], input[name='end_date']").prop("disabled", false);
+      } else {
+        $("input[name='start_date'], input[name='end_date']").prop("disabled", true);
+      }
+    });
+
+  });
 </script>
-This updated template should work with the updated expense_list function.
-
-
-
-
-
-
 
 {% endblock %}

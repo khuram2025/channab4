@@ -6,6 +6,9 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+
+
+from farm_finances.models import Expense, ExpenseCategory
 from .forms import  FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm, SalaryTransactionForm
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -239,21 +242,49 @@ def add_salary_component(request, member_id):
 
 def salary_transaction_list(request):
     transactions = SalaryTransaction.objects.all()
-    return render(request, 'accounts/salary_transaction_list.html', {'transactions': transactions})
+    return render(request, 'accounts/salary_transaction_list.html', {'salary_transactions': transactions})
+
+
+from django.http import JsonResponse
+
+def get_salary_components(request, user_id):
+    components = SalaryComponent.objects.filter(member_id=user_id).values('id', 'name')
+    return JsonResponse(list(components), safe=False)
+
 
 @login_required
 def salary_transaction_create(request):
-
+    farm = request.user.farm  # Replace `farm` with the correct attribute to get the farm instance for the logged-in user
 
     if request.method == 'POST':
-        form = SalaryTransactionForm(request.POST)
+        form = SalaryTransactionForm(request.POST, farm=farm)
         if form.is_valid():
-            form.save()
+            salary_transaction = form.save()
+
+            # Create or retrieve the salary expense category for the farm
+            salary_category, created = ExpenseCategory.objects.get_or_create(farm=farm, name='Salary')
+
+            # Create a new expense instance with the salary transaction data
+            expense = Expense(
+                user=request.user,
+                farm=farm,
+                date=salary_transaction.transaction_date,
+                description=f'Salary for {salary_transaction.farm_member} - {salary_transaction.component.name}',
+                amount=salary_transaction.amount_paid,
+                category=salary_category,
+                salary_transaction=salary_transaction
+            )
+
+            # Save the new expense instance
+            expense.save()
+
             return redirect('accounts:salary_transaction_list')
     else:
-        form = SalaryTransactionForm()
+        form = SalaryTransactionForm(farm=farm)
     return render(request, 'accounts/salary_transaction_form.html', {'form': form})
 
+
+@login_required
 def salary_transaction_update(request, pk):
     transaction = SalaryTransaction.objects.get(pk=pk)
     if request.method == 'POST':
