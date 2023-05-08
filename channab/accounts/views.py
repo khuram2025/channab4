@@ -148,7 +148,7 @@ def edit_member(request, pk):
 
         if form.is_valid():
             form.save()
-            return redirect('accounts:user_profile')
+            return redirect('accounts:member_detail', member_id=pk)
 
     else:
         form = ProfileUpdateForm(instance=user.profile)
@@ -192,6 +192,7 @@ def farm_member_list(request):
 @login_required
 def member_detail(request, member_id):
     member = get_object_or_404(CustomUser, pk=member_id)
+    salary_transactions = SalaryTransaction.objects.filter(farm_member=member)
     
     if request.method == 'POST':
         form = SalaryComponentForm(request.POST)
@@ -203,7 +204,8 @@ def member_detail(request, member_id):
     else:
         form = SalaryComponentForm()
 
-    return render(request, 'accounts/member_detail.html', {'member': member, 'form': form})
+    return render(request, 'accounts/member_detail.html', {'member': member, 'form': form, 'salary_transactions': salary_transactions})
+
 
 from .forms import SalaryComponentForm
 from .models import SalaryComponent

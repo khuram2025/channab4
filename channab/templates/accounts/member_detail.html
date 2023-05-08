@@ -1,4 +1,43 @@
-{% extends 'main/base.html' %} {% block content %} {% load static %}
+{%extends 'main/base.html'%} {%block content%} {%load static%}
+<style>
+  .info-table-wrapper {
+    display: none;
+  }
+
+  .name-section {
+    display: none;
+  }
+
+  .name-section-web {
+    display: block;
+  }
+
+  .name-section-mobile {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .info-table-wrapper {
+      display: block;
+    }
+
+    .info-tab-mobile {
+      display: none;
+    }
+
+    .name-section {
+      display: block;
+    }
+
+    .name-section-web {
+      display: none;
+    }
+
+    .name-section-mobile {
+      display: block;
+    }
+  }
+</style>
 
 <!-- tap on top start -->
 <div class="tap-top">
@@ -8,20 +47,20 @@
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
   <!-- Page Header Start-->
-  {% include 'home/backend_header.html' %}
+  {%include 'home/backend_header.html'%}
   <!-- Page Header Ends-->
   <!-- mobile fix menu start -->
-  {% include 'home/mobile_menu.html' %}
+  {%include 'home/mobile_menu.html'%}
   <!-- mobile fix menu end -->
   <!-- Page Body Start-->
   <div class="page-body-wrapper">
     <!-- Page Sidebar Start-->
-    {% include 'home/backend_sidebar.html' %}
+    {%include 'home/backend_sidebar.html'%}
     <!-- Page Sidebar Ends-->
     <!-- Page Body Start -->
     <!-- Container-fluid starts-->
     <div class="page-body">
-      <!-- Member Detail Start -->
+      <!-- All User Table Start -->
       <div class="container" style="background-color: white">
         <div class="row">
           <div class="col-sm-12">
@@ -48,102 +87,229 @@
                       </div>
                     </div>
                   </div>
+
                   <div class="col-xl-6">
                     <div class="responsive-container">
                       <div class="right-box-contain">
                         <div class="d-flex align-items-center">
-                          <h2 class="name mb-0">{{ member.first_name }} {{ member.last_name }}</h2>
+                          <h2 class="name mb-0">{{ member.first_name }} {{member.last_name}}</h2>
                           <a href="{% url 'accounts:edit_member' member.pk %}" class="btn btn-link btn-sm text-success ms-auto">
                             <i class="fas fa-pencil-alt"></i>
                           </a>
                         </div>
                         <div class="name-section">
                           <p>Role: {{ member.role }}</p>
-                          <p>City: {{ member.profile.city }}</p>
+                          <p>City: {{ member.city }}</p>
                           <p>Email: {{ member.email }}</p>
+                          <p>Joining Date: {{ member.profile.joining_date|date:"F d, Y"|default:"Not Available" }}</p>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </section>
-          </div>
-        </div>
-      </div>
-      <!-- Member Detail Ends-->
-      <!-- Salary Tab Start -->
-      <div class="container">
-        <div class="col-12">
-          <div class="product-section-box">
-            <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="salary-tab" data-bs-toggle="tab" data-bs-target="#salary" type="button" role="tab" aria-controls="salary" aria-selected="false">Salary</button>
-              </li>
-            </ul>
-            <div class="tab-content" id="myTabContent">
-              <div class="tab-pane fade" id="salary" role="tabpanel" aria-labelledby="salary-tab">
-                <div class="col-sm-12">
-                  <div class="card card-table">
-                    <div class="card-body">
-                      <div class="title-header option-title">
-                        <h5>Salary Information</h5>
-                        <!-- Add/Edit Allowance Button -->
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#allowanceModal">Add/Edit Allowance</button>
-                      </div>
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th>Salary Component</th>
-                            <th>Amount</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for component in member.salary_components.all %}
-                          <tr>
-                            <td>{{ component.name }} ({{ component.duration|title }})</td>
-                            <td>{{ component.amount }}</td>
-                          </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                      <div class="mt-3">
-                        <h6>Total Salary: {{ member.total_salary }}</h6>
-                        <h6>Employee Joining Date: {{ member.profile.joining_date|date:"F d, Y" }}</h6>
-                      </div>
-                      <!-- Add/Edit Allowance Modal -->
-                      <div class="modal fade" id="allowanceModal" tabindex="-1" aria-labelledby="allowanceModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="allowanceModalLabel">Add/Edit Allowance</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                              <form method="POST" action="{% url 'accounts:member_detail' member.pk %}">
-                                {% csrf_token %} {{ form.as_p }}
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                  <button type="submit" class="btn btn-primary">Save Allowance</button>
+
+                  <div class="col-12">
+                    <div class="product-section-box">
+                      <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link info-tab-mobile show active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">Info</button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="salary-tab" data-bs-toggle="tab" data-bs-target="#salary" type="button" role="tab" aria-controls="salary" aria-selected="false">Salery</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="transactions-tab" data-bs-toggle="tab" data-bs-target="#transactions" type="button" role="tab" aria-controls="transactions" aria-selected="false">Salary Transactions</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review" type="button" role="tab" aria-controls="review" aria-selected="false">Tasks</button>
+                        </li>
+                      </ul>
+                      <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade info-table-wrapper show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                          <div class="table-responsive">
+                            <table class="table info-table">
+                              <tbody>
+                                <tr>
+                                  <td>Role</td>
+                                  <td>{{ member.role }}</td>
+                                </tr>
+                                <tr>
+                                  <td>City</td>
+                                  <td>{{ member.city }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Email</td>
+                                  <td>{{ member.email }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Joining Date</td>
+                                  <td>{{ member.profile.joining_date|date:"F d, Y"|default:"Not Available" }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="tab-pane fade" id="salary" role="tabpanel" aria-labelledby="salary-tab">
+                          <div class="col-sm-12">
+                            <div class="card card-table">
+                              <div class="card-body">
+                                <div class="title-header option-title">
+                                  <h5>Salary Information</h5>
+                                  <!-- Add/Edit Allowance Button -->
+                                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#allowanceModal">Add/Edit Allowance</button>
                                 </div>
-                              </form>
+                                <table class="table table-striped">
+                                  <thead>
+                                    <tr>
+                                      <th>Salary Component</th>
+                                      <th>Amount</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {% for component in member.salary_components.all %}
+                                    <tr>
+                                      <td>{{ component.name }} ({{ component.duration|title }})</td>
+                                      <td>{{ component.amount }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                  </tbody>
+                                </table>
+                                <div class="mt-3">
+                                  <h6>Total Salary: {{ member.total_salary }}</h6>
+                                  <h6>Employee Joining Date: {{ member.profile.joining_date|date:"F d, Y" }}</h6>
+                                </div>
+                                <!-- Add/Edit Allowance Modal -->
+                                <div class="modal fade" id="allowanceModal" tabindex="-1" aria-labelledby="allowanceModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="allowanceModalLabel">Add/Edit Allowance</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <form method="POST" action="{% url 'accounts:member_detail' member.pk %}">
+                                          {% csrf_token %} {{ form.as_p }}
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Save Allowance</button>
+                                          </div>
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="tab-pane fade" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
+                          <div class="col-sm-12">
+                            <div class="card card-table">
+                              <div class="card-body">
+                                <div class="title-header option-title">
+                                  <h5>Salary Transactions</h5>
+                                </div>
+                                <div class="table-responsive transactions-table">
+                                  <div>
+                                    <table class="table all-package theme-table" id="table_id">
+                                      <thead>
+                                        <tr>
+                                          <th>Date</th>
+                                          <th>Salary Component</th>
+                                          <th>Amount</th>
+                                          <th>Description</th>
+                                          <th>Options</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {% for transaction in salary_transactions %}
+                                        <tr>
+                                          <td>{{ transaction.transaction_date }}</td>
+                                          <td>{{ transaction.component.name }} ({{ transaction.component.duration|title }})</td>
+                                          <td>{{ transaction.amount_paid }}</td>
+                                          <td>{{ transaction.description }}</td>
+                                          <td>
+                                            <ul>
+                                              <li>
+                                                <a href="{% url 'accounts:salary_transaction_update' transaction.pk %}">
+                                                  <i class="ri-pencil-line"></i>
+                                                </a>
+                                              </li>
+                                              <li>
+  <a href="#" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" data-transaction-id="{{ transaction.pk }}">
+    <i class="ri-delete-bin-line"></i>
+  </a>
+</li>
+                                            </ul>
+                                          </td>
+                                        </tr>
+                                        {% endfor %}
+
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
+
+                  <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
+                    <!-- Account content goes here -->
+                  </div>
+                  <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
+                    <!-- Tasks content goes here -->
+                  </div>
                 </div>
               </div>
-            </div>
           </div>
         </div>
       </div>
+      </section>
     </div>
-    <!-- Container-fluid end -->
-    <!-- Page Body End -->
   </div>
-  <!-- Page Body End -->
+</div>
+<!-- All User Table Ends-->
+</div>
+<!-- Container-fluid end -->
+<!-- Page Body End -->
+</div>
+<!-- Page Body End -->
 </div>
 <!-- page-wrapper End-->
+<!-- Delete Salary Transaction Modal -->
+<div class="modal fade" id="deleteTransactionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteTransactionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="deleteTransactionModalLabel">Delete Salary Transaction Record</h5>
+        <p>Are you sure you want to delete this salary transaction record?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+          <a id="confirm-delete-button" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Delete Salary Transaction Modal -->
+
+{%endblock%}{% block extra_js %}
+<script>
+  $(document).ready(function () {
+    // ...
+
+    $("#deleteTransactionModal").on("show.bs.modal", function (event) {
+      var button = $(event.relatedTarget);
+      var transactionId = button.data("transaction-id");
+      var url = "{% url 'accounts:salary_transaction_delete' 0 %}".replace("0", transactionId);
+      url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
+      $("#confirm-delete-button").attr("href", url);
+    });
+  });
+</script>
 {% endblock %}

@@ -14,7 +14,7 @@ Total Salary for the Employee (sum up of all the above Basic salary with all all
 
 add another tab Salery Transaction Tab
 
-So now Farm admin will add salery Transaction to a farm member 
+So now Farm admin will add salery Transaction to a farm member based on this we need to calulate the salery status for this employee 
 
 
 Like Farm admin  give Salery to this employee on 12 Jan 2023 2000 (Basic Saelry) -- it will be added in expense also as Salery with auto description Farm member receive 2000 Basic Salery on 12 Jan 2023 
