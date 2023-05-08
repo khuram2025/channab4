@@ -189,10 +189,49 @@ def farm_member_list(request):
 
     return render(request, 'accounts/farm_member_list.html', context)
 
+from datetime import date
+from dateutil.relativedelta import relativedelta
+
+def calculate_salary_status(member):
+    salary_transactions = SalaryTransaction.objects.filter(farm_member=member)
+
+    salary_status = {}
+    total_salary_received = 0
+
+    for transaction in salary_transactions:
+        component_name = transaction.component.name
+        if component_name not in salary_status:
+            salary_status[component_name] = transaction.amount_paid
+        else:
+            salary_status[component_name] += transaction.amount_paid
+
+        total_salary_received += transaction.amount_paid
+
+    salary_status["total_salary_received"] = total_salary_received
+
+    for key, value in salary_status.items():
+        if key != "total_salary_received":
+            salary_status[key] = {"received_amount": value, "sum_with_total": value + total_salary_received}
+
+    # Calculate expected salary
+    joining_date = member.profile.joining_date
+    today = date.today()
+    months_worked = relativedelta(today, joining_date).years * 12 + relativedelta(today, joining_date).months
+    expected_salary_till_now = months_worked * member.total_salary()
+    remaining_salary = expected_salary_till_now - total_salary_received
+
+    salary_status["expected_salary_till_now"] = expected_salary_till_now
+    salary_status["remaining_salary"] = remaining_salary
+
+    return salary_status
+
+
+
 @login_required
 def member_detail(request, member_id):
     member = get_object_or_404(CustomUser, pk=member_id)
     salary_transactions = SalaryTransaction.objects.filter(farm_member=member)
+    salary_status = calculate_salary_status(member)
     
     if request.method == 'POST':
         form = SalaryComponentForm(request.POST)
@@ -204,7 +243,7 @@ def member_detail(request, member_id):
     else:
         form = SalaryComponentForm()
 
-    return render(request, 'accounts/member_detail.html', {'member': member, 'form': form, 'salary_transactions': salary_transactions})
+    return render(request, 'accounts/member_detail.html', {'member': member, 'form': form, 'salary_transactions': salary_transactions, 'salary_status': salary_status})
 
 
 from .forms import SalaryComponentForm
