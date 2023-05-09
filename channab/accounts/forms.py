@@ -103,10 +103,14 @@ class SalaryComponentForm(forms.ModelForm):
 class SalaryTransactionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         farm = kwargs.pop('farm', None)
+        disabled = kwargs.pop('disabled', False)
         super(SalaryTransactionForm, self).__init__(*args, **kwargs)
         if farm:
             self.fields['farm_member'].queryset = CustomUser.objects.filter(farm=farm)
             self.fields['component'].queryset = SalaryComponent.objects.filter(member__farm=farm)
+
+        if disabled:
+            self.fields['component'].disabled = True
 
     class Meta:
         model = SalaryTransaction
