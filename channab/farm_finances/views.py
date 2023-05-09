@@ -262,3 +262,61 @@ def expense_list(request):
         expenses = expenses.filter(date__range=(start_date, end_date))
 
     return render(request, 'farm_finances/expense_list.html', {'expenses': expenses, 'farm': farm, 'sort_by': sort_by, 'sort_order': sort_order})
+
+
+import pandas as pd
+from django.http import HttpResponse
+
+
+from django.shortcuts import redirect
+from django.contrib import messages
+from pandas import isna
+from django.contrib import messages
+
+@login_required
+def import_expenses(request):
+    if request.method == 'POST' and request.FILES['expenses_file']:
+        expenses_file = request.FILES['expenses_file']
+        farm = request.user.farm
+
+        # Read the Excel file and convert it to a pandas DataFrame
+        expenses_df = pd.read_excel(expenses_file)
+
+        # Convert the DataFrame to a list of dictionaries and create Expense objects
+        expenses_list = expenses_df.to_dict('records')
+        for expense in expenses_list:
+            if not isna(expense['category_id']):
+                expense['category_id'] = int(expense['category_id'])
+                Expense.objects.create(
+                    user=request.user,
+                    farm=farm,
+                    date=expense['date'],
+                    description=expense['description'],
+                    amount=expense['amount'],
+                    category_id=expense['category_id'],
+                    image=None,  # Images cannot be imported from an Excel file
+                    salary_transaction_id=expense['salary_transaction_id']
+                )
+
+        messages.success(request, 'Expenses imported successfully')
+        return redirect('expense_list')
+
+    return render(request, 'farm_finances/import_expenses.html')
+
+
+@login_required
+def export_expenses(request):
+    farm = request.user.farm
+    expenses = Expense.objects.filter(farm=farm)
+
+    # Convert the expenses queryset to a pandas DataFrame
+    expenses_df = pd.DataFrame.from_records(expenses.values())
+
+    # Write the DataFrame to an Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=expenses.xlsx'
+    writer = pd.ExcelWriter(response, engine='openpyxl')
+    expenses_df.to_excel(writer, index=False, sheet_name='Expenses')
+
+    writer.book.save(response)  # Save the workbook directly to the response
+    return response

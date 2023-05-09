@@ -19,6 +19,9 @@ urlpatterns = [
 
     path('create_expense/', views.create_expense, name='create_expense'),
     path('expense_list/', views.expense_list, name='expense_list'),
+    path('export_expenses/', views.export_expenses, name='export_expenses'),
+    path('import_expenses/', views.import_expenses, name='import_expenses'),
+
     path('update_expense/<int:expense_id>/', views.update_expense, name='update_expense'),
     path('expenses/<int:pk>/delete/', views.delete_expense, name='delete_expense'),
 

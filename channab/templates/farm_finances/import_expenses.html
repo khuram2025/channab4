@@ -1,0 +1,100 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+<!-- tap on top start -->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    {% include 'home/backend_header.html' %}
+    <!-- Page Header Ends-->
+    <!-- mobile fix menu start -->
+    {% include 'home/mobile_menu.html' %}
+    <!-- mobile fix menu end -->
+    <!-- Page Body Start-->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        {% include 'home/backend_sidebar.html' %}
+        <!-- Page Sidebar Ends-->
+        <!-- Page Body Start -->
+        <div class="page-body">
+            <!-- Import Expenses Start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-sm-8 m-auto">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="card-header-2">
+                                            <h5>Import Expenses</h5>
+                                        </div>
+
+                                        <form method="post" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="col-sm-3 col-form-label form-label-title">Expense File</label>
+                                                <div class="form-group col-sm-9">
+                                                    <div class="dropzone-wrapper" id="dropzone-wrapper">
+                                                        <input type="file" class="dropzone" name="expenses_file" id="expenses-file-input" style="display: none;" required />
+                                                        <div class="dropzone-desc" id="dropzone-desc">
+                                                            <i class="ri-upload-2-line"></i>
+                                                            <p>Choose an Excel file or drag it here.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-4 d-flex justify-content-center">
+                                                <button type="submit" class="btn btn-primary btn-form">Import</button>
+                                                <a href="{% url 'farm_finances:expense_list' %}" class="btn btn-secondary btn-form">Cancel</a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Import Expenses End -->
+
+            <!-- footer Start -->
+
+            <!-- footer En -->
+        </div>
+        <!-- Container-fluid End -->
+
+        <!-- Page Body End -->
+    </div>
+    <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
+
+</div>
+{% endblock %}{% block extra_js %}
+...
+<!-- Add this block of code -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropzoneWrapper = document.getElementById('dropzone-wrapper');
+        const expensesFileInput = document.getElementById('expenses-file-input');
+
+        dropzoneWrapper.addEventListener('click', function() {
+            expensesFileInput.click();
+        });
+
+        expensesFileInput.addEventListener('change', function() {
+            if (expensesFileInput.files.length > 0) {
+                const fileName = expensesFileInput.files[0].name;
+                const dropzoneDesc = document.getElementById('dropzone-desc');
+                dropzoneDesc.innerHTML = `<i class="ri-file-text-line"></i><p>${fileName}</p>`;
+            }
+        });
+    });
+</script>
+{% endblock %}
+
