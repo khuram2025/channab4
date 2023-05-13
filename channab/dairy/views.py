@@ -208,10 +208,12 @@ def animal_milk_list(request):
     }
     sort_by_field = sort_by_mapping.get(sort_by, 'date')
 
+    # Filter milk_records by the farm of the logged-in user
+    farm = request.user.farm
     if sort_order == 'asc':
-        milk_records = MilkRecord.objects.all().select_related('animal').order_by(sort_by_field)
+        milk_records = MilkRecord.objects.filter(animal__farm=farm).select_related('animal').order_by(sort_by_field)
     else:
-        milk_records = MilkRecord.objects.all().select_related('animal').order_by(F(sort_by_field).desc(nulls_last=True))
+        milk_records = MilkRecord.objects.filter(animal__farm=farm).select_related('animal').order_by(F(sort_by_field).desc(nulls_last=True))
 
     # Handle sorting by total_milk separately
     if sort_by == 'total_milk':
@@ -225,14 +227,17 @@ def animal_milk_delete(request, pk):
     milk_record.delete()
     return redirect('dairy:animal_milk_list')
 
-
 @login_required
 def animal_milk_new(request):
     edit_mode = False
     milk_record = None
 
+    farm = request.user.farm
+    form = MilkRecordForm()
+
     if request.method == "POST":
         form = MilkRecordForm(request.POST)
+        form.fields['animal'].queryset = Animal.objects.filter(farm=farm, sex='female')
         if form.is_valid():
             animal = form.cleaned_data['animal']
             date = form.cleaned_data['date']
@@ -248,20 +253,16 @@ def animal_milk_new(request):
     else:
         animal_id = request.GET.get('animal')
         date = request.GET.get('date')
+        form.fields['animal'].queryset = Animal.objects.filter(farm=farm, sex='female')
 
         if animal_id and date:
             animal = get_object_or_404(Animal, pk=animal_id)
             milk_record, _ = MilkRecord.objects.get_or_create(animal=animal, date=date)
             edit_mode = True
-            print(f"Found milk_record: {milk_record}")  # Debugging print statement
 
         form = MilkRecordForm(instance=milk_record)
 
-    print(f"Returning form: {form}")  # Debugging print statement
     return render(request, 'dairy/animal_milk_edit.html', {'form': form, 'edit_mode': edit_mode, 'milk_record': milk_record})
-
-
-
 
 
 @login_required

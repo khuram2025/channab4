@@ -16,7 +16,7 @@ class AnimalForm(forms.ModelForm):
 from .models import MilkRecord, Animal, AnimalWeight
 
 class MilkRecordForm(forms.ModelForm):
-    animal = forms.ModelChoiceField(queryset=Animal.objects.filter(sex='female'))
+    animal = forms.ModelChoiceField(queryset=Animal.objects.none())  # Will be set in the view
     first_time = forms.DecimalField(max_digits=5, decimal_places=2, required=False)
     second_time = forms.DecimalField(max_digits=5, decimal_places=2, required=False)
     third_time = forms.DecimalField(max_digits=5, decimal_places=2, required=False)
