@@ -7,6 +7,25 @@
   width: calc(50% - 0.5em);
 }
 
+@media screen and (max-width: 576px) {
+  /* For mobile devices with max width of 576px */
+  .main-tiles .media-body h4 {
+    font-size: 12;
+  }
+  .main-tiles .media-body span {
+    font-size: 0.8rem; /* Adjust as needed */
+  }
+}
+
+.custom-image-style {
+  width: 68px !important;
+  height: 68px !important;
+  object-fit: cover;
+  display: block;
+  margin: auto;
+  border-radius: 10%;
+}
+
 @media (max-width: 576px) {
   .date-inputs-wrapper input {
     width: 100%;
