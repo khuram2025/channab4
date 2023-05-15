@@ -31,3 +31,31 @@ Housing Allownce Received --- 500
 Total Salery --- 5500(Basic Salery + All Allownces)
 Received Salery --- 3000
 Reming Salery -----2500
+
+
+I need to build family model relation for dairy farm animals as per the below model 
+
+Animal A (Male) is an animal it is father of Animal C (Male) & D (Female). Animal B(Female) is mother of Animal C & D now the Family relation Tab should be like below 
+
+Animal A Relation Tree:
+Father of Animal C 
+Father of Animal D 
+
+Animal B Relation Tree:
+Mother of Animal C 
+Mother of Animal D 
+
+Animal C Relation Tree:
+Child of Animal A 
+Child of Animal B 
+Brother of Animal D   
+
+Animal A Relation Tree:
+Child of Animal A 
+Child of Animal B 
+Sister of Animal C
+
+
+
+
+
