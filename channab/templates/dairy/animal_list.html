@@ -1,8 +1,4 @@
-{%extends 'main/base.html'%}
-{% load dairy_extras %}
- {%load static%}
-{%block content%}
-
+{%extends 'main/base.html'%} {% load dairy_extras %} {%load static%} {%block content%}
 
 <!-- tap on top start -->
 <div class="tap-top">
@@ -25,109 +21,76 @@
     <!-- Page Body Start -->
     <!-- Container-fluid starts-->
     <div class="page-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="card card-table">
-                                <div class="card-body">
-                                    <div class="title-header option-title d-sm-flex d-block">
-                                        <h5>Products List</h5>
-                                        <div class="right-options">
-                                            <ul>
-                                                <li>
-                                                    <a href="javascript:void(0)">import</a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0)">Export</a>
-                                                </li>
-                                                <li>
-                                                    <a class="btn btn-solid" href="{% url 'dairy:animal_create' %}">Add Animal</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="table-responsive">
-                                            <table class="table all-package theme-table table-product" id="table_id">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Animal Image</th>
-                                                        <th>TAG#</th>
-                                                        <th>Category</th>
-                                                        <th>Sex</th>
-                                                        <th>Age</th>
-                                                        <th>Price</th>
-                                                        <th>Status</th>
-                                                        <th>Type</th>
-                                                        <th>Option</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for animal in animals %}
-                                                    <tr>
-                                                        <td>
-                                                            <div class="table-image">
-                                                            <a href="{% url 'dairy:animal_detail' animal.pk %}">
-                                                                <img src="{{ animal.image.url }}" class="img-fluid" alt="{{ animal.tag }} Image" style="width: 350px; height: 350px;">
-                                                            </a>
-                                                            </div>
-
-                                                        </td>
-                                                        <td>
-                                                            <a href="{% url 'dairy:animal_detail' animal.pk %}">
-                                                            {{ animal.tag }}
-                                                        </td>
-                                                        <td>{{ animal.category.title }}</td>
-                                                        <td>{{ animal.get_sex_display }}</td>
-                                                        <td>{{ animal.dob|animal_age }}</td>
-                                                        <td class="td-price">${{ animal.purchase_cost }}</td>
-                                                        <td class="{% if animal.status == 'active' %}status-close{% elif animal.status == 'expired' %}status-danger{% else %}status-warning{% endif %}">
-                                                            <span>{{ animal.get_status_display }}</span>
-                                                        </td>
-                                                        <td>{{ animal.get_animal_type_display }}</td>
-                                                        <td>
-                                                            <ul>
-                                                                <li>
-                                                                    <a href="{% url 'dairy:animal_edit' animal.pk %}">
-                                                                        <i class="ri-eye-line"></i>
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <a href="{% url 'dairy:animal_edit' animal.pk %}">
-                                                                        <i class="ri-pencil-line"></i>
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#deleteAnimalModal" data-animal-id="{{ animal.pk }}">
-                                                                        <i class="ri-delete-bin-line"></i>
-                                                                    </a>
-                                                                </li>
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xl-9 col-xxl-12">
+            <div class="card">
+              <div class="card-header border-0 pb-2 d-lg-flex flex-wrap d-block">
+                <div>
+                  <h4 class="card-title mb-2">Animals List</h4>
                 </div>
-                <!-- Container-fluid Ends-->
-
-                <div class="container-fluid">
-                    <!-- footer start-->
-                    <footer class="footer">
-                        <div class="row">
-                            <div class="col-md-12 footer-copyright text-center">
-                                <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                            </div>
-                        </div>
-                    </footer>
+                <div class="card-action card-tabs mt-3 mt-3 mt-lg-0">
+                  <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link active" data-toggle="tab" href="#all-animals" role="tab" aria-selected="true"> All Animals </a>
+                    </li>
+                    {% for animal_type, page_obj in page_objs_by_type.items %}
+                    <li class="nav-item">
+                      <a class="nav-link" data-toggle="tab" href="#{{ animal_type }}" role="tab" aria-selected="false"> {{ animal_type }} </a>
+                    </li>
+                    {% endfor %}
+                  </ul>
                 </div>
+              </div>
+              <div class="card-body most-favourite-items pb-0">
+                <div class="tab-content">
+                  <div class="tab-pane fade show active" id="all-animals">{% include 'dairy/animal_list_partial.html' with page_obj=page_objs_by_type.all %}</div>
+                  {% for animal_type, page_obj in page_objs_by_type.items %}
+                  <div class="tab-pane fade" id="{{ animal_type }}">{% include 'dairy/animal_list_partial.html' with page_obj=page_obj %}</div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div class="card-footer border-0">
+                <nav>
+                  <ul class="pagination style-1 mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item page-indicator">
+                      <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                        <i class="la la-angle-left"></i>
+                      </a>
+                    </li>
+                    {% endif %} {% for i in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == i %}active{% endif %}">
+                      <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                    </li>
+                    {% endfor %} {% if page_obj.has_next %}
+                    <li class="page-item page-indicator">
+                      <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                        <i class="la la-angle-right"></i>
+                      </a>
+                    </li>
+                    {% endif %}
+                  </ul>
+                </nav>
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <!-- Container-fluid Ends-->
+
+      <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+          <div class="row">
+            <div class="col-md-12 footer-copyright text-center">
+              <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
     <!-- Container-fluid end -->
     <!-- Page Body End -->
   </div>
@@ -137,33 +100,38 @@
 {% include 'dairy/delete.html' %}
 <!-- Modal Start -->
 <div class="modal fade" id="deleteAnimalModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteAnimalModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <h5 class="modal-title" id="deleteAnimalModalLabel">Delete Animal</h5>
-                <p>Are you sure you want to delete this animal?</p>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                <div class="button-box">
-                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                    <a id="confirm-delete-animal-button" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
-                </div>
-            </div>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="deleteAnimalModalLabel">Delete Animal</h5>
+        <p>Are you sure you want to delete this animal?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+          <a id="confirm-delete-animal-button" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %} {% block extra_js %}
 <script>
-    $(document).ready(function () {
-        // ...
-
-        $("#deleteAnimalModal").on("show.bs.modal", function (event) {
-            var button = $(event.relatedTarget);
-            var animalId = button.data("animal-id");
-            var url = "{% url 'dairy:delete_animal' 0 %}".replace("0", animalId);
-            url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
-            $("#confirm-delete-animal-button").attr("href", url);
-        });
+  $(document).ready(function () {
+    $(".nav-tabs a").click(function () {
+      $(this).tab("show");
     });
+  });
+  $(document).ready(function () {
+    // ...
+
+    $("#deleteAnimalModal").on("show.bs.modal", function (event) {
+      var button = $(event.relatedTarget);
+      var animalId = button.data("animal-id");
+      var url = "{% url 'dairy:delete_animal' 0 %}".replace("0", animalId);
+      url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
+      $("#confirm-delete-animal-button").attr("href", url);
+    });
+  });
 </script>
 
 {%endblock%}
