@@ -6,7 +6,7 @@
       <img class="rounded mr-3 food-img" src="{{ animal.image.url }}" alt="{{ animal.tag }}" style="width: 130px; height: 100px; border-radius: 20px" />
 
       <div class="media-body">
-        <h5 class="mb-sm-4 mb-3"><a class="text-black" href="{% url 'dairy:animal_detail' animal.pk %}">{{ animal.tag }}</a></h5>
+        <h5 class="mb-sm-4 mb-3"><a class="text-black" href="{% url 'dairy:animal_detail' animal.pk %}">{{ animal.tag }}--{{ animal.get_sex_display }}</a></h5>
         <div class="d-flex mb-2">
           <svg class="mr-2" width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="0.500488" width="2.04545" height="15" rx="1.02273" fill="#EA7A9A"></rect>
@@ -18,7 +18,7 @@
         </div>
         <div class="star-review2 d-flex align-items-center flex-wrap fs-12">
           <div class="info-div category-title-div">{{ animal.category.title }}</div>
-          <div class="info-div sex-display-div">{{ animal.get_sex_display }}</div>
+
           <div class="info-div animal-type-display-div">{{ animal.get_animal_type_display }}</div>
         </div>
       </div>

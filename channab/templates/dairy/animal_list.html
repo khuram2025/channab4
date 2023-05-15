@@ -31,9 +31,6 @@
                 </div>
                 <div class="card-action card-tabs mt-3 mt-3 mt-lg-0">
                   <ul class="nav nav-tabs" role="tablist">
-                    <li class="nav-item">
-                      <a class="nav-link active" data-toggle="tab" href="#all-animals" role="tab" aria-selected="true"> All Animals </a>
-                    </li>
                     {% for animal_type, page_obj in page_objs_by_type.items %}
                     <li class="nav-item">
                       <a class="nav-link" data-toggle="tab" href="#{{ animal_type }}" role="tab" aria-selected="false"> {{ animal_type }} </a>

@@ -12,6 +12,10 @@ urlpatterns = [
 
     path('animals/', views.animal_list, name='animal_list'),
     path('animal/<int:pk>/', views.animal_detail, name='animal_detail'),
+     path('animal/<int:pk>/add_family/', views.add_family, name='add_family'),
+     path('family/<int:pk>/edit/', views.EditFamilyView.as_view(), name='edit_family'),
+     path('family/<int:pk>/delete/', views.DeleteFamilyView.as_view(), name='delete_family'),
+
     path('animals/create/', views.animal_create, name='animal_create'),
     path('animals/edit/<int:pk>/', views.animal_edit, name='animal_edit'),
     path('animals/<int:pk>/delete/', views.delete_animal, name='delete_animal'),

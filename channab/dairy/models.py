@@ -47,9 +47,66 @@ class Animal(models.Model):
     ]
     animal_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='other')
 
+    @property
+    def children(self):
+        fathered_families = self.fathered_families.all()  # get all families where current animal is the father
+        mothered_families = self.mothered_families.all()  # get all families where current animal is the mother
+
+        children = set()  # use a set to avoid duplicates
+        for family in fathered_families:
+            children.add(family.child)
+        for family in mothered_families:
+            children.add(family.child)
+            
+        return list(children)  # return the children as a list
+
+
+
     def __str__(self):
         return f'{self.tag} ({self.category.title})'
+
+from django.db.models import Q
+
+from django.core.exceptions import ValidationError
+
+class Family(models.Model):
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='families')
+    father = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, related_name='fathered_families', blank=True)
+    mother = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, related_name='mothered_families', blank=True)
+    child = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name='family')
+
+    @property
+    def siblings(self):
+        if self.father and self.mother:
+            return Family.objects.filter(Q(father=self.father) | Q(mother=self.mother)).exclude(child=self.child)
+        return Family.objects.none()
+
+    @property
+    def children(self):
+        fathered_children = Family.objects.filter(father=self)  # get all families where current animal is the father
+        mothered_children = Family.objects.filter(mother=self)  # get all families where current animal is the mother
+
+        children = set()  # use a set to avoid duplicates
+        for family in fathered_children:
+            children.add(family.child)
+        for family in mothered_children:
+            children.add(family.child)
+            
+        return list(children)  # return the children as a list
+
+    def clean(self):
+        if self.child_id:  # Check if the child_id foreign key is set
+            if self.child == self.father or self.child == self.mother:
+                raise ValidationError("Child can't be a parent")
+        super().clean()
+
+
     
+    def __str__(self):
+        return f'Family of {self.child}'
+
+
+
 
 class MilkRecord(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, limit_choices_to={'sex': 'female'})

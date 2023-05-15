@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from .models import AnimalCategory, Animal
-from .forms import AnimalCategoryForm, AnimalForm, AnimalWeightForm, MilkRecordForm
+from .models import AnimalCategory, Animal, Family
+from .forms import AnimalCategoryForm, AnimalForm, AnimalWeightForm, FamilyForm, MilkRecordForm
 from accounts.models import Farm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import MilkRecord, Animal, AnimalWeight
@@ -136,7 +136,44 @@ def animal_detail(request, pk):
         prev_weights[weight.pk] = prev_weight 
 
     milk_records = MilkRecord.objects.filter(animal=animal)
-    return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order})
+    try:
+        family = Family.objects.get(child=animal)
+        siblings = family.siblings
+    except Family.DoesNotExist:
+        family = None
+        siblings = None
+
+    return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order, 'family': family, 'siblings': siblings,})
+
+@login_required
+def add_family(request, pk):
+    animal = get_object_or_404(Animal, pk=pk, farm=request.user.farm)
+    if request.method == 'POST':
+        form = FamilyForm(request.POST)
+        if form.is_valid():
+            family = form.save(commit=False)
+            family.child = animal
+            family.farm = request.user.farm  # Here we assign the farm_id from the logged-in user
+            family.save()
+            return redirect('dairy:animal_detail', pk=animal.pk)
+    else:
+        form = FamilyForm()
+    return render(request, 'dairy/add_family.html', {'form': form, 'animal': animal})
+
+from django.views.generic import UpdateView, DeleteView
+from .models import Family
+
+class EditFamilyView(UpdateView):
+    model = Family
+    fields = ['father', 'mother', 'child']
+    template_name = 'dairy/edit_family.html'
+    success_url = '/some-success-url/'
+
+class DeleteFamilyView(DeleteView):
+    model = Family
+    template_name = 'dairy/confirm_delete_family.html'
+    success_url = '/some-success-url/'
+
 
 @login_required
 def delete_animal(request, pk):

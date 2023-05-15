@@ -1,5 +1,5 @@
 from django import forms
-from .models import AnimalCategory, Animal
+from .models import AnimalCategory, Animal, Family
 
 class AnimalCategoryForm(forms.ModelForm):
     class Meta:
@@ -25,7 +25,13 @@ class MilkRecordForm(forms.ModelForm):
         model = MilkRecord
         fields = ('animal', 'date', 'first_time', 'second_time', 'third_time')
 
+class FamilyForm(forms.ModelForm):
+    father = forms.ModelChoiceField(queryset=Animal.objects.filter(sex='male'), required=False)
+    mother = forms.ModelChoiceField(queryset=Animal.objects.filter(sex='female'), required=False)
 
+    class Meta:
+        model = Family
+        fields = ['father', 'mother']
 
    
 

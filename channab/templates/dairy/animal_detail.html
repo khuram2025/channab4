@@ -103,11 +103,10 @@
                         <li class="nav-item" role="presentation">
                           <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review" type="button" role="tab" aria-controls="review" aria-selected="false">Tasks</button>
                         </li>
-                        {% if request.user.role == "admin" %}
+
                         <li class="nav-item" role="presentation">
-                          <button class="nav-link" id="farm-members-tab" data-bs-toggle="tab" data-bs-target="#farm_members" type="button" role="tab" aria-controls="farm_members" aria-selected="false">Farm Members</button>
+                          <button class="nav-link" id="farm-members-tab" data-bs-toggle="tab" data-bs-target="#family" type="button" role="tab" aria-controls="family" aria-selected="false">Family</button>
                         </li>
-                        {% endif %}
                       </ul>
                       <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
