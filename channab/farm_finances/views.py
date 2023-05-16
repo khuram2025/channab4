@@ -101,7 +101,7 @@ def expense_categories(request):
     return render(request, 'farm_finances/expense_categories.html', {'farm': farm, 'expense_categories': expense_categories})
 
 
-from django.http import JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 
 
 
@@ -262,3 +262,128 @@ def expense_list(request):
         expenses = expenses.filter(date__range=(start_date, end_date))
 
     return render(request, 'farm_finances/expense_list.html', {'expenses': expenses, 'farm': farm, 'sort_by': sort_by, 'sort_order': sort_order})
+
+
+import openpyxl
+from .models import Income, Expense
+from django.db import models
+
+
+from django.db.models.fields.files import ImageFieldFile
+
+
+def export_to_excel(model):
+    # create a new excel workbook
+    wb = openpyxl.Workbook()
+    ws = wb.active
+
+    # get the model's fields and append them as the header row
+    fields = model._meta.fields
+    header_row = [field.name for field in fields if not isinstance(field, models.ImageField)]
+    ws.append(header_row)
+
+    # get the model's objects and append each object as a row
+    for obj in model.objects.all():
+        row = []
+        for field in fields:
+            if isinstance(field, models.ImageField):
+                continue
+            value = getattr(obj, field.name)
+            if isinstance(value, models.Model):
+                value = str(value)
+            elif isinstance(value, ImageFieldFile):
+                if value:
+                    value = str(value.path)
+                else:
+                    value = None
+            row.append(value)
+        ws.append(row)
+
+    return wb
+
+
+
+
+from django.core.exceptions import ObjectDoesNotExist
+
+def import_from_excel(model, file, user):  # add the user parameter
+    # open the workbook
+    wb = openpyxl.load_workbook(file)
+    ws = wb.active
+
+    # get the header row and model fields
+    header_row = [cell.value for cell in ws[1]]
+    fields = {field.name: field for field in model._meta.fields}
+
+    # iterate over the rows in the worksheet
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        obj_dict = {}
+        for key, value in zip(header_row, row):
+            field = fields.get(key)
+            if field is None:
+                continue
+
+            # if the field is a ForeignKey and not the 'user' field, look up the related object
+            if isinstance(field, models.ForeignKey) and field.name != 'user':
+                # check which field to use for lookup based on field name
+                lookup_field = 'name' if field.name in ['farm', 'category'] else 'id'  # revise this as needed
+                try:
+                    value = field.related_model.objects.get(**{lookup_field: value})
+                except ObjectDoesNotExist:
+                    value = None
+            obj_dict[key] = value
+
+        # assign the logged-in user to the 'user' field
+        obj_dict['user'] = user
+
+        # create the object
+        model.objects.create(**obj_dict)
+
+
+
+
+@login_required
+def export_income(request):
+    wb = export_to_excel(Income)
+    # Save the workbook to a HttpResponse
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=Incomes.xlsx'
+    wb.save(response)
+    return response
+
+@login_required
+def export_expense(request):
+    wb = export_to_excel(Expense)
+    # Save the workbook to a HttpResponse
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=Expenses.xlsx'
+    wb.save(response)
+    return response
+
+
+@login_required
+def import_income(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            import_from_excel(Income, request.FILES['file'], request.user)  # pass the user here
+            return HttpResponseRedirect('/success/url/')
+    else:
+        form = UploadFileForm()
+    return render(request, 'farm_finances/upload.html', {'form': form})
+
+@login_required
+def import_expense(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            import_from_excel(Expense, request.FILES['file'], request.user)
+            return HttpResponseRedirect('/success/url/')
+    else:
+        form = UploadFileForm()
+    return render(request, 'farm_finances/upload.html', {'form': form})
+
+from django import forms
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField()

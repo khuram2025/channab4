@@ -28,6 +28,15 @@
               <div class="card-body">
                 <div class="title-header option-title">
                   <h5>All Expenses</h5>
+                   <ul>
+                                                <li>
+                                                    <a href="{% url 'farm_finances:import_expense' %}">import</a>
+                                                </li>
+                                                <li>
+                                                    <a href="{% url 'farm_finances:export_expense' %}">Export</a>
+                                                </li>
+                                                
+                                            </ul>
                   <a class="btn btn-solid" href="{% url 'farm_finances:create_expense' %}">Add Expense</a>
                 </div>
                 <!-- Add this form just before the expense table -->

@@ -31,5 +31,9 @@ urlpatterns = [
     path('expense-categories/<int:pk>/delete/', views.delete_expense_category, name='delete_expense_category'),
 
     # Add update and delete URL patterns for income and expense categories
+    path('export_income/', views.export_income, name='export_income'),
+    path('export_expense/', views.export_expense, name='export_expense'),
+    path('import_income/', views.import_income, name='import_income'),
+    path('import_expense/', views.import_expense, name='import_expense'),
 ]
 

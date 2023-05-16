@@ -30,6 +30,17 @@
                   <div class="title-header option-title">
                       <h5>All Incomes</h5>
                       <div class="d-flex align-items-center">
+                        <ul>
+                                                <li>
+                                                    <a href="{% url 'farm_finances:import_income' %}">import</a>
+                                                </li>
+                                                <li>
+                                                    <a href="{% url 'farm_finances:export_income' %}">Export</a>
+                                                </li>
+                                                
+                                            </ul>
+                        
+                  
                           <a class="btn btn-solid me-3" href="{% url 'farm_finances:create_income' %}">Add Income</a>
                           <form method="get" class="time-filter-form d-flex align-items-center">
                               <select name="time_filter" id="time_filter" class="form-select me-2">
