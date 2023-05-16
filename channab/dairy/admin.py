@@ -10,4 +10,5 @@ class AnimalCategoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Animal, AnimalAdmin)
 admin.site.register(MilkRecord)
+
 admin.site.register(AnimalCategory, AnimalCategoryAdmin)
