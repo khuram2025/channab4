@@ -55,7 +55,8 @@ Child of Animal A
 Child of Animal B 
 Sister of Animal C
 
-
+Animal cannot be added as father/mother/child to himslef
+Ifa a relation adeed in an animal automaticley relation should be created in family tree to other  related animal 
 
 
 
