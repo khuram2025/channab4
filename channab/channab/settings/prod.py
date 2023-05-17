@@ -12,3 +12,6 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+
+tesetterert
