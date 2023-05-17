@@ -1,2 +1,3 @@
 venv
 channab/manage.py
+channab/channab/settings/prod.py
