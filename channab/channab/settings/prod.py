@@ -1,5 +1,5 @@
 from .base import *
-
+ALLOWED_HOSTS = ['*']
 DEBUG = True
 
 DATABASES = {
@@ -12,6 +12,3 @@ DATABASES = {
         'PORT': '',
     }
 }
-
-
-tesetterert
