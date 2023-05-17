@@ -66,6 +66,11 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+
+            # If 'remember_me' is not checked in the form, set the session to expire when the user closes the browser.
+            if not request.POST.get('remember_me', False):
+                request.session.set_expiry(0)
+
             return redirect(reverse('home:home'))
         else:
             print("Form is invalid")
@@ -73,6 +78,7 @@ def login_view(request):
     else:
         form = MobileAuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})
+
 
 
 from .forms import ProfileForm
