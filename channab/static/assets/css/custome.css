@@ -11,6 +11,55 @@
 .fa-star:before {
   content: "\f005";
 }
+md-chips {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+}
+
+.tab-veiw {
+  padding: 0.15rem;
+  display: flex;
+  flex-direction: row; /* Add this line */
+  align-items: center;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  border-radius: 0.8rem;
+  margin-bottom: 0.5rem;
+  border: 0.1rem solid #0da487;
+}
+
+.tab-veiw1 {
+  min-width: 2.6rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  margin-left: 0.6rem;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.tab-veiw2 {
+  margin-left: 0.6rem;
+  margin-right: 0.6rem;
+  letter-spacing: 0;
+}
+
+.tab-slider {
+  display: flex;
+  place-content: space-between;
+  overflow-x: auto;
+  mix-blend-mode: normal;
+  opacity: 1;
+  margin-right: -1.6rem;
+  margin-left: -1.6rem;
+  padding-right: 0.8rem;
+  padding-left: 1.6rem;
+}
+
+.tab-slider::-webkit-scrollbar {
+  display: none;
+}
+
 /*! end @import */
 /*! @import https://sego.dexignzone.com/xhtml/icons/line-awesome/css/line-awesome.min.css */
 .la {

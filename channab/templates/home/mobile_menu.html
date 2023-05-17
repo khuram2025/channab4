@@ -3,37 +3,37 @@
 <div class="mobile-menu d-md-none d-block mobile-cart">
   <ul>
     <li class="active">
-      <a href="index.html">
+      <a href="{%url 'home:home' %}">
         <i class="iconly-Home icli"></i>
         <span>Home</span>
       </a>
     </li>
 
     <li class="mobile-category">
-      <a href="javascript:void(0)">
+      <a href="{%url 'dairy:animal_list' %}">
         <i class="iconly-Category icli js-link"></i>
         <span>Animals</span>
       </a>
     </li>
 
     <li>
-      <a href="search.html" class="search-box">
-        <i class="iconly-Search icli"></i>
+      <a href="{%url 'farm_finances:expense_list' %}" class="search-box">
+        <i class="iconly-Category icli"></i>
         <span>Expense</span>
       </a>
     </li>
 
     <li>
-      <a href="wishlist.html" class="notifi-wishlist">
-        <i class="iconly-Heart icli"></i>
+      <a href="{%url 'farm_finances:income_list' %}" class="notifi-wishlist">
+        <i class="iconly-Category icli"></i>
         <span>Income</span>
       </a>
     </li>
 
     <li>
-      <a href="cart.html">
-        <i class="iconly-Bag-2 icli fly-cate"></i>
-        <span>Milk Record</span>
+      <a href="{%url 'dairy:animal_milk_list' %}">
+        <i class="iconly-Bag-2 icli"></i>
+        <span>Milk Rec</span>
       </a>
     </li>
   </ul>

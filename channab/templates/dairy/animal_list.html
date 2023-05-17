@@ -29,14 +29,16 @@
                 <div>
                   <h4 class="card-title mb-2">Animals List</h4>
                 </div>
-                <div class="card-action card-tabs mt-3 mt-3 mt-lg-0">
-                  <ul class="nav nav-tabs" role="tablist">
+                <div class="tab-slider">
+                  <md-chips>
                     {% for animal_type, page_obj in page_objs_by_type.items %}
-                    <li class="nav-item">
-                      <a class="nav-link" data-toggle="tab" href="#{{ animal_type }}" role="tab" aria-selected="false"> {{ animal_type }} </a>
-                    </li>
+                    <div class="tab-veiw">
+                      <a data-toggle="tab" href="#{{ animal_type }}" role="tab" aria-selected="false">
+                        <div class="tab-veiw2">{{ animal_type }}</div>
+                      </a>
+                    </div>
                     {% endfor %}
-                  </ul>
+                  </md-chips>
                 </div>
               </div>
               <div class="card-body most-favourite-items pb-0">
