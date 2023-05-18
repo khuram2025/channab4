@@ -60,6 +60,21 @@ md-chips {
   display: none;
 }
 
+.card-img-top {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-title {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.card-text {
+  font-size: 16px;
+}
+
 /*! end @import */
 /*! @import https://sego.dexignzone.com/xhtml/icons/line-awesome/css/line-awesome.min.css */
 .la {
