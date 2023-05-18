@@ -1,16 +1,137 @@
-<div class="tab-slider">
-    <md-chips>
-        <div class="tab-veiw"><img class="tab-veiw1" src="/assets/iconAllView_noinline.39ddad88bff28d63de099e06d4261424.svg" alt="View places nearby">
-            <div class="tab-veiw2">All</div>
-        </div>
-    </md-chips>
+{% load dairy_extras %}
+<div class="row">
+  {% for animal in page_obj %}
+  <div id="DIV_96">
+    <main id="MAIN_97">
+      <div id="DIV_98">
+        <ul id="UL_99">
+          <li id="LI_1">
+            <article id="ARTICLE_2">
+              <div id="DIV_3">
+                <a href="https://www.zameen.com/Property/dha_phase_8_dha_phase_8_block_p_1_kanal_modern_design_solid_house_for_sale-45323549-8874-1.html" title="1 Kanal Modern Design Solid House for sale" id="A_4"></a>
+                <div id="DIV_5"></div>
+              </div>
+              <div id="DIV_6">
+                <div id="DIV_7">
+                  <picture id="PICTURE_8">
+                    <source id="SOURCE_9" />
+                    <img alt="1 Kanal Modern Design Solid House for sale" src="https://media.zameen.com/thumbnails/218167283-240x180.jpeg" id="IMG_10" />
+                  </picture>
+                </div>
+                <div id="DIV_11">
+                  <div id="DIV_12">
+                    <div id="DIV_13">super hot</div>
+                  </div>
+                  <div id="DIV_14">
+                    <button id="BUTTON_15"></button>
+                    <svg id="svg_16">
+                      <path id="path_17"></path>
+                      <path id="path_18"></path>
+                    </svg>
+                  </div>
+                  <div id="DIV_19">
+                    <div id="DIV_20">
+                      <div id="DIV_21">
+                        <div id="DIV_22">
+                          <svg id="svg_23">
+                            <path id="path_24"></path>
+                            <g id="g_25">
+                              <path id="path_26"></path>
+                              <path id="path_27"></path>
+                            </g></svg
+                          ><span id="SPAN_28">9</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="DIV_29">
+                    <div id="DIV_30"></div>
+                  </div>
+                </div>
+              </div>
+              <div id="DIV_31">
+                <div id="DIV_32">
+                  <div id="DIV_33">
+                    <div id="DIV_34">
+                      <svg id="svg_35">
+                        <g id="g_36">
+                          <path id="path_37"></path>
+                          <path id="path_38"></path>
+                          <path id="path_39"></path>
+                        </g>
+                      </svg>
+                    </div>
+                    <div id="DIV_40">
+                      <svg id="svg_41">
+                        <g id="g_42">
+                          <path id="path_43"></path>
+                          <path id="path_44"></path>
+                        </g>
+                      </svg>
+                    </div>
+                  </div>
+                  <div id="DIV_45">
+                    <span id="SPAN_46"></span>
+                    <svg id="svg_47">
+                      <path id="path_48"></path>
+                      <path id="path_49"></path></svg
+                    ><span id="SPAN_50">Titanium</span><span id="SPAN_51"></span>
+                    <svg id="svg_52">
+                      <path id="path_53"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div id="DIV_54">
+                  <div id="DIV_55">
+                    <div id="DIV_56"><span id="SPAN_57">PKR</span><span id="SPAN_58"></span><span id="SPAN_59">7.95 Crore</span></div>
+                  </div>
+                </div>
+                <div id="DIV_60">DHA Phase 8 - Block P, DHA Phase 8</div>
+                <div id="DIV_61">
+                  <div id="DIV_62">
+                    <span id="SPAN_63"></span>
+                    <svg id="svg_64">
+                      <g id="g_65">
+                        <path id="path_66"></path>
+                        <g id="g_67">
+                          <path id="path_68"></path>
+                          <path id="path_69"></path>
+                        </g>
+                      </g></svg
+                    ><span id="SPAN_70">5</span><span id="SPAN_71"></span>
+                    <svg id="svg_72">
+                      <g id="g_73">
+                        <g id="g_74">
+                          <path id="path_75"></path>
+                          <path id="path_76"></path>
+                        </g>
+                        <path id="path_77"></path>
+                      </g></svg
+                    ><span id="SPAN_78">6</span><span id="SPAN_79"></span>
+                    <svg id="svg_80">
+                      <path id="path_81"></path></svg
+                    ><span id="SPAN_82"><span id="SPAN_83">1 Kanal</span></span>
+                  </div>
+                </div>
+                <div id="DIV_84"><span id="SPAN_85">Added: 7 hours ago</span><span id="SPAN_86"></span></div>
+                <div id="DIV_87">
+                  <div id="DIV_88">
+                    <button id="BUTTON_89"></button>
+                    <svg id="svg_90">
+                      <path id="path_91"></path></svg
+                    >SMS
+                    <button type="button" id="BUTTON_92"></button>
+                    <svg id="svg_93">
+                      <path id="path_94"></path></svg
+                    >Call<a id="A_95">Email</a>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </li>
+        </ul>
+      </div>
+    </main>
+  </div>
+  {% endfor %}
 </div>
-
-/*! CSS Used from: Embedded */
-*,:after,:before{-webkit-box-sizing:inherit;box-sizing:inherit;}
-/*! CSS Used from: Embedded */
-.tab-veiw{min-height:3.2rem;padding:.15rem;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;cursor:pointer;margin-right:.8rem;border-radius:5rem;border:.1rem solid #e6e6e6;}
-.tab-veiw1{min-width:2.6rem;margin-top:.2rem;margin-bottom:.2rem;margin-left:.6rem;display:inline-block;border-radius:50%;}
-.tab-veiw2{margin-left:.6rem;margin-right:.6rem;letter-spacing:0;font:normal normal normal 22.4px/27.2px Lato;font:normal normal normal 1.4rem/1.7rem Lato;}
-.tab-slider{display:-webkit-box;display:-ms-flexbox;display:flex;place-content:space-between;overflow-x:auto;mix-blend-mode:normal;opacity:1;margin-right:-1.6rem;margin-left:-1.6rem;padding-right:.8rem;padding-left:1.6rem;}
-.tab-slider::-webkit-scrollbar{display:none;}
