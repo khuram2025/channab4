@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-555*d5x_xf93d7dg&du+1wb&ktdwj4r$rt*ot#gvxoa&c_ao6x
 # SECURITY WARNING: don't run with debug turned on in production!
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
@@ -50,6 +50,9 @@ INSTALLED_APPS = [
     'dal_select2',
     'widget_tweaks',
     'farm_finances',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
 
 ]
 
