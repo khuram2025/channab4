@@ -1,0 +1,75 @@
+CREATE DATABASE channab;
+
+CREATE USER khan WITH PASSWORD 'C@hannb183!';
+
+
+ALTER ROLE khan SET client_encoding TO 'utf8';
+ALTER ROLE khan SET default_transaction_isolation TO 'read committed';
+ALTER ROLE khan SET timezone TO 'UTC';
+
+
+GRANT ALL PRIVILEGES ON DATABASE channab TO khan;
+\q
+sudo pip3 install virtualenv
+
+mkdir ~/channab
+cd ~/channab
+
+
+python3 -m virtualenv channabenv
+
+source channabenv/bin/activate
+
+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
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'channab',
+        'USER': 'khan',
+        'PASSWORD': 'C@hannb183!',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+
+git clone https://khuram2025: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@github.com/khuram2025/channab4.git
+
+
+gunicorn channab.wsgi
+
+
+
+server {
+    listen 80;
+    server_name farm.channab.com;
+    access_log off;
+
+    location /static/ {
+        alias /home/ubuntu/channab/channab4/channab/static/;
+    }
+
+    location / {
+        proxy_pass http://unix:/home/ubuntu/channab/channab4/channab/channab.sock;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+git add . && git commit -m "EC2 1st" && git push origin fixing
+
+
+sudo nano /etc/systemd/system/gunicorn.service
+
+python manage.py runserver 0.0.0.0:8000 --settings=channab.settings.prod
+
+
+export AWS_ACCESS_KEY_ID = 'AKIASTSQA7RFKIXHUCWP '
+export AWS_SECRET_ACCESS_KEY = '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'
+export AWS_STORAGE_BUCKET_NAME = 'channabdairy'
+export AWS_S3_REGION_NAME = 'us-east-1'
+
+
+git pull origin mobile-app
