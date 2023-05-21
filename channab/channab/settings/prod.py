@@ -30,4 +30,5 @@ STATICFILES_DIRS = [
 ]
 STATIC_URL = 'https://%s.s3.amazonaws.com/%s/' % (AWS_STORAGE_BUCKET_NAME, AWS_LOCATION)
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATIC_ROOT = '/var/www/example.com/static/'
 
