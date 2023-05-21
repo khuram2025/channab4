@@ -23,6 +23,10 @@ source channabenv/bin/activate
 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
 
 
+gunicorn channab.wsgi:application --bind 127.0.0.1:8000 --env DJANGO_SETTINGS_MODULE=channab.settings.prod
+
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

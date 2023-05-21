@@ -31,8 +31,5 @@ STATICFILES_DIRS = [
 STATIC_URL = 'https://%s.s3.amazonaws.com/%s/' % (AWS_STORAGE_BUCKET_NAME, AWS_LOCATION)
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATIC_ROOT = '/var/www/example.com/static/'
+MEDIA_URL = f"https://{'channabdairy.s3.amazonaws.com'}/media/"
 
-
-AWS_LOCATION = 'media'
-MEDIA_URL = 'https://%s/%s/' % ('channabdairy.s3.amazonaws.com', AWS_LOCATION)
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
