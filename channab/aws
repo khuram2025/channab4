@@ -73,3 +73,4 @@ export AWS_S3_REGION_NAME = 'us-east-1'
 
 
 git pull origin mobile-app
+~/channab/channab4/channab$ git pull origin mobile-app
