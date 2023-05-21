@@ -54,7 +54,9 @@
 
                           <td>
                             <div class="table-image">
+                              {% if category.image %}
                               <img src="{{ category.image.url }}" class="img-fluid" alt="" />
+                              {% endif %}
                             </div>
                           </td>
 
