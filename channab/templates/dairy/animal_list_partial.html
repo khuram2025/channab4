@@ -3,7 +3,11 @@
   {% for animal in page_obj %}
   <div class="col-lg-6">
     <div class="media mb-4 align-items-center">
+      {% if animal.image %}
       <img class="rounded mr-3 food-img" src="{{ animal.image.url }}" alt="{{ animal.tag }}" style="width: 130px; height: 100px; border-radius: 20px" />
+      {% else %}
+      <!-- fallback image or other content goes here -->
+      {% endif %}
 
       <div class="media-body">
         <h5 class="mb-sm-4 mb-3"><a class="text-black" href="{% url 'dairy:animal_detail' animal.pk %}">{{ animal.tag }}--{{ animal.get_sex_display }}</a></h5>
