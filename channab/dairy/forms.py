@@ -11,6 +11,8 @@ class AnimalForm(forms.ModelForm):
     class Meta:
         model = Animal
         fields = ['tag', 'image', 'dob', 'purchase_cost', 'status', 'sex', 'category', 'animal_type']
+    
+    
 
 
 from .models import MilkRecord, Animal, AnimalWeight

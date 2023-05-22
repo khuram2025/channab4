@@ -3,6 +3,9 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
 from accounts.models import Farm
+from PIL import Image
+from io import BytesIO
+from django.core.files import File
 
 class AnimalCategory(models.Model):
     title = models.CharField(max_length=100)
@@ -46,6 +49,28 @@ class Animal(models.Model):
         ('other', 'Other'),
     ]
     animal_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='other')
+
+    def save(self, *args, **kwargs):
+        if self.image:
+            # Open the uploaded image
+            img = Image.open(self.image)
+            
+            # Check if image has an alpha channel then convert it to RGB
+            if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+                img = img.convert('RGB')
+
+            # Compress the image (resize it to the size you want)
+            output_size = (500, 500)
+            img.thumbnail(output_size)
+            output = BytesIO()
+            img.save(output, format='JPEG', quality=75)
+            output.seek(0)
+
+            # Change the imagefield value to be the newley modifed image value
+            self.image = File(output, name=self.image.name)
+        super().save(*args, **kwargs)
+
+    
 
     
 
