@@ -91,7 +91,8 @@ class HomeAPIView(APIView):
         farm = request.user.farm
         total_income = Income.objects.filter(farm=farm).aggregate(Sum('amount'))['amount__sum'] or 0
         total_expense = Expense.objects.filter(farm=farm).aggregate(Sum('amount'))['amount__sum'] or 0
-        status = total_income - total_expense
+        net_income = total_income - total_expense
+
         
 
         now = timezone.now()
@@ -125,7 +126,7 @@ class HomeAPIView(APIView):
             ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0
 
             summary.append({
-                "category": category,
+                "category": category.name,
                 "total_amount": total_amount,
             })
 
@@ -138,14 +139,14 @@ class HomeAPIView(APIView):
             ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0
 
             expense_summary.append({
-                "category": category,
+                "category": category.name,
                 "total_amount": total_amount,
             })
 
         data = {
             'total_income': total_income,
             'total_expense': total_expense,
-            'status': status,
+            'net_income': net_income,
             "summary": summary,
             "time_filter": time_filter,
             "expense_summary": expense_summary,
