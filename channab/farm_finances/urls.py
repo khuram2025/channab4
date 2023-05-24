@@ -1,11 +1,15 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
 
 app_name = 'farm_finances'
 
+router = DefaultRouter()
+router.register(r'api_income_list', views.IncomeViewSet)
+
 urlpatterns = [
     # Your other URL patterns
-
+    path('', include(router.urls)),
     path('income-categories/', views.income_categories, name='income_categories'),
     path('expense-categories/', views.expense_categories, name='expense_categories'),
     path('update-income-category/<int:income_category_id>/', views.update_income_category, name='update_income_category'),

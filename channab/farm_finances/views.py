@@ -4,9 +4,12 @@ from django.contrib.auth.decorators import login_required
 from .models import  IncomeCategory, ExpenseCategory
 from accounts.models import Farm
 from .forms import IncomeCategoryForm, ExpenseCategoryForm
-from datetime import date
+from datetime import date, datetime, timedelta
 from django.db.models import F
-
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from .serializers import IncomeSerializer
 
 # Other imports and views
 
@@ -387,3 +390,64 @@ from django import forms
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
+
+# Mobile API
+
+from django.db.models import Sum, F
+from django.utils import timezone
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import viewsets
+from .serializers import IncomeSerializer
+from .models import Income, IncomeCategory, Farm
+
+class IncomeViewSet(viewsets.ModelViewSet):
+    queryset = Income.objects.all()
+    serializer_class = IncomeSerializer
+
+    @action(detail=False, methods=['get'])
+    def income_list(self, request):
+        user = request.user
+        farm = user.farm
+        sort_by = request.GET.get('sort_by', 'date')
+        sort_order = request.GET.get('sort_order', 'desc')
+        if sort_order == 'asc':
+            incomes = Income.objects.filter(farm=farm).order_by(sort_by)
+        else:
+            incomes = Income.objects.filter(farm=farm).order_by(F(sort_by).desc(nulls_last=True))
+
+        time_filter = request.GET.get('time_filter')
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+
+        if time_filter == 'last_7_days':
+            start_date = timezone.now() - timezone.timedelta(days=7)
+            end_date = timezone.now()
+        elif time_filter == 'one_month':
+            start_date = timezone.now() - timezone.timedelta(days=30)
+            end_date = timezone.now()
+        elif time_filter == 'three_months':
+            start_date = timezone.now() - timezone.timedelta(days=90)
+            end_date = timezone.now()
+        elif time_filter == 'one_year':
+            start_date = timezone.now() - timezone.timedelta(days=365)
+            end_date = timezone.now()
+
+        if start_date and end_date:
+            incomes = incomes.filter(date__range=(start_date, end_date))
+
+        income_categories = IncomeCategory.objects.filter(farm=farm)
+
+        summary = []
+        for category in income_categories:
+            total_amount = incomes.filter(category=category).aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+            summary.append({
+                "category": category.name,
+                "total_amount": total_amount,
+            })
+
+        serializer = IncomeSerializer(incomes, many=True)
+        return Response({
+            'income_list': serializer.data,
+            'summary': summary
+        })
