@@ -59,4 +59,14 @@ Animal cannot be added as father/mother/child to himslef
 Ifa a relation adeed in an animal automaticley relation should be created in family tree to other  related animal 
 
 
+give me the BeautiFull UI for animalDeatil page flutter
 
+Columnt(
+1st Row(Animal Image on left side 200*200 
+animal imagelibrary down to the imageSize 50*50 upto 4 image
+Next column(1st Row animal title, 2nd row animal Age, 3rd Animal Sex, 4th Row, animal Purchase cost, 5th row Animal Category))
+
+2nd Row(Tabs with folowing options(Detail, Health, Breeding, Weight, Family, Milk,)
+if we click in any tab it should show the the related tab content on click by default Detail is Active)
+
+)
