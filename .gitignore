@@ -1,3 +1,5 @@
 venv
 channab/manage.py
 channab/channab/settings/prod.py
+channab/channab/settings/prod.py
+prod.py
