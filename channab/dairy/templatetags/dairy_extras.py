@@ -11,9 +11,9 @@ def animal_age(dob):
     days = (today - dob.replace(year=today.year)).days
 
     if age > 0:
-        return f"{age} Year{'s' if age > 1 else ''} {months} Month{'s' if months > 1 else ''} {days} Day{'s' if days > 1 else ''}"
+        return f"{age}Y {months}M  {days}D"
     elif months > 0:
-        return f"{months} Month{'s' if months > 1 else ''} {days} Day{'s' if days > 1 else ''}"
+        return f"{months}M {days}D"
     else:
         return f"{days} Day{'s' if days > 1 else ''}"
     

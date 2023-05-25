@@ -27,6 +27,137 @@
   }
 }
 
+.animal-list-header {
+  width: 100%;
+  max-width: 880px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: white;
+  padding: 0 10px;
+}
+
+.animal-list-header h2 {
+  margin: 0;
+  color: #0da487;
+}
+
+.animal-list-header a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.add-animal-button {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.add-animal-button div {
+  width: auto;
+  height: 30px;
+  border: 1px solid #0da487;
+  border-radius: 3px;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+}
+
+.add-animal-button span {
+  color: #0da487;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filter-select {
+  background-color: white;
+  color: #0da487;
+  border: 1px solid #0da487;
+  height: 30px;
+}
+.filter-icon {
+  color: #0da487;
+  margin-right: 5px;
+}
+
+.animal-card {
+  width: 100%;
+  max-width: 880px;
+  height: 150px;
+  display: flex;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: white;
+}
+
+.animal-card a.image-link {
+  width: 150px;
+  height: 150px;
+  display: block;
+}
+
+.animal-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.animal-card-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.animal-card-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.animal-card-header a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.animal-card-header h4 {
+  margin: 0;
+}
+
+.animal-card-actions {
+  display: flex;
+}
+
+.animal-card-actions a {
+  margin-right: 5px;
+}
+
+.animal-card-details {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-left: 15px;
+}
+
+.animal-card-details span {
+  display: inline-block;
+  width: 30%;
+  height: 30px;
+  border: 1px solid #33a137;
+  color: #33a137;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 6px;
+}
+
 .fa {
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
