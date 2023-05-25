@@ -1,32 +1,29 @@
-{% load dairy_extras %}
-<div class="row">
-  {% for animal in page_obj %}
-  <div style="width: 100%; max-width: 880px; height: 150px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
-    <a href="#" style="width: 150px; height: 150px; display: block">
-      {% if animal.image %}
-      <img src="{{ animal.image.url }}" alt="Animal" style="width: 100%; height: 100%; object-fit: cover" />
-      {% else %}
-      <!-- fallback image or other content goes here -->
-      {% endif %}
-    </a>
-    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
-      <div style="display: flex; justify-content: space-between">
-        <a href="#" style="color: inherit; text-decoration: none">
-          <h4 style="margin: 0 0 10px 0">{{ animal.tag }}</h4>
-        </a>
-        <div>
-          <a href="#"><img src="https://via.placeholder.com/16" alt="Edit" /></a>
-          <a href="#"><img src="https://via.placeholder.com/16" alt="Delete" /></a>
-        </div>
-      </div>
-      <p style="margin: 0">Price: {{ animal.purchase_cost }}</p>
-      <p style="margin: 0">Age: {{ animal.age }}</p>
-      <div style="display: flex; justify-content: space-between; margin-top: 10px; margin-left: 15px">
-        <span style="display: inline-block; width: 30%; height: 30px; border: 1px solid #33a137; color: #33a137; line-height: 30px; text-align: center; border-radius: 6px">{{ animal.sex }}</span>
-        <span style="display: inline-block; width: 30%; height: 30px; border: 1px solid #33a137; color: #33a137; line-height: 30px; text-align: center; border-radius: 6px">{{ animal.status }}</span>
-        <span style="display: inline-block; width: 30%; height: 30px; border: 1px solid #33a137; color: #33a137; line-height: 30px; text-align: center; border-radius: 6px">{{ animal.animal_type }}</span>
+{% load dairy_extras %} {% for animal in page_obj %}
+<div style="width: 100%; max-width: 880px; height: 150px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+  <a href="{% url 'dairy:animal_detail' animal.pk %}" style="width: 150px; height: 150px; display: block">
+    {% if animal.image %}
+    <img src="{{ animal.image.url }}" alt="Animal" style="width: 100%; height: 100%; object-fit: cover" />
+    {% else %}
+    <!-- fallback image or other content goes here -->
+    {% endif %}
+  </a>
+  <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <a href="{% url 'dairy:animal_detail' animal.pk %}" style="color: inherit; text-decoration: none">
+        <h4 style="margin: 0">{{ animal.tag }}</h4>
+      </a>
+      <div>
+        <a href="#"><img src="https://via.placeholder.com/16" alt="Edit" /></a>
+        <a href="#"><img src="https://via.placeholder.com/16" alt="Delete" /></a>
       </div>
     </div>
+    <p style="margin: 0">Price: {{ animal.purchase_cost }}</p>
+    <p style="margin: 0">Age: {{ animal.dob|animal_age }}</p>
+    <div style="display: flex; justify-content: space-between; margin-top: 10px; margin-left: 15px">
+      <span style="display: inline-block; width: 30%; height: 25px; border: 1px solid #33a137; color: #33a137; line-height: 25px; text-align: center; border-radius: 6px">{{ animal.sex|capfirst }}</span>
+      <span style="display: inline-block; width: 30%; height: 25px; border: 1px solid #33a137; color: #33a137; line-height: 25px; text-align: center; border-radius: 6px">{{ animal.status|capfirst }}</span>
+      <span style="display: inline-block; width: 30%; height: 25px; border: 1px solid #33a137; color: #33a137; line-height: 25px; text-align: center; border-radius: 6px">{{ animal.animal_type|capfirst}}</span>
+    </div>
   </div>
-  {% endfor %}
 </div>
+{% endfor %}

@@ -75,6 +75,8 @@ export AWS_SECRET_ACCESS_KEY = 'NKdvEEV82if/QWvLgIxAESnnrAIhysdYfTXa1aZ4'
 export AWS_STORAGE_BUCKET_NAME = 'channabdairy'
 export AWS_S3_REGION_NAME = 'us-east-1'
 
+nano ~/.bashrc
+
 
 git pull origin mobile-app
 ~/channab/channab4/channab$ git pull origin mobile-app
