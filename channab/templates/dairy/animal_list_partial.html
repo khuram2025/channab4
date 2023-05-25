@@ -1,30 +1,30 @@
 {% load dairy_extras %}
 <div class="row">
   {% for animal in page_obj %}
-  <div class="col-lg-6">
-    <div class="media mb-4 align-items-center">
+  <div style="width: 100%; max-width: 880px; height: 150px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+    <a href="#" style="width: 150px; height: 150px; display: block">
       {% if animal.image %}
-      <img class="rounded mr-3 food-img" src="{{ animal.image.url }}" alt="{{ animal.tag }}" style="width: 130px; height: 100px; border-radius: 20px" />
+      <img src="{{ animal.image.url }}" alt="Animal" style="width: 100%; height: 100%; object-fit: cover" />
       {% else %}
       <!-- fallback image or other content goes here -->
       {% endif %}
-
-      <div class="media-body">
-        <h5 class="mb-sm-4 mb-3"><a class="text-black" href="{% url 'dairy:animal_detail' animal.pk %}">{{ animal.tag }}--{{ animal.get_sex_display }}</a></h5>
-        <div class="d-flex mb-2">
-          <svg class="mr-2" width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0.500488" width="2.04545" height="15" rx="1.02273" fill="#EA7A9A"></rect>
-            <rect x="4.59131" y="4.09082" width="2.04545" height="10.9091" rx="1.02273" fill="#EA7A9A"></rect>
-            <rect x="8.68213" y="10.2271" width="2.04545" height="4.77273" rx="1.02273" fill="#EA7A9A"></rect>
-            <rect x="12.7729" y="2.04541" width="2.04545" height="12.9545" rx="1.02273" fill="#EA7A9A"></rect>
-          </svg>
-          <span class="fs-14 text-black"><strong class="mr-1">{{ animal.dob|animal_age }}</strong></span>
+    </a>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
+      <div style="display: flex; justify-content: space-between">
+        <a href="#" style="color: inherit; text-decoration: none">
+          <h4 style="margin: 0 0 10px 0">{{ animal.tag }}</h4>
+        </a>
+        <div>
+          <a href="#"><img src="https://via.placeholder.com/16" alt="Edit" /></a>
+          <a href="#"><img src="https://via.placeholder.com/16" alt="Delete" /></a>
         </div>
-        <div class="star-review2 d-flex align-items-center flex-wrap fs-12">
-          <div class="info-div category-title-div">{{ animal.category.title }}</div>
-
-          <div class="info-div animal-type-display-div">{{ animal.get_animal_type_display }}</div>
-        </div>
+      </div>
+      <p style="margin: 0">Price: {{ animal.purchase_cost }}</p>
+      <p style="margin: 0">Age: {{ animal.age }}</p>
+      <div style="display: flex; justify-content: space-between; margin-top: 10px; margin-left: 15px">
+        <span style="display: inline-block; width: 30%; height: 30px; border: 1px solid #33a137; color: #33a137; line-height: 30px; text-align: center; border-radius: 6px">{{ animal.sex }}</span>
+        <span style="display: inline-block; width: 30%; height: 30px; border: 1px solid #33a137; color: #33a137; line-height: 30px; text-align: center; border-radius: 6px">{{ animal.status }}</span>
+        <span style="display: inline-block; width: 30%; height: 30px; border: 1px solid #33a137; color: #33a137; line-height: 30px; text-align: center; border-radius: 6px">{{ animal.animal_type }}</span>
       </div>
     </div>
   </div>

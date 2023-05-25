@@ -170,71 +170,50 @@
           </div>
 
           <!-- Best Selling Product Start -->
-          <div class="col-xl-6 col-md-12">
-            <div class="card o-hidden card-hover">
-              <div class="card-header card-header-top card-header--2 px-0 pt-0">
-                <div class="card-header-title">
-                  <h4>Animals</h4>
-                </div>
-                <div class="best-selling-box d-sm-flex d-none">
-                  <span>Sort By:</span>
-                  <div class="dropdown">
-                    <button class="btn p-0 dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" data-bs-auto-close="true">Sex</button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                      <li><a class="dropdown-item" href="?sex=male">Male</a></li>
-                      <li><a class="dropdown-item" href="?sex=female">Female</a></li>
-                    </ul>
-                  </div>
+
+          <!-- Best Selling Product End -->
+          <div style="width: 100%; max-width: 880px; height: 50px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white; padding: 0 10px">
+            <h2 style="margin: 0; color: #0da487">Animal List</h2>
+            <div style="display: flex; align-items: center">
+              <i class="fas fa-filter" style="color: #0da487; margin-right: 5px"></i>
+              <select id="filter" style="background-color: white; color: #0da487; border: 1px solid #0da487; height: 30px">
+                <option value="7days" style="background-color: white; color: #0da487">Last 7 days</option>
+                <option value="1month" style="background-color: white; color: #0da487">One Month</option>
+                <option value="1year" style="background-color: white; color: #0da487">1 Year</option>
+              </select>
+            </div>
+          </div>
+
+          {% for animal in animals %}
+          <div style="width: 100%; max-width: 880px; height: 150px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+            <a href="#" style="width: 150px; height: 150px; display: block">
+              {% if animal.image %}
+              <img src="{{ animal.image.url }}" alt="Animal" style="width: 100%; height: 100%; object-fit: cover" />
+              {% else %}
+              <!-- fallback image or other content goes here -->
+              {% endif %}
+            </a>
+            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
+              <div style="display: flex; justify-content: space-between">
+                <a href="#" style="color: inherit; text-decoration: none">
+                  <h4 style="margin: 0 0 10px 0">{{ animal.tag }}</h4>
+                </a>
+                <div>
+                  <a href="#"><img src="https://via.placeholder.com/16" alt="Edit" /></a>
+                  <a href="#"><img src="https://via.placeholder.com/16" alt="Delete" /></a>
                 </div>
               </div>
-              <div class="card-body p-0">
-                <div>
-                  <div class="table-responsive">
-                    <table class="best-selling-table w-image w-image w-image table border-0">
-                      <tbody>
-                        {% for animal in animals %}
-                        <tr>
-                          <td>
-                            <div class="best-product-box">
-                              <div class="" style="all: unset">
-                                <img src="{{ animal.image.url }}" class="img-fluid custom-image-style" alt="Animal" />
-                              </div>
-
-                              <div class="product-name">
-                                <h5>{{ animal.tag }}</h5>
-                                <h6>{{ animal.dob }}</h6>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="product-detail-box">
-                              <h6>Price</h6>
-                              <h5>{{ animal.purchase_cost }}</h5>
-                            </div>
-                          </td>
-
-                          <td>
-                            <div class="product-detail-box">
-                              <h6>Age</h6>
-                              <h5>{{ animal.age }}</h5>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="product-detail-box">
-                              <h6>Sex</h6>
-                              <h5>{{ animal.sex }}</h5>
-                            </div>
-                          </td>
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+              <p style="margin: 0">Price: {{ animal.purchase_cost }}</p>
+              <p style="margin: 0">Age: {{ animal.age }}</p>
+              <div style="display: flex; justify-content: space-between; margin-top: 10px; margin-left: 15px">
+                <span style="display: inline-block; width: 30%; height: 30px; border: 1px solid #33a137; color: #33a137; line-height: 30px; text-align: center; border-radius: 6px">{{ animal.sex }}</span>
+                <span style="display: inline-block; width: 30%; height: 30px; border: 1px solid #33a137; color: #33a137; line-height: 30px; text-align: center; border-radius: 6px">{{ animal.status }}</span>
+                <span style="display: inline-block; width: 30%; height: 30px; border: 1px solid #33a137; color: #33a137; line-height: 30px; text-align: center; border-radius: 6px">{{ animal.animal_type }}</span>
               </div>
             </div>
           </div>
-          <!-- Best Selling Product End -->
+
+          {% endfor %}
         </div>
       </div>
       <!-- Container-fluid Ends-->

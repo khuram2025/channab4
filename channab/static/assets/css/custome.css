@@ -1,5 +1,32 @@
 /*! CSS Used from: https://sego.dexignzone.com/xhtml/css/style.css */
 /*! @import https://sego.dexignzone.com/xhtml/icons/font-awesome-old/css/font-awesome.min.css */
+
+@media only screen and (max-width: 600px) {
+  .animal-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .animal-image img {
+    width: 150px !important;
+    height: 150px !important;
+    object-fit: cover !important;
+  }
+
+  .animal-details {
+    width: 100% !important;
+  }
+
+  .product-detail-box {
+    display: flex !important;
+    justify-content: space-between !important;
+    border: 1px solid green !important;
+    padding: 10px !important;
+    margin: 10px 0 !important;
+  }
+}
+
 .fa {
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
