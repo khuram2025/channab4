@@ -84,6 +84,9 @@ nano ~/.bashrc
 git pull origin mobile-app
 ~/channab/channab4/channab$ git pull origin mobile-app
 
+~/channab/channab4/channab$ git pull origin Web
+
+
 
 
 
