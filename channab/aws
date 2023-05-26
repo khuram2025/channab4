@@ -18,9 +18,12 @@ cd ~/channab
 
 python3 -m virtualenv channabenv
 
-source channabenv/bin/activate
-
+source channab/channabenv/bin/activate
+cd  ~/channab/channab4/channab/
 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
+
+
+sudo nano /etc/nginx/sites-available/channab
 
 
 gunicorn channab.wsgi:application --bind 127.0.0.1:8000 --env DJANGO_SETTINGS_MODULE=channab.settings.prod
@@ -80,3 +83,9 @@ nano ~/.bashrc
 
 git pull origin mobile-app
 ~/channab/channab4/channab$ git pull origin mobile-app
+
+
+
+
+/dev/sda1
+vol-0e396776b2f3f929e
