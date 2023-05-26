@@ -1,43 +1,47 @@
-{% extends "home/base.html" %} {% block content %}
+{% extends "home/base.html" %}
 {% load static %}
 {% load widget_tweaks %}
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Add any extra CSS or JavaScript imports here -->
+{% block content %}
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var editAnimalModal = new bootstrap.Modal(document.getElementById('editAnimal'), {});
+
+            // Add event listener to the close button
+            var closeButton = document.querySelector('#closeButton');
+            closeButton.addEventListener('click', function () {
+                editAnimalModal.hide();
+
+                // Redirect to the animal list page
+                window.location.href = "{% url 'dairy:animal_list' %}";
+            });
+
             editAnimalModal.show();
         });
     </script>
-    <script>
-$(document).ready(function() {
-    $("#{{ form.dob.auto_id }}").datepicker({
-        dateFormat: 'yy-mm-dd',
-        changeMonth: true,
-        changeYear: true,
-        yearRange: "1900:2100"
-    });
-});
-</script>
 
-  </head>
-  <body>
-    {% include 'home/mobile_menu.html' %}
+    <script>
+        $(document).ready(function() {
+            $("#{{ form.dob.auto_id }}").datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "1900:2100"
+            });
+        });
+    </script>
+
     <div class="modal fade theme-modal" id="editAnimal" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel2">{% if edit_mode %}Edit{% else %}Add{% endif %} Animal</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                    
                 </div>
                 <div class="modal-body">
                     <form method="post" enctype="multipart/form-data" action="{% if edit_mode %}{% url 'dairy:animal_edit' animal.pk %}{% else %}{% url 'dairy:animal_create' %}{% endif %}">
@@ -103,7 +107,7 @@ $(document).ready(function() {
                         </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal" id="closeButton">Close</button>
                     <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
                 </div>
             </form>
@@ -111,9 +115,4 @@ $(document).ready(function() {
         </div>
     </div>
 
-<!-- Edit Animal End -->
-</body>
-</html>
- {% endblock %}
-
-                   
+{% endblock %}

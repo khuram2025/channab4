@@ -13,8 +13,8 @@
         <h4 style="margin: 0">{{ animal.tag }}</h4>
       </a>
       <div>
-        <a href="#"><img src="https://via.placeholder.com/16" alt="Edit" /></a>
-        <a href="#"><img src="https://via.placeholder.com/16" alt="Delete" /></a>
+        <a href="{% url 'dairy:animal_edit' animal.pk %}"><i class="ri-pencil-line"></i></a>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#deleteAnimalModal{{ animal.pk }}"><i class="ri-delete-bin-line"></i></a>
       </div>
     </div>
     <p style="margin: 0">Price: {{ animal.purchase_cost }}</p>
@@ -26,4 +26,47 @@
     </div>
   </div>
 </div>
+
+<!-- Delete Animal Modal -->
+<div class="modal fade" id="deleteAnimalModal{{ animal.pk }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteAnimalModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="deleteAnimalModalLabel">Delete Animal</h5>
+        <p>Are you sure you want to delete this animal?</p>
+        <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+          <button id="confirm-delete-animal-button{{ animal.pk }}" class="btn btn--yes btn-primary">Yes, delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endfor %}
+
+<script>
+  $(document).ready(function () {
+      {% for animal in page_obj %}
+      $("#confirm-delete-animal-button{{ animal.pk }}").click(function () {
+          $.ajax({
+              url: "{% url 'dairy:delete_animal' animal.pk %}",
+              method: "POST",
+              beforeSend: function (xhr) {
+                  xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+              },
+              success: function (response) {
+                  // Handle success response (e.g., remove the deleted animal from the page)
+                  $("#deleteAnimalModal{{ animal.pk }}").modal("hide");
+                  // Reload the animal list page
+                  window.location.href = "{% url 'dairy:animal_list' %}";
+              },
+              error: function (xhr) {
+                  // Handle error response (if needed)
+                  console.log(xhr.responseText);
+              }
+          });
+      });
+      {% endfor %}
+  });
+</script>
