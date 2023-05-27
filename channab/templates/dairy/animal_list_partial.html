@@ -46,20 +46,39 @@
 {% endfor %}
 
 <script>
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+
   $(document).ready(function () {
+      var csrftoken = getCookie('csrftoken');  // Fetch CSRF token using the function defined above
       {% for animal in page_obj %}
       $("#confirm-delete-animal-button{{ animal.pk }}").click(function () {
+        console.log('Button clicked');
           $.ajax({
               url: "{% url 'dairy:delete_animal' animal.pk %}",
               method: "POST",
               beforeSend: function (xhr) {
-                  xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                  xhr.setRequestHeader("X-CSRFToken", csrftoken);
               },
               success: function (response) {
-                  // Handle success response (e.g., remove the deleted animal from the page)
-                  $("#deleteAnimalModal{{ animal.pk }}").modal("hide");
-                  // Reload the animal list page
-                  window.location.href = "{% url 'dairy:animal_list' %}";
+                  if(response.success) {
+                      // Handle success response (e.g., remove the deleted animal from the page)
+                      $("#deleteAnimalModal{{ animal.pk }}").modal("hide");
+                      // Reload the animal list page
+                      window.location.href = "{% url 'dairy:animal_list' %}";
+                  }
               },
               error: function (xhr) {
                   // Handle error response (if needed)

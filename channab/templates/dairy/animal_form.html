@@ -11,25 +11,37 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="{% static 'js/jquery.Jcrop.min.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/jquery.Jcrop.min.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/compressorjs@1.1.0/dist/compressor.min.js"></script>
+
 
 <script>
     $(document).ready(function () {
         $('#id_image').change(function () {
             var file = this.files[0];
             new Compressor(file, {
-                quality: 0.6, // Set the desired image quality (0.6 means 60% quality)
-                maxWidth: 800, // Set the maximum width of the compressed image
-                maxHeight: 800, // Set the maximum height of the compressed image
+                quality: 0.6,
+                maxWidth: 800,
+                maxHeight: 800,
                 success: function (compressedFile) {
                     var reader = new FileReader();
                     reader.onload = function (e) {
                         $('#animal-image').attr('src', e.target.result);
                         $('#animal-image').removeClass('d-none');
+
+                        var jcrop_api;
+
                         $('#animal-image').Jcrop({
-                            setSelect: [100, 100, 400, 400], // Set initial crop selection
-                            aspectRatio: 1, // Set aspect ratio for square cropping
-                            minSize: [100, 100], // Set minimum crop size
-                            maxSize: [500, 500], // Set maximum crop size
+                            setSelect: [100, 100, 400, 400],
+                            aspectRatio: 1,
+                            minSize: [100, 100],
+                            maxSize: [500, 500],
+                            onSelect: function (c) {
+                                jcrop_api = this;
+                                // add hidden fields to the form with the selected area
+                                $('#id_image_crop').val(c.x + ',' + c.y + ',' + c.x2 + ',' + c.y2);
+                            },
+                        }, function () {
+                            jcrop_api = this;
                         });
                     };
                     reader.readAsDataURL(compressedFile);
@@ -39,6 +51,7 @@
                 },
             });
         });
+
 
         flatpickr("#id_dob", {
             dateFormat: 'Y-m-d',
@@ -78,6 +91,8 @@
                             <div id="image-preview" class="mb-3">
                                 {% if edit_mode and animal.image %}
                                 <img src="{{ animal.image.url }}" alt="Animal Image" id="animal-image" class="img-fluid">
+                                <input type="hidden" id="id_image_crop" name="image_crop">
+
                                 {% else %}
                                 <img src="#" alt="Animal Image" id="animal-image" class="img-fluid d-none">
                                 {% endif %}

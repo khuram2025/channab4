@@ -146,9 +146,17 @@ def animal_detail(request, pk):
 
 @login_required
 def delete_animal(request, pk):
-    animal = get_object_or_404(Animal, pk=pk, farm=request.user.farm)
-    animal.delete()
-    return redirect('dairy:animal_list')
+    if request.is_ajax() and request.method == "POST":
+        animal = get_object_or_404(Animal, pk=pk, farm=request.user.farm)
+        animal.delete()
+        print(request.is_ajax())
+        print(request.method)
+        print(animal)
+
+        return JsonResponse({"success": True})  # Sending an success response
+    else:
+        return JsonResponse({"success": False})  # Sending an error response
+
 
 def milk_create_for_animal(request, animal_pk):
     animal = get_object_or_404(Animal, pk=animal_pk)
