@@ -27,6 +27,69 @@
   }
 }
 
+@import url("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap");
+body {
+  height: 100%;
+  margin: 0;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+button:focus,
+input:focus {
+  outline: none;
+  box-shadow: none;
+}
+a,
+a:hover {
+  text-decoration: none;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #e0e3e8;
+}
+
+/*------------*/
+.form-area {
+  background-color: #fff;
+  box-shadow: 0px 5px 10px rgba(90, 116, 148, 0.3);
+  padding: 40px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.form-area .form-inner {
+  width: 100%;
+}
+.form-control {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding: 15px 19px;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #475f7b;
+  background-color: #fff;
+  border: 1px solid #dfe3e7;
+  border-radius: 0.267rem;
+  -webkit-transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.form-control:focus {
+  color: #475f7b;
+  background-color: #fff;
+  border-color: #5a8dee;
+  outline: 0;
+  box-shadow: 0 3px 8px 0 rgb(0 0 0 / 10%);
+}
+.intl-tel-input,
+.iti {
+  width: 100%;
+}
 .animal-list-header {
   width: 100%;
   max-width: 880px;

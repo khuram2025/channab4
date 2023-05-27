@@ -3,8 +3,13 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .models import CustomUser, SalaryTransaction
 from django.contrib.auth.models import User
 
+from phonenumber_field.formfields import PhoneNumberField
+from phonenumber_field.phonenumber import PhoneNumber
+from django import forms
+
 class MobileAuthenticationForm(AuthenticationForm):
-    mobile = forms.CharField(
+    country_code = forms.CharField(initial='+92', required=False)
+    mobile = PhoneNumberField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'name': 'mobile'}),
         label='Mobile',
     )
@@ -12,6 +17,8 @@ class MobileAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(MobileAuthenticationForm, self).__init__(*args, **kwargs)
         self.fields['username'] = self.fields.pop('mobile')
+
+
 
 
 from .models import CustomUser
