@@ -4,115 +4,134 @@
 
 {% block content %}
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="{% static 'js/jquery.Jcrop.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/jquery.Jcrop.min.css' %}">
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var editAnimalModal = new bootstrap.Modal(document.getElementById('editAnimal'), {});
-
-            // Add event listener to the close button
-            var closeButton = document.querySelector('#closeButton');
-            closeButton.addEventListener('click', function () {
-                editAnimalModal.hide();
-
-                // Redirect to the animal list page
-                window.location.href = "{% url 'dairy:animal_list' %}";
-            });
-
-            editAnimalModal.show();
+<script>
+    $(document).ready(function () {
+        $('#id_image').change(function () {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#animal-image').attr('src', e.target.result);
+                $('#animal-image').removeClass('d-none');
+                $('#animal-image').Jcrop({
+                    setSelect: [100, 100, 400, 400], // Set initial crop selection
+                    aspectRatio: 1, // Set aspect ratio for square cropping
+                    minSize: [100, 100], // Set minimum crop size
+                    maxSize: [500, 500], // Set maximum crop size
+                });
+            };
+            reader.readAsDataURL(this.files[0]);
         });
-    </script>
+    });
+</script>
 
-    <script>
-        $(document).ready(function() {
-            $("#{{ form.dob.auto_id }}").datepicker({
-                dateFormat: 'yy-mm-dd',
-                changeMonth: true,
-                changeYear: true,
-                yearRange: "1900:2100"
-            });
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var editAnimalModal = new bootstrap.Modal(document.getElementById('editAnimal'), {});
+
+        // Add event listener to the close button
+        var closeButton = document.querySelector('#closeButton');
+        closeButton.addEventListener('click', function () {
+            editAnimalModal.hide();
+
+            // Redirect to the animal list page
+            window.location.href = "{% url 'dairy:animal_list' %}";
         });
-    </script>
 
-    <div class="modal fade theme-modal" id="editAnimal" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel2">{% if edit_mode %}Edit{% else %}Add{% endif %} Animal</h5>
-                    
-                </div>
-                <div class="modal-body">
-                    <form method="post" enctype="multipart/form-data" action="{% if edit_mode %}{% url 'dairy:animal_edit' animal.pk %}{% else %}{% url 'dairy:animal_create' %}{% endif %}">
-                        {% csrf_token %}
-                        <div class="row g-4">
-                            <div class="col-xxl-12">
-                                <div id="image-preview" class="mb-3">
-                                    {% if edit_mode and animal.image %}
-                                        <img src="{{ animal.image.url }}" alt="Animal Image" id="animal-image" class="img-fluid">
-                                    {% else %}
-                                        <img src="#" alt="Animal Image" id="animal-image" class="img-fluid d-none">
-                                    {% endif %}
-                                </div>
-                                <div class="form-floating theme-form-floating">
-                                    {{ form.image|add_class:"form-control" }}
-                                    <label for="{{ form.image.auto_id }}">Animal Image</label>
-                                </div>
-                            </div>
+        editAnimalModal.show();
+    });
+</script>
 
-                            <div class="col-xxl-6">
-                                <div class="form-floating theme-form-floating">
-                                    {{ form.tag|add_class:"form-control" }}
-                                    <label for="{{ form.tag.auto_id }}">TAG#</label>
-                                </div>
-                            </div>
-                            <div class="col-xxl-6">
-                                <div class="form-floating theme-form-floating">
-                                    {{ form.category|add_class:"form-control" }}
-                                    <label for="{{ form.category.auto_id }}">Category</label>
-                                </div>
-                            </div>
-                            <div class="col-xxl-6">
-                                <div class="form-floating theme-form-floating">
-                                    {{ form.sex|add_class:"form-control" }}
-                                    <label for="{{ form.sex.auto_id }}">Sex</label>
-                                </div>
-                            </div>
-                            <div class="col-xxl-6">
-                                <div class="form-floating theme-form-floating">
-                                    {{ form.purchase_cost|add_class:"form-control" }}
-                                    <label for="{{ form.purchase_cost.auto_id }}">Price</label>
-                                </div>
-                            </div>
-                            <div class="col-xxl-6">
-                                <div class="form-floating theme-form-floating">
-                                    {{ form.dob|add_class:"form-control" }}
-                                    <label for="{{ form.dob.auto_id }}">Date of Birth</label>
-                                </div>
-                            </div>
+<script>
+    flatpickr("#id_dob", {
+        dateFormat: 'Y-m-d',
+        // Add any other options you want to customize the date picker
+    });
+</script>
 
-                            <div class="col-xxl-6">
-                                <div class="form-floating theme-form-floating">
-                                    {{ form.status|add_class:"form-control" }}
-                                    <label for="{{ form.status.auto_id }}">Status</label>
-                                </div>
+<div class="modal fade theme-modal" id="editAnimal" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">{% if edit_mode %}Edit{% else %}Add{% endif %} Animal</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="{% if edit_mode %}{% url 'dairy:animal_edit' animal.pk %}{% else %}{% url 'dairy:animal_create' %}{% endif %}">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div id="image-preview" class="mb-3">
+                                {% if edit_mode and animal.image %}
+                                <img src="{{ animal.image.url }}" alt="Animal Image" id="animal-image" class="img-fluid">
+                                {% else %}
+                                <img src="#" alt="Animal Image" id="animal-image" class="img-fluid d-none">
+                                {% endif %}
                             </div>
-                            <div class="col-xxl-6">
-                                <div class="form-floating theme-form-floating">
-                                    {{ form.animal_type|add_class:"form-control" }}
-                                    <label for="{{ form.animal_type.auto_id }}">Type</label>
-                                </div>
+                            <div class="form-floating theme-form-floating">
+                                {{ form.image|add_class:"form-control" }}
+                                <label for="{{ form.image.auto_id }}">Animal Image</label>
+                            </div>
+                            {{ form.image_crop.as_hidden }}
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.tag|add_class:"form-control" }}
+                                <label for="{{ form.tag.auto_id }}">TAG#</label>
                             </div>
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal" id="closeButton">Close</button>
-                    <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
-                </div>
-            </form>
+                        <div class="col-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.category|add_class:"form-control" }}
+                                <label for="{{ form.category.auto_id }}">Category</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.sex|add_class:"form-control" }}
+                                <label for="{{ form.sex.auto_id }}">Sex</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.purchase_cost|add_class:"form-control" }}
+                                <label for="{{ form.purchase_cost.auto_id }}">Price</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.dob|add_class:"form-control" }}
+                                <label for="{{ form.dob.auto_id }}">Date of Birth</label>
+                            </div>
+                        </div>
+                        {% if edit_mode %}
+                        <div class="col-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.status|add_class:"form-control" }}
+                                <label for="{{ form.status.auto_id }}">Status</label>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="col-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.animal_type|add_class:"form-control" }}
+                                <label for="{{ form.animal_type.auto_id }}">Type</label>
+                            </div>
+                        </div>
+                    </div>
             </div>
+            <div class="modal-footer" style="margin-top: -15px;">
+                <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal" id="closeButton">Close</button>
+            </div>
+            </form>
         </div>
     </div>
+</div>
 
 {% endblock %}

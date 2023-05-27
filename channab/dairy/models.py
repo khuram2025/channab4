@@ -3,14 +3,18 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
 from accounts.models import Farm
-from PIL import Image
+from PIL import Image, ExifTags
 from io import BytesIO
 from django.core.files import File
+from image_cropping import ImageRatioField
+from django.core.files.uploadedfile import SimpleUploadedFile
+import io 
 
 class AnimalCategory(models.Model):
     title = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True)
     image = models.ImageField(upload_to='animal_categories/', blank=True, null=True)
+    image_crop = ImageRatioField('image', '500x500')
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='animal_categories')
 
     def save(self, *args, **kwargs):
@@ -49,36 +53,63 @@ class Animal(models.Model):
         ('other', 'Other'),
     ]
     animal_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='other')
-
+    image_crop = ImageRatioField('image', '500x500')
     def save(self, *args, **kwargs):
-        if self.image:
-            # Open the uploaded image
-            img = Image.open(self.image)
-            
-            # Check if image has an alpha channel then convert it to RGB
-            if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
-                img = img.convert('RGB')
+            if self.image:
+                # Open the original image
+                image = Image.open(self.image)
 
-            # Compress the image (resize it to the size you want)
-            output_size = (500, 500)
-            img.thumbnail(output_size)
-            output = BytesIO()
-            img.save(output, format='JPEG', quality=75)
-            output.seek(0)
+                # Rotate the image if necessary based on the EXIF orientation
+                image = self._rotate_image(image)
 
-            # Change the imagefield value to be the newley modifed image value
-            self.image = File(output, name=self.image.name)
-        super().save(*args, **kwargs)
+                # Resize the image while maintaining the aspect ratio
+                max_size = (800, 800)
+                image.thumbnail(max_size)
 
+                # Create a BytesIO object to hold the compressed image data
+                image_io = io.BytesIO()
+
+                # Save the image to the BytesIO object with JPEG format and quality of 70
+                image.save(image_io, format='JPEG', quality=70)
+
+                # Calculate the size of the compressed image
+                image_size = image_io.tell()
+
+                # If the image size is larger than 50 KB, further compress it
+                if image_size > 50000:
+                    # Calculate the desired compression ratio
+                    compression_ratio = 50000 / image_size
+
+                    # Create a new BytesIO object to hold the further compressed image data
+                    compressed_image_io = io.BytesIO()
+
+                    # Adjust the quality based on the compression ratio and save the image
+                    image.save(compressed_image_io, format='JPEG', quality=int(compression_ratio * 70))
+
+                    # Set the content of the image field to the further compressed image
+                    self.image = SimpleUploadedFile(self.image.name, compressed_image_io.getvalue())
+
+            super().save(*args, **kwargs)
+
+    def _rotate_image(self, image):
+        if hasattr(image, '_getexif'):
+            exif_data = image._getexif()
+            if exif_data is not None:
+                for tag, value in list(exif_data.items()):
+                    if tag in ExifTags.TAGS:
+                        if ExifTags.TAGS[tag] == 'Orientation':
+                            if value == 3:
+                                image = image.rotate(180, expand=True)
+                            elif value == 6:
+                                image = image.rotate(-90, expand=True)
+                            elif value == 8:
+                                image = image.rotate(90, expand=True)
+                            break
+        return image
     
-
-    
-
-
 
     def __str__(self):
         return f'{self.tag} ({self.category.title})'
-
 from django.db.models import Q
 
 from django.core.exceptions import ValidationError
