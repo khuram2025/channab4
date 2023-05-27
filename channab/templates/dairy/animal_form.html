@@ -15,18 +15,34 @@
 <script>
     $(document).ready(function () {
         $('#id_image').change(function () {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $('#animal-image').attr('src', e.target.result);
-                $('#animal-image').removeClass('d-none');
-                $('#animal-image').Jcrop({
-                    setSelect: [100, 100, 400, 400], // Set initial crop selection
-                    aspectRatio: 1, // Set aspect ratio for square cropping
-                    minSize: [100, 100], // Set minimum crop size
-                    maxSize: [500, 500], // Set maximum crop size
-                });
-            };
-            reader.readAsDataURL(this.files[0]);
+            var file = this.files[0];
+            new Compressor(file, {
+                quality: 0.6, // Set the desired image quality (0.6 means 60% quality)
+                maxWidth: 800, // Set the maximum width of the compressed image
+                maxHeight: 800, // Set the maximum height of the compressed image
+                success: function (compressedFile) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#animal-image').attr('src', e.target.result);
+                        $('#animal-image').removeClass('d-none');
+                        $('#animal-image').Jcrop({
+                            setSelect: [100, 100, 400, 400], // Set initial crop selection
+                            aspectRatio: 1, // Set aspect ratio for square cropping
+                            minSize: [100, 100], // Set minimum crop size
+                            maxSize: [500, 500], // Set maximum crop size
+                        });
+                    };
+                    reader.readAsDataURL(compressedFile);
+                },
+                error: function (error) {
+                    console.log(error.message);
+                },
+            });
+        });
+
+        flatpickr("#id_dob", {
+            dateFormat: 'Y-m-d',
+            // Add any other options you want to customize the date picker
         });
     });
 </script>
@@ -45,13 +61,6 @@
         });
 
         editAnimalModal.show();
-    });
-</script>
-
-<script>
-    flatpickr("#id_dob", {
-        dateFormat: 'Y-m-d',
-        // Add any other options you want to customize the date picker
     });
 </script>
 
@@ -107,24 +116,14 @@
                             <div class="form-floating theme-form-floating">
                                 {{ form.dob|add_class:"form-control" }}
                                 <label for="{{ form.dob.auto_id }}">Date of Birth</label>
-                                <script>
-                                    $(document).ready(function () {
-                                        flatpickr("#{{ form.dob.auto_id }}", {
-                                            dateFormat: 'Y-m-d',
-                                            // Add any other options you want to customize the date picker
-                                        });
-                                    });
-                                </script>
                             </div>
                         </div>
-                   
                         <div class="col-6">
                             <div class="form-floating theme-form-floating">
                                 {{ form.status|add_class:"form-control" }}
                                 <label for="{{ form.status.auto_id }}">Status</label>
                             </div>
                         </div>
-                       
                         <div class="col-6">
                             <div class="form-floating theme-form-floating">
                                 {{ form.animal_type|add_class:"form-control" }}
