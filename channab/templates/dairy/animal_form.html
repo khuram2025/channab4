@@ -107,16 +107,24 @@
                             <div class="form-floating theme-form-floating">
                                 {{ form.dob|add_class:"form-control" }}
                                 <label for="{{ form.dob.auto_id }}">Date of Birth</label>
+                                <script>
+                                    $(document).ready(function () {
+                                        flatpickr("#{{ form.dob.auto_id }}", {
+                                            dateFormat: 'Y-m-d',
+                                            // Add any other options you want to customize the date picker
+                                        });
+                                    });
+                                </script>
                             </div>
                         </div>
-                        {% if edit_mode %}
+                   
                         <div class="col-6">
                             <div class="form-floating theme-form-floating">
                                 {{ form.status|add_class:"form-control" }}
                                 <label for="{{ form.status.auto_id }}">Status</label>
                             </div>
                         </div>
-                        {% endif %}
+                       
                         <div class="col-6">
                             <div class="form-floating theme-form-floating">
                                 {{ form.animal_type|add_class:"form-control" }}
@@ -125,7 +133,7 @@
                         </div>
                     </div>
             </div>
-            <div class="modal-footer" style="margin-top: -15px;">
+            <div class="modal-footer">
                 <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save</button>
                 <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal" id="closeButton">Close</button>
             </div>
