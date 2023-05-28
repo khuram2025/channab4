@@ -61,24 +61,29 @@ from django.core.paginator import Paginator
 def animal_list(request):
     farm = request.user.farm
     animals = Animal.objects.filter(farm=farm)
+    
     animal_types = dict(Animal.TYPE_CHOICES)
     
     animals_by_type = {}
+    counts_by_type = {}  # New dictionary to store counts
     paginators_by_type = {}
     page_objs_by_type = {}
-    
+
     # Add paginator and page object for 'all' animals
     paginator_all = Paginator(animals, 14)
     page_number_all = request.GET.get('all_page')
     page_objs_by_type['all'] = paginator_all.get_page(page_number_all)
     
     for animal_type in animal_types:
-        animals_by_type[animal_type] = animals.filter(animal_type=animal_type)
+        animals_of_type = animals.filter(animal_type=animal_type)
+        animals_by_type[animal_type] = animals_of_type
+        counts_by_type[animal_type] = animals_of_type.count()  # Store count in dictionary
         paginators_by_type[animal_type] = Paginator(animals_by_type[animal_type], 14)
         page_number = request.GET.get(f'{animal_type}_page')
         page_objs_by_type[animal_type] = paginators_by_type[animal_type].get_page(page_number)
 
-    return render(request, 'dairy/animal_list.html', {'animals': animals, 'animals_by_type': animals_by_type, 'page_objs_by_type': page_objs_by_type})
+    return render(request, 'dairy/animal_list.html', {'animals': animals, 'animals_by_type': animals_by_type, 'counts_by_type': counts_by_type, 'page_objs_by_type': page_objs_by_type})
+
 
 
 @login_required

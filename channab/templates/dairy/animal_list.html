@@ -43,6 +43,18 @@
               </select>
             </div>
           </div>
+          <div class="list-container slider">
+            {% for animal_type in animals_by_type.keys %}
+            <div class="list-subcontainer">
+              <a href="/dairy/animals/?type={{ animal_type }}">
+                <div class="add-animal-button">
+                  <span class="animal-type">{{ animal_type }}</span>
+                  <span class="animal-count">{{ counts_by_type|get_item:animal_type }}</span>
+                </div>
+              </a>
+            </div>
+            {% endfor %}
+          </div>
 
           {% include 'dairy/animal_list_partial.html' with page_obj=page_objs_by_type.all %} {% for animal_type, page_obj in page_objs_by_type.items %}
           <div class="tab-pane fade" id="{{ animal_type }}">{% include 'dairy/animal_list_partial.html' with page_obj=page_obj %}</div>
