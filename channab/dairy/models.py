@@ -6,7 +6,7 @@ from accounts.models import Farm
 from PIL import Image, ExifTags
 from io import BytesIO
 from django.core.files import File
-from image_cropping import ImageRatioField
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 import io 
 
@@ -14,7 +14,7 @@ class AnimalCategory(models.Model):
     title = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True)
     image = models.ImageField(upload_to='animal_categories/', blank=True, null=True)
-    image_crop = ImageRatioField('image', '500x500')
+ 
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='animal_categories')
 
     def save(self, *args, **kwargs):
@@ -53,7 +53,7 @@ class Animal(models.Model):
         ('other', 'Other'),
     ]
     animal_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='other')
-    image_crop = ImageRatioField('image', '500x500')
+  
     def save(self, *args, **kwargs):
             if self.image:
                 # Open the original image
