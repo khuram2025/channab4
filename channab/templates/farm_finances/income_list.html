@@ -27,139 +27,136 @@
           <div class="col-sm-12">
             <div class="card card-table">
               <div class="card-body">
-                  <div class="title-header option-title">
-                      <h5>All Incomes</h5>
-                      <div class="d-flex align-items-center">
-                        <ul>
-                                                <li>
-                                                    <a href="{% url 'farm_finances:import_income' %}">import</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{% url 'farm_finances:export_income' %}">Export</a>
-                                                </li>
-                                                
-                                            </ul>
-                        
-                  
-                          <a class="btn btn-solid me-3" href="{% url 'farm_finances:create_income' %}">Add Income</a>
-                          <form method="get" class="time-filter-form d-flex align-items-center">
-                              <select name="time_filter" id="time_filter" class="form-select me-2">
-                                          <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
-                                          <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
-                                          <option value="one_month" {% if time_filter == 'one_month' %}selected{% endif %}>One month</option>
-                                          <option value="three_months" {% if time_filter == 'three_months' %}selected{% endif %}>Three months</option>
-                                          <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>One year</option>
-                                          <option value="custom" {% if time_filter == 'custom' %}selected{% endif %}>Custom</option>
-                                      </select>
-                              
-                                  <input type="date" name="start_date" id="start_date" class="me-2" {% if start_date %}value="{{ start_date|date:"Y-m-d" }}"{% endif %}>
-                                  <input type="date" name="end_date" id="end_date" class="me-2" {% if end_date %}value="{{ end_date|date:"Y-m-d" }}"{% endif %}>
-                              
-                              <button type="submit" class="btn btn-solid me-3">Filter</button>
-                          </form>
-                      </div>
-                  </div>
-                  <div class="table-responsive income-table">
-                    <div>
-                      <table class="table all-package theme-table" id="table_id">
-                        <thead>
-                          <tr>
-                            <th>
-                              <a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
-                            </th>
-                            <th>Description</th>
-                            <th>
-                              <a href="?sort_by=amount&sort_order={% if sort_by == 'amount' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Amount {% if sort_by == 'amount' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
-                            </th>
-                            <th>
-                              <a href="?sort_by=category__name&sort_order={% if sort_by == 'category__name' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Category {% if sort_by == 'category__name' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
-                            </th>
-                            <th>Option</th>
-                          </tr>
-                        </thead>
+                <div class="title-header option-title">
+                  <h5>All Incomes</h5>
+                  <div class="d-flex align-items-center">
+                    <ul>
+                      <li>
+                        <a href="{% url 'farm_finances:import_income' %}">import</a>
+                      </li>
+                      <li>
+                        <a href="{% url 'farm_finances:export_income' %}">Export</a>
+                      </li>
+                    </ul>
+                    <a class="btn btn-solid me-3" href="{% url 'farm_finances:create_income' %}">Add Income</a>
+                    <form method="get" class="time-filter-form d-flex align-items-center">
+                      <select name="time_filter" id="time_filter" class="form-select me-2">
+                        <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
+                        <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
+                        <option value="one_month" {% if time_filter == 'one_month' %}selected{% endif %}>One month</option>
+                        <option value="three_months" {% if time_filter == 'three_months' %}selected{% endif %}>Three months</option>
+                        <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>One year</option>
+                        <option value="custom" {% if time_filter == 'custom' %}selected{% endif %}>Custom</option>
+                      </select>
 
-                        <tbody>
-                          {% for income in incomes %}
-                          <tr>
-                            <td>{{ income.date }}</td>
-                            <td>{{ income.description }}</td>
-                            <td>{{ income.amount }}</td>
-                            <td>{{ income.category }}</td>
-                            <td>
-                              <ul>
-                                <li>
-                                  <a href="{% url 'farm_finances:update_income' income_id=income.id %}">
-                                    <i class="ri-pencil-line"></i>
-                                  </a>
-                                </li>
-                                <li>
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#deleteIncomeModal" data-income-id="{{ income.pk }}">
-                                        <i class="ri-delete-bin-line"></i>
-                                    </a>
-                                </li>
-                                </li>
-                              </ul>
-                            </td>
-                          </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                    </div>
+                      <input type="date" name="start_date" id="start_date" class="me-2" {% if start_date %}value="{{ start_date|date:"Y-m-d" }}" {% endif %}>
+                      <input type="date" name="end_date" id="end_date" class="me-2" {% if end_date %}value="{{ end_date|date:"Y-m-d" }}" {% endif %}>
+
+                      <button type="submit" class="btn btn-solid me-3">Filter</button>
+                    </form>
                   </div>
+                </div>
+                <div class="table-responsive income-table">
+                  <div>
+                    <table class="table all-package theme-table" id="table_id">
+                      <thead>
+                        <tr>
+                          <th>
+                            <a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
+                          </th>
+                          <th>Description</th>
+                          <th>
+                            <a href="?sort_by=amount&sort_order={% if sort_by == 'amount' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Amount {% if sort_by == 'amount' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
+                          </th>
+                          <th>
+                            <a href="?sort_by=category__name&sort_order={% if sort_by == 'category__name' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Category {% if sort_by == 'category__name' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
+                          </th>
+                          <th>Option</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {% for income in incomes %}
+                        <tr>
+                          <td>{{ income.date }}</td>
+                          <td>{{ income.description }}</td>
+                          <td>{{ income.amount }}</td>
+                          <td>{{ income.category }}</td>
+                          <td>
+                            <ul>
+                              <li>
+                                <a href="{% url 'farm_finances:update_income' income_id=income.id %}">
+                                  <i class="ri-pencil-line"></i>
+                                </a>
+                              </li>
+                              <li>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteIncomeModal" data-income-id="{{ income.pk }}">
+                                  <i class="ri-delete-bin-line"></i>
+                                </a>
+                              </li>
+                              </li>
+                            </ul>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
                   </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <!-- All Incomes Table Ends-->
-
-      <div class="container-fluid">
-        <!-- footer start-->
-        <footer class="footer">
-          <div class="row">
-            <div class="col-md-12 footer-copyright text-center">
-              <p class="mb-0">Copyright 2023 © Fastkart theme by pixelstrap</p>
-            </div>
-          </div>
-        </footer>
-        <!-- footer end-->
-      </div>
     </div>
-    <!-- Container-fluid end -->
-    <!-- Page Body End -->
+    <!-- All Incomes Table Ends-->
+
+    <div class="container-fluid">
+      <!-- footer start-->
+      <footer class="footer">
+        <div class="row">
+          <div class="col-md-12 footer-copyright text-center">
+            <p class="mb-0">Copyright 2023 © Fastkart theme by pixelstrap</p>
+          </div>
+        </div>
+      </footer>
+      <!-- footer end-->
+    </div>
   </div>
+  <!-- Container-fluid end -->
   <!-- Page Body End -->
+</div>
+<!-- Page Body End -->
 </div>
 <!-- page-wrapper End-->
 <div class="modal fade" id="deleteIncomeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteIncomeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <h5 class="modal-title" id="deleteIncomeModalLabel">Delete Income</h5>
-                <p>Are you sure you want to delete this income?</p>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                <div class="button-box">
-                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                    <a id="confirm-delete-income-button" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
-                </div>
-            </div>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="deleteIncomeModalLabel">Delete Income</h5>
+        <p>Are you sure you want to delete this income?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+          <a id="confirm-delete-income-button" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %} {% block extra_js %}
 <script>
-    $(document).ready(function () {
-        // ...
+  $(document).ready(function () {
+    // ...
 
-        $("#deleteIncomeModal").on("show.bs.modal", function (event) {
-            var button = $(event.relatedTarget);
-            var incomeId = button.data("income-id");
-            var url = "{% url 'farm_finances:delete_income' 0 %}".replace("0", incomeId);
-            url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
-            $("#confirm-delete-income-button").attr("href", url);
-        });
+    $("#deleteIncomeModal").on("show.bs.modal", function (event) {
+      var button = $(event.relatedTarget);
+      var incomeId = button.data("income-id");
+      var url = "{% url 'farm_finances:delete_income' 0 %}".replace("0", incomeId);
+      url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
+      $("#confirm-delete-income-button").attr("href", url);
     });
+  });
 </script>
 <script>
   $(document).ready(function () {
@@ -178,50 +175,50 @@
     }
 
     // Show or hide date inputs based on the time filter selection
-updateDateInputsVisibility();
-$('#time_filter').on('change', updateDateInputsVisibility);
-// You will need to update the function that fetches the incomes based on the time filter and the start and end date values.
-// Below is a basic outline of how you can handle filtering on the frontend.
-// However, it is recommended to handle filtering on the backend by updating your view to accept filter parameters.
-$('#time_filter').on('change', function () {
-  var filterValue = $(this).val();
-  var startDate = $('#start_date').val();
-  var endDate = $('#end_date').val();
-  var filteredIncomes;
+    updateDateInputsVisibility();
+    $('#time_filter').on('change', updateDateInputsVisibility);
+    // You will need to update the function that fetches the incomes based on the time filter and the start and end date values.
+    // Below is a basic outline of how you can handle filtering on the frontend.
+    // However, it is recommended to handle filtering on the backend by updating your view to accept filter parameters.
+    $('#time_filter').on('change', function () {
+      var filterValue = $(this).val();
+      var startDate = $('#start_date').val();
+      var endDate = $('#end_date').val();
+      var filteredIncomes;
 
-  // Apply the selected filter to the incomes list
-  switch (filterValue) {
-    case 'last_7_days':
-      // Apply the last 7 days filter
-      // filteredIncomes = ...
-      break;
-    case 'one_month':
-      // Apply the one-month filter
-      // filteredIncomes = ...
-      break;
-    case 'three_months':
-      // Apply the three months filter
-      // filteredIncomes = ...
-      break;
-    case 'one_year':
-      // Apply the one year filter
-      // filteredIncomes = ...
-      break;
-    case 'custom':
-      if (startDate && endDate) {
-        // Apply the custom date range filter
-        // filteredIncomes = ...
+      // Apply the selected filter to the incomes list
+      switch (filterValue) {
+        case 'last_7_days':
+          // Apply the last 7 days filter
+          // filteredIncomes = ...
+          break;
+        case 'one_month':
+          // Apply the one-month filter
+          // filteredIncomes = ...
+          break;
+        case 'three_months':
+          // Apply the three months filter
+          // filteredIncomes = ...
+          break;
+        case 'one_year':
+          // Apply the one year filter
+          // filteredIncomes = ...
+          break;
+        case 'custom':
+          if (startDate && endDate) {
+            // Apply the custom date range filter
+            // filteredIncomes = ...
+          }
+          break;
+        default:
+          // Default case: display all incomes
+          // filteredIncomes = ...
+          break;
       }
-      break;
-    default:
-      // Default case: display all incomes
-      // filteredIncomes = ...
-      break;
-  }
 
-  // Update the table with the filtered incomes
-  // ...
-});
-});
+      // Update the table with the filtered incomes
+      // ...
+    });
+  });
 </script>
 {% endblock %}
