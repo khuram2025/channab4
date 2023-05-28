@@ -27,6 +27,67 @@
   }
 }
 
+/* styles.css */
+.animal-list-container {
+  width: 100%;
+  max-width: 880px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: white;
+  padding: 0 10px;
+}
+
+.animal-list-header {
+  margin: 0;
+  color: #0da487;
+}
+
+.add-animal-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.add-animal-button {
+  width: auto;
+  height: 30px;
+  border: 1px solid #0da487;
+  border-radius: 3px;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+}
+
+.add-animal-button span {
+  color: #0da487;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filter-icon {
+  color: #0da487;
+  margin-right: 5px;
+}
+
+.filter-select {
+  background-color: white;
+  color: #0da487;
+  border: 1px solid #0da487;
+  height: 30px;
+}
+
+.filter-select-option {
+  background-color: white;
+  color: #0da487;
+}
+
 @import url("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap");
 body {
   height: 100%;
