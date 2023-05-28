@@ -53,7 +53,7 @@ class Animal(models.Model):
         ('other', 'Other'),
     ]
     animal_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='other')
-    image_crop = ImageRatioField('image', '500x500')
+    
     def save(self, *args, **kwargs):
             if self.image:
                 # Open the original image
