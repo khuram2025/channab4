@@ -260,25 +260,21 @@ def calculate_salary_status(member):
             salary_status[key] = {"received_amount": value, "sum_with_total": value + total_salary_received}
 
     # Calculate expected salary
+    # Calculate expected salary
     joining_date = member.profile.joining_date
     today = date.today()
 
-    if joining_date is not None:
+    if joining_date is not None:  # Check if joining_date is not None
         days_worked = (today - joining_date).days
         daily_salary = member.total_salary() / 30
         expected_salary_till_now = round(days_worked * daily_salary)  # Round to the nearest integer
         remaining_salary = expected_salary_till_now - total_salary_received
-
-        salary_status["expected_salary_till_now"] = expected_salary_till_now
-        salary_status["remaining_salary"] = remaining_salary
     else:
-        salary_status["expected_salary_till_now"] = 0
-        salary_status["remaining_salary"] = 0
-
-    days_worked = (today - joining_date).days
-    daily_salary = member.total_salary() / 30
-    expected_salary_till_now = round(days_worked * daily_salary)  # Round to the nearest integer
-    remaining_salary = expected_salary_till_now - total_salary_received
+        # Handle the case when joining_date is None. For example:
+        days_worked = 0
+        daily_salary = 0
+        expected_salary_till_now = 0
+        remaining_salary = 0
 
     salary_status["expected_salary_till_now"] = expected_salary_till_now
     salary_status["remaining_salary"] = remaining_salary
