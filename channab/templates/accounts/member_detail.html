@@ -96,6 +96,9 @@
                           <a href="{% url 'accounts:edit_member' member.pk %}" class="btn btn-link btn-sm text-success ms-auto">
                             <i class="fas fa-pencil-alt"></i>
                           </a>
+                          <a href="{% url 'accounts:reset_password' member.pk %}" class="btn btn-link btn-sm text-success ms-auto">
+                            <i class="fas fa-lock"></i>
+                          </a>
                         </div>
                         <div class="name-section">
                           <p>Role: {{ member.role }}</p>

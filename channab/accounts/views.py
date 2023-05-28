@@ -1,6 +1,6 @@
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 
 from farm_finances.models import Expense, ExpenseCategory
-from .forms import  FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm, SalaryTransactionForm
+from .forms import  FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm, ResetPasswordForm, SalaryTransactionForm
 from django.shortcuts import render, redirect, get_object_or_404
 
 class SignupView(CreateView):
@@ -164,6 +164,27 @@ def create_farm_member(request):
 
     return render(request, 'accounts/create_farm_member.html', {'form': form})
 
+@login_required
+def reset_password(request, pk):
+    if request.user.role != 'admin':
+        return HttpResponseForbidden("You are not allowed to perform this action")
+
+    member = get_object_or_404(CustomUser, pk=pk)
+    if request.method == 'POST':
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            member.set_password(form.cleaned_data["new_password1"])
+            member.save()
+            return redirect('accounts:member_detail', member_id=pk)
+    else:
+        form = ResetPasswordForm()
+
+    context = {
+        'form': form,
+        'member': member,
+    }
+    return render(request, 'accounts/reset_password.html', context)
+
 def edit_member(request, pk):
     user = get_object_or_404(CustomUser, pk=pk)
 
@@ -186,8 +207,6 @@ def edit_member(request, pk):
     }
 
     return render(request, 'accounts/edit_member.html', context)
-
-
 
 def delete_member(request, pk):
     member = get_object_or_404(CustomUser, pk=pk)
