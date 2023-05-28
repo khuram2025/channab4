@@ -23,9 +23,10 @@
     <div class="page-body">
       <div class="container-fluid">
         <div class="row">
-          <div class="animal-list-container">
-            <h2 class="animal-list-header">Animal List</h2>
-            <div>
+          <div class="list-container">
+            <h2 class="list-header">Animal List</h2>
+            <div class="list-subcontainer">
+              <!-- Note the new class here -->
               <a href="{% url 'dairy:animal_create'  %}" class="add-animal-link">
                 <div>
                   <div class="add-animal-button">
