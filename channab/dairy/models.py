@@ -48,7 +48,7 @@ class Animal(models.Model):
         ('pregnant', 'Pregnant'),
         ('dry', 'Dry'),
         ('milking', 'Milking'),
-        ('preg_milking', 'Pregnant Milking'),
+        ('preg_milking', 'Pre-Milk'),
         ('calf', 'Calf'),
         ('other', 'Other'),
     ]
