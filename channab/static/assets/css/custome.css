@@ -76,9 +76,13 @@
 }
 .compact-table td,
 .compact-table th {
-  padding: 0rem; /* Adjust this value to your liking */
+  padding: 0.25rem; /* Adjust this value to your liking */
 }
 
+.compact-table {
+  border-collapse: separate;
+  border-spacing: 0; /* Remove space between cells */
+}
 .styled-container {
   width: 100%;
   max-width: 880px;

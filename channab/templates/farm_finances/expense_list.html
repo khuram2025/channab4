@@ -23,100 +23,85 @@
       <!-- All Expenses Table Start -->
       <div class="container-fluid">
         <div class="row">
-          <div class="col-sm-12">
-            <div class="card card-table">
-              <div class="card-body">
-                <div class="title-header option-title">
-                  <h5>All Expenses</h5>
-                   <ul>
-                                                <li>
-                                                    <a href="{% url 'farm_finances:import_expense' %}">import</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{% url 'farm_finances:export_expense' %}">Export</a>
-                                                </li>
-                                                
-                                            </ul>
-                  <a class="btn btn-solid" href="{% url 'farm_finances:create_expense' %}">Add Expense</a>
-                </div>
-                <!-- Add this form just before the expense table -->
-                <div class="filter-form">
-                  <form method="GET" action="{% url 'farm_finances:expense_list' %}" class="d-flex">
-                    <input type="hidden" name="sort_by" value="{{ sort_by }}" />
-                    <input type="hidden" name="sort_order" value="{{ sort_order }}" />
-                    <div class="form-group mr-2">
-                      <select class="form-control" name="time_filter">
-                        <option value="">Select date range</option>
-                        <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
-                        <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
-                        <option value="one_month" {% if time_filter == 'one_month' %}selected{% endif %}>Last 1 month</option>
-                        <option value="three_months" {% if time_filter == 'three_months' %}selected{% endif %}>Last 3 months</option>
-                        <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>Last 1 year</option>
-                        <option value="custom" {% if time_filter == 'custom' %}selected{% endif %}>Custom</option>
-                      </select>
-                    </div>
-                    <div class="form-group mr-2">
-                      <input type="date" class="form-control" name="start_date" value="{{ start_date }}" {% if time_filter != 'custom' %}disabled{% endif %} />
-                    </div>
-                    <div class="form-group mr-2">
-                      <input type="date" class="form-control" name="end_date" value="{{ end_date }}" {% if time_filter != 'custom' %}disabled{% endif %} />
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                      <i class="fas fa-search"></i>
-                    </button>
-                  </form>
-                </div>
-
-
-                <div class="table-responsive expense-table">
-                  <div>
-                    <table class="table all-package theme-table" id="table_id">
-                      <thead>
-                        <tr>
-                          <th>
-                            <a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
-                          </th>
-                          <th>Description</th>
-                          <th>
-                            <a href="?sort_by=amount&sort_order={% if sort_by == 'amount' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Amount {% if sort_by == 'amount' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
-                          </th>
-                          <th>
-                            <a href="?sort_by=category__name&sort_order={% if sort_by == 'category__name' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Category {% if sort_by == 'category__name' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
-                          </th>
-                          <th>Option</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {% for expense in expenses %}
-                        <tr>
-                          <td>{{ expense.date }}</td>
-                          <td>{{ expense.description }}</td>
-                          <td>{{ expense.amount }}</td>
-                          <td>{{ expense.category }}</td>
-                          <td>
-                            {% if expense.category.name != "Salary" %}
-                            <ul>
-                              <li>
-                                <a href="{% url 'farm_finances:update_expense' expense_id=expense.id %}">
-                                  <i class="ri-pencil-line"></i>
-                                </a>
-                              </li>
-                              <li>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteExpenseModal" data-expense-id="{{ expense.pk }}">
-                                  <i class="ri-delete-bin-line"></i>
-                                </a>
-                              </li>
-                            </ul>
-                            {% endif %}
-                          </td>
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
+          <div class="list-container">
+            <h2 class="list-header">Expense List</h2>
+            <div class="list-subcontainer">
+              <a href="{% url 'farm_finances:create_expense' %}" class="add-animal-link">
+                <div>
+                  <div class="add-animal-button">
+                    <span>Add Expense</span>
                   </div>
                 </div>
+              </a>
+
+              <i class="fas fa-filter filter-icon"></i>
+              <form method="GET" action="{% url 'farm_finances:expense_list' %}" class="time-filter-form d-flex align-items-center" id="filterForm">
+                <input type="hidden" name="sort_by" value="{{ sort_by }}" />
+                <input type="hidden" name="sort_order" value="{{ sort_order }}" />
+
+                <select name="time_filter" id="filter" class="filter-select" onchange="document.getElementById('filterForm').submit();">
+                  <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
+                  <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
+                  <option value="one_month" {% if time_filter == 'one_month' %}selected{% endif %}>One month</option>
+                  <option value="three_months" {% if time_filter == 'three_months' %}selected{% endif %}>Three months</option>
+                  <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>One year</option>
+                  <option value="custom" {% if time_filter == 'custom' %}selected{% endif %}>Custom</option>
+                </select>
+                <i class="fas fa-search"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+          <div class="styled-container">
+            <div class="table-responsive expense-table">
+
+              <div class="filter-form">
+                <!-- filter form -->
               </div>
+              <table class="table all-package theme-table compact-table" id="table_id">
+                <thead>
+                  <tr>
+                    <th>
+                      <a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
+                    </th>
+                   
+                    <th>
+                      <a href="?sort_by=amount&sort_order={% if sort_by == 'amount' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Amount {% if sort_by == 'amount' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
+                    </th>
+                    <th>
+                      <a href="?sort_by=category__name&sort_order={% if sort_by == 'category__name' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Category {% if sort_by == 'category__name' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
+                    </th>
+                     <th>Description</th>
+                    <th>Option</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for expense in expenses %}
+                  <tr>
+                    <td>{{ expense.date }}</td>
+                    <td>{{ expense.amount }}</td>
+                    <td>{{ expense.category }}</td>
+                    <td>{{ expense.description }}</td>
+                    <td>
+                      {% if expense.category.name != "Salary" %}
+                      <ul>
+                        <li>
+                          <a href="{% url 'farm_finances:update_expense' expense_id=expense.id %}">
+                            <i class="ri-pencil-line"></i>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#" data-bs-toggle="modal" data-bs-target="#deleteExpenseModal" data-expense-id="{{ expense.pk }}">
+                            <i class="ri-delete-bin-line"></i>
+                          </a>
+                        </li>
+                      </ul>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
