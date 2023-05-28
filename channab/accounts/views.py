@@ -75,6 +75,7 @@ def login_view(request):
         else:
             print("Form is invalid")
             print(form.errors)
+            print(request.POST)
     else:
         form = MobileAuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})

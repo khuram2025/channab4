@@ -37,7 +37,7 @@
         <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="button-box">
           <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-          <button id="confirm-delete-animal-button{{ animal.pk }}" class="btn btn--yes btn-primary">Yes, delete</button>
+          <a id="confirm-delete-animal-button{{ animal.pk }}" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
         </div>
       </div>
     </div>
@@ -46,7 +46,7 @@
 {% endfor %}
 
 <script>
-    function getCookie(name) {
+  function getCookie(name) {
       let cookieValue = null;
       if (document.cookie && document.cookie !== '') {
           const cookies = document.cookie.split(';');
@@ -64,27 +64,12 @@
   $(document).ready(function () {
       var csrftoken = getCookie('csrftoken');  // Fetch CSRF token using the function defined above
       {% for animal in page_obj %}
-      $("#confirm-delete-animal-button{{ animal.pk }}").click(function () {
-        console.log('Button clicked');
-          $.ajax({
-              url: "{% url 'dairy:delete_animal' animal.pk %}",
-              method: "POST",
-              beforeSend: function (xhr) {
-                  xhr.setRequestHeader("X-CSRFToken", csrftoken);
-              },
-              success: function (response) {
-                  if(response.success) {
-                      // Handle success response (e.g., remove the deleted animal from the page)
-                      $("#deleteAnimalModal{{ animal.pk }}").modal("hide");
-                      // Reload the animal list page
-                      window.location.href = "{% url 'dairy:animal_list' %}";
-                  }
-              },
-              error: function (xhr) {
-                  // Handle error response (if needed)
-                  console.log(xhr.responseText);
-              }
-          });
+      $("#deleteAnimalModal{{ animal.pk }}").on("show.bs.modal", function (event) {
+          var button = $(event.relatedTarget);
+          var animalId = button.data("animal-id");
+          var url = "{% url 'dairy:delete_animal' 0 %}".replace("0", animalId);
+          url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
+          $("#confirm-delete-animal-button{{ animal.pk }}").attr("href", url);
       });
       {% endfor %}
   });

@@ -4,29 +4,6 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-
-<style>
-    .intl-tel-input {
-        width: 100%;
-    }
-
-    .intl-tel-input .iti {
-        width: 100%;
-    }
-
-    .iti--separate-dial-code .iti__selected-dial-code {
-        display: inline-block;
-    }
-
-    /* Make the mobile number box to the same width as the password box */
-    .intl-tel-input input[type=tel] {
-        width: 100%;
-        box-sizing: border-box;
-    }
-</style>
 
 <body>
 
@@ -60,11 +37,10 @@
                                 {% csrf_token %}
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating log-in-form">
-                                        <input type="tel" class="form-control" name="{{ form.username.html_name }}" id="{{ form.username.auto_id }}" placeholder="Mobile Number">
-                                        <label for="{{ form.username.auto_id }}"></label>
+                                        <input type="text" class="form-control" name="{{ form.username.html_name }}" id="{{ form.username.auto_id }}" placeholder="Mobile Number">
+                                        <label for="{{ form.username.auto_id }}">Mobile Number</label>
                                     </div>
                                 </div>
-
 
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating log-in-form">
@@ -86,8 +62,9 @@
                                 </div>
 
                                 <div class="col-12">
-        <button class="btn btn-animation w-100 justify-content-center" type="submit">Log In</button>
-    </div>
+                                    <button class="btn btn-animation w-100 justify-content-center" type="submit">Log
+                                        In</button>
+                                </div>
                             </form>
                         </div>
                         <div class="other-log-in">
@@ -107,24 +84,4 @@
 </body>
 
 </html>
-<script>
-$(document).ready(function() {
-    var input = document.querySelector("#{{ form.username.auto_id }}");
-    var iti = window.intlTelInput(input, {
-      initialCountry: "pk",
-      separateDialCode: true,
-      dropdownContainer: document.body,
-      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-    });
-
-    // Listen for form submission
-    $('#loginForm').on('submit', function(e) {
-        // Get the full international number
-        var fullNumber = iti.getNumber();
-        
-        // Set the full international number to the username field
-        $('#{{ form.username.auto_id }}').val(fullNumber);
-    });
-});
-</script>
 {% endblock %}
