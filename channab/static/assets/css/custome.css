@@ -68,6 +68,15 @@
   flex: 0 0 auto;
   scroll-snap-align: start;
 }
+.list-subcontainer.selected {
+  background-color: #0da487;
+  margin-right: 10px;
+}
+
+.list-subcontainer.selected .animal-type,
+.list-subcontainer.selected .animal-count {
+  color: white;
+}
 
 .add-animal-button span {
   color: #0da487;

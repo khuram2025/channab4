@@ -44,8 +44,16 @@
             </div>
           </div>
           <div class="list-container slider">
+            <div class="list-subcontainer {% if selected_type == 'all' %}selected{% endif %}">
+              <a href="?type=all">
+                <div class="add-animal-button">
+                  <span class="animal-type">All</span>
+                  <span class="animal-count">{{ animals.count }}</span>
+                </div>
+              </a>
+            </div>
             {% for animal_type in animals_by_type.keys %}
-            <div class="list-subcontainer">
+            <div class="list-subcontainer {% if selected_type == animal_type %}selected{% endif %}">
               <a href="?type={{ animal_type }}">
                 <div class="add-animal-button">
                   <span class="animal-type">{{ animal_type|get_animal_type_display }} </span>
