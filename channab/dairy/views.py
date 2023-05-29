@@ -56,7 +56,7 @@ def animal_category_delete(request, pk):
     return render(request, 'dairy/delete.html', {'category': category})
 
 from django.core.paginator import Paginator
-
+# just a comment 
 @login_required
 def animal_list(request):
     farm = request.user.farm
