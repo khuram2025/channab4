@@ -1,5 +1,6 @@
 from django import template
 from datetime import date
+from dairy.models import Animal
 
 register = template.Library()
 
@@ -32,3 +33,11 @@ def div(value, arg):
 @register.filter
 def mul(value, arg):
     return value * arg
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
+
+@register.filter
+def get_animal_type_display(animal_type):
+    return Animal.ANIMAL_TYPE_CHOICES_DICT.get(animal_type)

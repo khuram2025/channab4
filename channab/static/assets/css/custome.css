@@ -65,8 +65,16 @@
 .list-subcontainer {
   display: flex;
   align-items: center;
+  flex: 0 0 auto;
+  scroll-snap-align: start;
 }
-
+.list-container.slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
 .add-animal-button span {
   color: #0da487;
   line-height: 1;

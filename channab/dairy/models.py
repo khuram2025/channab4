@@ -48,11 +48,12 @@ class Animal(models.Model):
         ('pregnant', 'Pregnant'),
         ('dry', 'Dry'),
         ('milking', 'Milking'),
-        ('preg_milking', 'Pregnant Milking'),
+        ('preg_milking', 'Pre-Milk'),
         ('calf', 'Calf'),
         ('other', 'Other'),
     ]
     animal_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='other')
+    ANIMAL_TYPE_CHOICES_DICT = dict(TYPE_CHOICES)
     
     def save(self, *args, **kwargs):
             if self.image:
@@ -110,6 +111,7 @@ class Animal(models.Model):
 
     def __str__(self):
         return f'{self.tag} ({self.category.title})'
+
 from django.db.models import Q
 
 from django.core.exceptions import ValidationError

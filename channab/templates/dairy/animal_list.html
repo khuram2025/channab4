@@ -43,6 +43,18 @@
               </select>
             </div>
           </div>
+          <div class="list-container slider">
+            {% for animal_type in animals_by_type.keys %}
+            <div class="list-subcontainer">
+              <a href="?type={{ animal_type }}">
+                <div class="add-animal-button">
+                  <span class="animal-type">{{ animal_type|get_animal_type_display }} </span>
+                  <span class="animal-count">{{ counts_by_type|get_item:animal_type }}</span>
+                </div>
+              </a>
+            </div>
+            {% endfor %}
+          </div>
 
           {% include 'dairy/animal_list_partial.html' with page_obj=page_objs_by_type.all %} {% for animal_type, page_obj in page_objs_by_type.items %}
           <div class="tab-pane fade" id="{{ animal_type }}">{% include 'dairy/animal_list_partial.html' with page_obj=page_obj %}</div>
@@ -51,19 +63,22 @@
           <div class="card-footer border-0">
             <nav>
               <ul class="pagination style-1 mb-0">
+                <li class="page-item">
+                  <a href="?type=all">All</a>
+                </li>
                 {% if page_obj.has_previous %}
                 <li class="page-item page-indicator">
-                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                  <a class="page-link" href="?type={{ selected_type }}&page={{ page_obj.previous_page_number }}">
                     <i class="la la-angle-left"></i>
                   </a>
                 </li>
                 {% endif %} {% for i in page_obj.paginator.page_range %}
                 <li class="page-item {% if page_obj.number == i %}active{% endif %}">
-                  <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                  <a class="page-link" href="?type={{ selected_type }}&page={{ i }}">{{ i }}</a>
                 </li>
                 {% endfor %} {% if page_obj.has_next %}
                 <li class="page-item page-indicator">
-                  <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                  <a class="page-link" href="?type={{ selected_type }}&page={{ page_obj.next_page_number }}">
                     <i class="la la-angle-right"></i>
                   </a>
                 </li>
