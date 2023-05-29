@@ -62,6 +62,7 @@ def animal_list(request):
     farm = request.user.farm
     animals = Animal.objects.filter(farm=farm)
     
+    
     animal_types = dict(Animal.TYPE_CHOICES)
     
     animals_by_type = {}
@@ -95,6 +96,7 @@ def animal_list(request):
         'page_objs_by_type': page_objs_by_type,
         'selected_type': selected_type,
     })
+
 
 
 @login_required
