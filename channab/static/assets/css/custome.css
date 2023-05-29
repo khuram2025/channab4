@@ -349,6 +349,13 @@ md-chips {
   margin-right: 0.6rem;
   letter-spacing: 0;
 }
+.list-container.slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
 
 .tab-slider {
   display: flex;
