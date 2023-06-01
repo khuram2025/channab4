@@ -1,6 +1,32 @@
 /*! CSS Used from: https://sego.dexignzone.com/xhtml/css/style.css */
 /*! @import https://sego.dexignzone.com/xhtml/icons/font-awesome-old/css/font-awesome.min.css */
 
+.info-table-wrapper {
+  display: none;
+}
+
+.name-section {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .info-table-wrapper {
+    display: block;
+  }
+  .info-tab-mobile {
+    display: none;
+  }
+  .name-section {
+    display: block;
+  }
+}
+
+@media (max-width: 767px) {
+  .info-tab-mobile .info-table-wrapper {
+    display: block;
+  }
+}
+
 @media only screen and (max-width: 600px) {
   .animal-list {
     display: flex !important;
@@ -24,6 +50,72 @@
     border: 1px solid green !important;
     padding: 10px !important;
     margin: 10px 0 !important;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Mobile view */
+  .detail-page-image {
+    width: 100%;
+    height: auto;
+  }
+}
+.image-section img {
+  max-width: 100%;
+  max-height: 250px;
+}
+
+@media (min-width: 601px) {
+  .image-section img {
+    width: 100%;
+    max-width: 540px;
+    object-fit: cover;
+  }
+}
+
+.action-icons a {
+  margin-left: 15px;
+}
+
+.nav-pills {
+  overflow-x: auto;
+  white-space: nowrap;
+  border-bottom: 0;
+  padding: 10px 0;
+}
+.nav-link {
+  text-decoration: none;
+}
+.table-responsive {
+  margin: auto;
+}
+
+.hiddenRow {
+  padding: 0 !important;
+}
+
+.nav-pills .nav-item {
+  display: inline-block;
+  flex: none;
+}
+@media (max-width: 768px) {
+  .action-icons {
+    flex-direction: row-reverse;
+  }
+}
+
+.overview-content {
+  margin-top: 15px;
+}
+
+@media (min-width: 768px) {
+  /* Desktop view */
+  .detail-page-image {
+    max-height: 450px;
+    max-width: 450px;
+  }
+  .info-tab-mobile {
+    display: none;
   }
 }
 
@@ -71,6 +163,10 @@
 .list-subcontainer.selected {
   background-color: #0da487;
   margin-right: 10px;
+}
+.detail-page-image {
+  max-height: 450px;
+  max-width: 450px;
 }
 
 .list-subcontainer.selected .animal-type,
