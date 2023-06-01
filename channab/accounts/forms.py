@@ -51,15 +51,21 @@ class ProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ('profile_picture', 'first_name', 'last_name', 'city', 'email', 'facebook', 'youtube', 'joining_date')
+        fields = ('profile_picture', 'first_name', 'last_name', 'city', 'facebook', 'youtube', 'joining_date')
 
     joining_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
     )
+    
+    # Add this field
+    mobile = forms.CharField(max_length=17, required=False)
+
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         if self.instance.user:
             self.fields['role'].initial = self.instance.user.role
+            # Initialize mobile field with the user's mobile number
+            self.fields['mobile'].initial = self.instance.user.mobile
 
     def save(self, commit=True):
         profile = super(ProfileUpdateForm, self).save(commit=False)
@@ -68,6 +74,7 @@ class ProfileUpdateForm(forms.ModelForm):
             profile.save()
             profile.user.save()
         return profile
+
 class FarmMemberCreationForm(forms.ModelForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Confirm Password", widget=forms.PasswordInput)

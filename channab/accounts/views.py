@@ -239,6 +239,9 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 def calculate_salary_status(member):
+    from datetime import date
+    from accounts.models import SalaryTransaction
+
     salary_transactions = SalaryTransaction.objects.filter(farm_member=member)
 
     salary_status = {}
@@ -259,12 +262,10 @@ def calculate_salary_status(member):
         if key != "total_salary_received":
             salary_status[key] = {"received_amount": value, "sum_with_total": value + total_salary_received}
 
-    # Calculate expected salary
-    # Calculate expected salary
-    joining_date = member.profile.joining_date
     today = date.today()
 
-    if joining_date is not None:  # Check if joining_date is not None
+    if hasattr(member, 'profile') and member.profile.joining_date is not None:
+        joining_date = member.profile.joining_date
         days_worked = (today - joining_date).days
         daily_salary = member.total_salary() / 30
         expected_salary_till_now = round(days_worked * daily_salary)  # Round to the nearest integer

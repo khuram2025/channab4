@@ -71,6 +71,7 @@
                                 <label for="{{ form.first_name.auto_id }}">First Name</label>
                             </div>
                         </div>
+                        
                         <div class="col-xxl-6">
                             <div class="form-floating theme-form-floating">
                                 {{ form.last_name|add_class:"form-control" }}
@@ -79,11 +80,11 @@
                         </div>
 
                         <div class="col-xxl-6">
-                            <div class="form-floating theme-form-floating">
-                                {{ form.email|add_class:"form-control" }}
-                                <label for="{{ form.email.auto_id }}">Email address</label>
-                            </div>
-                        </div>
+    <div class="form-floating theme-form-floating">
+        {{ form.mobile|add_class:"form-control" }}
+        <label for="{{ form.mobile.auto_id }}">Mobile Number</label>
+    </div>
+</div>
 
                         <div class="col-xxl-6">
                             <div class="form-floating theme-form-floating">
