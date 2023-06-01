@@ -222,6 +222,12 @@
                               <div class="card-body">
                                 <div class="title-header option-title">
                                   <h5>Salary Transactions</h5>
+                                  {% if salary_transaction.pk %}
+    <a href="{% url 'accounts:salary_transaction_update_member' member_id=member.pk pk=salary_transaction.pk %}" class="btn btn-primary">Update Salary Amount</a>
+{% else %}
+    <a href="{% url 'accounts:salary_transaction_update_member' member_id=member.pk pk=0 %}" class="btn btn-primary">Add Salary Amount</a>
+{% endif %}
+
                                 </div>
                                 <div class="table-responsive transactions-table">
                                   <div>

@@ -1,6 +1,6 @@
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponseForbidden, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
@@ -417,6 +417,59 @@ def salary_transaction_update(request, pk=None):
         'edit_mode': edit_mode,
         'salary_transaction': transaction
     }    
+    return render(request, 'accounts/salary_transaction_form.html', context)
+
+@login_required
+def salary_transaction_update_member(request, member_id, pk):
+    farm = request.user.farm
+    try:
+        member = CustomUser.objects.get(pk=member_id)
+    except CustomUser.DoesNotExist:
+        return HttpResponseNotFound("FarmMember not found")
+
+    if pk is not None:
+        try:
+            transaction = SalaryTransaction.objects.get(farm_member=member, pk=pk)
+            print("Existing transaction found:", transaction)
+            edit_mode = True
+        except SalaryTransaction.DoesNotExist:
+            transaction = None
+            edit_mode = False
+
+    if request.method == 'POST':
+        form = SalaryTransactionForm(request.POST, instance=transaction, farm=farm)
+        if form.is_valid():
+            if transaction is not None:
+                print("Updating existing transaction")
+                # Update the existing transaction
+                transaction.transaction_date = form.cleaned_data['transaction_date']
+                transaction.farm_member = form.cleaned_data['farm_member']
+                transaction.component = form.cleaned_data['component']
+                transaction.amount_paid = form.cleaned_data['amount_paid']
+                transaction.save()
+            else:
+                print("Creating new transaction")
+                # Create a new transaction
+                transaction = form.save(commit=False)
+                transaction.farm_member = member
+                transaction.save()
+
+            # Create or retrieve the salary expense category for the farm
+            salary_category, created = ExpenseCategory.objects.get_or_create(farm=farm, name='Salary')
+
+            # other code here...
+
+            return redirect('accounts:salary_transaction_list')
+    else:
+        form = SalaryTransactionForm(instance=transaction, farm=farm)
+
+    context = {
+        'form': form,
+        'edit_mode': edit_mode,
+        'salary_transaction': transaction,
+        'member': member
+    }
+    
     return render(request, 'accounts/salary_transaction_form.html', context)
 
 
