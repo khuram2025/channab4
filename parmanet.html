@@ -1,1 +1,383 @@
-Category delete need to fix should work same like animal delete Delete button not working for Income and expense category pop-up is there but once press yes it not functional
+{%extends 'main/base.html'%} {%block content%} {%load static%}{% load dairy_extras %}
+<style>
+  .info-table-wrapper {
+    display: none;
+  }
+
+  .name-section {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .info-table-wrapper {
+      display: block;
+    }
+
+    .info-tab-mobile {
+      display: none;
+    }
+
+    .name-section {
+      display: block;
+    }
+  }
+</style>
+
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {%include 'home/backend_header.html'%}
+  <!-- Page Header Ends-->
+  <!-- mobile fix menu start -->
+  {%include 'home/mobile_menu.html'%}
+  <!-- mobile fix menu end -->
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {%include 'home/backend_sidebar.html'%}
+    <!-- Page Sidebar Ends-->
+    <!-- Page Body Start -->
+    <!-- Container-fluid starts-->
+    <div class="page-body">
+      <!-- All User Table Start -->
+      <div class="container" style="background-color: white">
+        <div class="row">
+          <div class="col-sm-12">
+            <section class="product-section">
+              <div class="col-xxl-12">
+                <div class="row g-4">
+                  <div class="col-xl-6">
+                    <div class="product-left-box">
+                      <div class="row g-2">
+                        <div class="col-xxl-10 col-lg-12 col-md-10 order-xxl-2 order-lg-1 order-md-2">
+                          <div class="product-main-2 no-arrow">
+                            <div>
+                              <div class="slider-image">
+                                {% if animal.image %}
+                                <img src="{{ animal.image.url }}" id="img-1" data-zoom-image="{{ animal.image.url }}" class="img-fluid image_zoom_cls-0 lazyload" alt="{{ animal.tag }} Image" />
+                                {% else %}
+                                <img src="{% static 'path/to/default/image.jpg' %}" id="img-1" data-zoom-image="{% static 'path/to/default/image.jpg' %}" class="img-fluid image_zoom_cls-0 blur-up lazyload" alt="Default Animal Image" />
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xxl-2 col-lg-12 col-md-2 order-xxl-1 order-lg-2 order-md-1"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-6">
+                    <div class="responsive-container">
+                      <div class="right-box-contain">
+                        <div class="d-flex align-items-center">
+                          <h2 class="name mb-0">{{ animal.tag }}</h2>
+                          <a href="{% url 'dairy:animal_edit' animal.pk %}" class="btn btn-link btn-sm text-success ms-auto">
+                            <i class="fas fa-pencil-alt"></i>
+                          </a>
+                        </div>
+                        <div class="name-section">
+                          <p>Role: {{ form.role.value }}</p>
+                          <p>City: {{ form.city.value }}</p>
+                          <p>Email: {{ form.email.value }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="product-section-box">
+                      <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">Info</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="false">Milk</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="weight-tab" data-bs-toggle="tab" data-bs-target="#weight" type="button" role="tab" aria-controls="weight" aria-selected="false">Weight</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review" type="button" role="tab" aria-controls="review" aria-selected="false">Tasks</button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="farm-members-tab" data-bs-toggle="tab" data-bs-target="#family" type="button" role="tab" aria-controls="family" aria-selected="false">Family</button>
+                        </li>
+                      </ul>
+                      <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                          <div class="table-responsive">
+                            <table class="table info-table">
+                              <tbody>
+                                <tr>
+                                  <td>Tag</td>
+                                  <td>{{ animal.tag }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Category</td>
+                                  <td>{{ animal.category.title }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Date of Birth</td>
+                                  <td>{{ animal.dob }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Purchase Cost</td>
+                                  <td>{{ animal.purchase_cost }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Status</td>
+                                  <td>{{ animal.get_status_display }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Sex</td>
+                                  <td>{{ animal.get_sex_display }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Animal Type</td>
+                                  <td>{{ animal.get_animal_type_display }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
+                          <!-- Animal Milk Records Table Start -->
+                          <div class="container-fluid">
+                            <div class="row">
+                              <div class="col-sm-12">
+                                <div class="card card-table">
+                                  <div class="card-body">
+                                    <div class="title-header option-title">
+                                      <h5>Animal Milk Records</h5>
+                                      <div class="d-flex align-items-center">
+                                        <a class="btn btn-primary me-2" href="{% url 'dairy:animal_milk_new' %}">Add Milk Record</a>
+                                      </div>
+                                    </div>
+
+                                    <div class="table-responsive milk-table">
+                                      <div>
+                                        <table class="table all-package theme-table" id="table_id">
+                                          <thead>
+                                            <tr>
+                                              <th>
+                                                <a href="?sort_by=tag&sort_order={% if sort_by == 'tag' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">TAG# {% if sort_by == 'tag' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                                              </th>
+                                              <th>
+                                                <a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                                              </th>
+                                              <th>
+                                                <a href="?sort_by=first_time&sort_order={% if sort_by == 'first_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">First Time (L) {% if sort_by == 'first_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                                              </th>
+                                              <th>
+                                                <a href="?sort_by=second_time&sort_order={% if sort_by == 'second_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Second Time (L) {% if sort_by == 'second_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                                              </th>
+                                              <th>
+                                                <a href="?sort_by=third_time&sort_order={% if sort_by == 'third_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Third Time (L) {% if sort_by == 'third_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                                              </th>
+                                              <th>Total Milk (L)</th>
+                                              <th>Option</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {% for milk_record in milk_records %}
+                                            <tr>
+                                              <td><a href="{% url 'dairy:animal_detail' milk_record.animal.pk %}">{{ milk_record.animal.tag }}</a></td>
+                                              <td>{{ milk_record.date }}</td>
+                                              <td>{{ milk_record.first_time }}</td>
+                                              <td>{{ milk_record.second_time }}</td>
+                                              <td>{{ milk_record.third_time }}</td>
+                                              <td>{{ milk_record.total_milk }}</td>
+                                              <td>
+                                                <ul>
+                                                  <li>
+                                                    <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}">
+                                                      <i class="ri-pencil-line"></i>
+                                                    </a>
+                                                  </li>
+                                                  <li>
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#deleteMilkRecordModal" data-milk-record-id="{{ milk_record.pk }}">
+                                                      <i class="ri-delete-bin-line"></i>
+                                                    </a>
+                                                  </li>
+                                                </ul>
+                                              </td>
+                                            </tr>
+                                            {% endfor %}
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- Animal Milk Records Table Ends-->
+                        </div>
+                        <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
+                          <!-- Tasks content goes here -->
+                        </div>
+                        <div class="tab-pane fade" id="weight" role="tabpanel" aria-labelledby="weight-tab">
+                          <div class="col-sm-12">
+                            <div class="card card-table">
+                              <div class="card-body">
+                                <div class="title-header option-title">
+                                  <h5>Animal Weights</h5>
+                                  <a class="btn btn-solid" href="{% url 'dairy:animal_detail_weight_new' animal.pk %}">Add Weight</a>
+                                </div>
+                                <div class="table-responsive weight-table">
+                                  <div>
+                                    <table class="table all-package theme-table" id="table_id">
+                                      <thead>
+                                        <tr>
+                                          <th>
+                                            <a href="?sort_by=tag&sort_order={% if sort_by == 'tag' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">TAG# {% if sort_by == 'tag' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                                          </th>
+                                          <th>
+                                            <a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                                          </th>
+                                          <th>
+                                            <a href="?sort_by=weight_kg&sort_order={% if sort_by == 'weight_kg' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Weight (KG) {% if sort_by == 'weight_kg' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                                          </th>
+                                          <th>
+                                            <a href="?sort_by=weight_change_kg&sort_order={% if sort_by == 'weight_change_kg' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Weight Change (KG) {% if sort_by == 'weight_change_kg' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                                          </th>
+                                          <th>
+                                            <a href="?sort_by=weight_change_percent&sort_order={% if sort_by == 'weight_change_percent' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Weight Change (%) {% if sort_by == 'weight_change_percent' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                                          </th>
+                                          <th>Description</th>
+                                          <th>Option</th>
+                                        </tr>
+                                      </thead>
+
+                                      <tbody>
+                                        {% for weight in weights %} {% with prev_weight=prev_weights|get_item:weight.pk %}
+                                        <tr>
+                                          <td><a href="{% url 'dairy:animal_detail' weight.animal.pk %}">{{ weight.animal.tag }}</a></td>
+                                          <td>{{ weight.date }}</td>
+                                          <td>{{ weight.weight_kg }}</td>
+                                          <td class="{% if prev_weight %}{% if weight.weight_kg|subtract:prev_weight.weight_kg < 0 %}text-danger{% else %}text-success{% endif %}{% endif %}">{% if prev_weight %} {{ weight.weight_kg|subtract:prev_weight.weight_kg }} {% else %} N/A {% endif %}</td>
+                                          <td class="{% if prev_weight %}{% if weight.weight_kg|subtract:prev_weight.weight_kg < 0 %}text-danger{% else %}text-success{% endif %}{% endif %}">{% if prev_weight %} {{ weight.weight_kg|subtract:prev_weight.weight_kg|div:prev_weight.weight_kg|mul:100|floatformat }}{% else %} N/A {% endif %}</td>
+                                          <td>{{ weight.description }}</td>
+                                          <td>
+                                            <ul>
+                                              <li>
+                                                <a href="{% url 'dairy:animal_weight_edit' weight.pk %}">
+                                                  <i class="ri-pencil-line"></i>
+                                                </a>
+                                              </li>
+                                              <li>
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteWeightModal" data-weight-id="{{ weight.pk }}">
+                                                  <i class="ri-delete-bin-line"></i>
+                                                </a>
+                                              </li>
+                                            </ul>
+                                          </td>
+                                        </tr>
+                                        {% endwith %} {% endfor %}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <!-- All User Table Ends-->
+    </div>
+    <!-- Container-fluid end -->
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
+<!-- Modal Start -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+        <p>Are you sure you want to log out?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+          <button type="button" class="btn btn--yes btn-primary">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Delete Animal Weight Modal -->
+<div class="modal fade" id="deleteWeightModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteWeightModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="deleteWeightModalLabel">Delete Animal Weight Record</h5>
+        <p>Are you sure you want to delete animal weight record?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+          <a id="confirm-delete-weight-button" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Delete Animal Weight Modal -->
+<!-- Delete Animal Milk Record Modal -->
+<div class="modal fade" id="deleteMilkRecordModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteMilkRecordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="deleteMilkRecordModalLabel">Delete Animal Milk Record</h5>
+        <p>Are you sure you want to delete the animal milk record?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+          <a id="confirm-delete-milk-record-button" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Delete Animal Milk Record Modal -->
+{% endblock %} {% block extra_js %}
+
+<script>
+  $(document).ready(function () {
+    // ...
+
+    $("#deleteWeightModal").on("show.bs.modal", function (event) {
+      var button = $(event.relatedTarget);
+      var weightId = button.data("weight-id");
+      var url = "{% url 'dairy:animal_weight_delete' 0 %}".replace("0", weightId);
+      url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
+      $("#confirm-delete-weight-button").attr("href", url);
+    });
+    $("#deleteMilkRecordModal").on("show.bs.modal", function (event) {
+      var button = $(event.relatedTarget);
+      var milkRecordId = button.data("milk-record-id");
+      var url = "{% url 'dairy:animal_milk_delete' 0 %}".replace("0", milkRecordId);
+      url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
+      $("#confirm-delete-milk-record-button").attr("href", url);
+    });
+  });
+</script>
+
+{%endblock%}

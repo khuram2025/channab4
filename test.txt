@@ -1,76 +1,16 @@
-HTTP 200 OK
-Allow: GET, HEAD, OPTIONS
-Content-Type: application/json
-Vary: Accept
+Give me the Full html & CSS code 
 
-{
-    "total_income": 21500.0,
-    "total_expense": 250.0,
-    "net_income": 21250.0,
-    "summary": [
-        {
-            "category": "Milk Sale",
-            "total_amount": 21400.0
-        },
-        {
-            "category": "Investment",
-            "total_amount": 0
-        }
-    ],
-    "time_filter": "last_30_days",
-    "expense_summary": [
-        {
-            "category": "Green Food",
-            "total_amount": 250.0
-        },
-        {
-            "category": "Salary",
-            "total_amount": 0
-        }
-    ],
-    "male_animals": [
-        {
-            "id": 1,
-            "farm_id": 1,
-            "tag": "CS101",
-            "image": "animals/gty_5VYoOI0.png",
-            "dob": "2023-04-05",
-            "purchase_cost": 2323.0,
-            "status": "active",
-            "sex": "male",
-            "category_id": 1,
-            "animal_type": "other"
-        },
-        
-    ],
-    "female_animals": [
-        {
-            "id": 10,
-            "farm_id": 1,
-            "tag": "CS102",
-            "image": "animals/12345_W8apkS9.PNG",
-            "dob": "2018-01-01",
-            "purchase_cost": 140000.0,
-            "status": "active",
-            "sex": "female",
-            "category_id": 1,
-            "animal_type": "preg_milking"
-        },
-        
-    ],
-    "animals": [
-        {
-            "id": 1,
-            "farm_id": 1,
-            "tag": "CS101",
-            "image": "animals/gty_5VYoOI0.png",
-            "dob": "2023-04-05",
-            "purchase_cost": 2323.0,
-            "status": "active",
-            "sex": "male",
-            "category_id": 1,
-            "animal_type": "other"
-        },
-       
-    ]
-}
+Mobile View 
+1st Row(Image streched to full width in mobile view 
+& max height 450 )
+2nd Row ( title of the product left side right side Action Icon Delete & Edit)
+3rd row Tabs( OverView, Animal, Family, Kissan, Ghar, Weight) and this should be scrolling if not fit to screen in mobile 
+4th row Content for each tab on press 
+
+Web/Desktop View 
+
+1st Row(
+    1st Columnd(Image streched to right side with maximum width and height of 450 )
+    2nd Column Animal Title along with Action Icon Delete & Edit , And Content form OverView Tab)
+3rd row Tabs(Animal, Family, Kissan, Ghar, Weight) 
+4th row Content for each tab on press 
