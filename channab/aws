@@ -92,6 +92,11 @@ git pull origin mobile-app
 cd ~/channab/channab4/channab
 git pull origin Web
 
+sudo systemctl restart gunicorn
+sudo systemctl restart nginx
+
+sudo systemctl status gunicorn
+sudo systemctl status nginx
 
 
 
