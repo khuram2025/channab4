@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Profile, Farm
-
+from .models import CustomUser, Profile, Farm, SalaryComponent, SalaryTransaction
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
     list_display = ('mobile', 'email', 'first_name', 'last_name', 'role', 'farm', 'is_staff', 'is_active',)
@@ -26,6 +25,19 @@ class CustomUserAdmin(UserAdmin):
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Farm)
 
+class SalaryComponentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'amount', 'duration', 'member')
+    search_fields = ('name', 'member__first_name', 'member__last_name')
+    ordering = ('member', 'name')
+
+admin.site.register(SalaryComponent, SalaryComponentAdmin)
+
+class SalaryTransactionAdmin(admin.ModelAdmin):
+    list_display = ('farm_member', 'component', 'amount_paid', 'transaction_date')
+    search_fields = ('farm_member__first_name', 'farm_member__last_name', 'component__name')
+    ordering = ('transaction_date', 'farm_member')
+
+admin.site.register(SalaryTransaction, SalaryTransactionAdmin)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'first_name', 'last_name', 'city', 'email', 'facebook', 'youtube')
     search_fields = ('user__mobile', 'email', 'first_name', 'last_name')
