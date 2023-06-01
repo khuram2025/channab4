@@ -8,6 +8,18 @@
 .name-section {
   display: none;
 }
+.image-section img {
+  max-width: 100%;
+  max-height: 250px;
+}
+
+@media (min-width: 601px) {
+  .image-section img {
+    width: 100%;
+    max-width: 540px;
+    object-fit: cover;
+  }
+}
 
 @media (min-width: 768px) {
   .info-table-wrapper {
@@ -165,7 +177,7 @@
   margin-right: 10px;
 }
 .detail-page-image {
-  max-height: 450px;
+  max-height: 250px;
   max-width: 450px;
 }
 

@@ -51,9 +51,9 @@
               <div class="col-md-6">
                 <div class="product-left-box">
                   <div class="product-main-2 no-arrow">
-                    <div class="slider-image">
+                    <div class="col-md-6 image-section">
                       {% if animal.image %}
-                      <img src="{{ animal.image.url }}" id="img-1" data-zoom-image="{{ animal.image.url }}" class="img-fluid image_zoom_cls-0 lazyload detail-page-image" alt="{{ animal.tag }} Image" />
+                      <img src="{{ animal.image.url }}" alt="{{ animal.tag }} Image" class="product-image" />
                       {% else %}
                       <img src="{% static 'path/to/default/image.jpg' %}" id="img-1" data-zoom-image="{% static 'path/to/default/image.jpg' %}" class="img-fluid image_zoom_cls-0 blur-up lazyload detail-page-image" alt="Default Animal Image" />
                       {% endif %}
