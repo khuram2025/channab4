@@ -8,6 +8,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import MilkRecord, Animal, AnimalWeight
 from django.db.models import F
 from datetime import timedelta, date
+from django.db.models import Subquery, OuterRef
 
 
 @login_required
@@ -62,6 +63,9 @@ from django.core.paginator import Paginator
 def animal_list(request):
     farm = request.user.farm
     animals = Animal.objects.filter(farm=farm)
+    animals = animals.annotate(latest_weight=Subquery(
+        AnimalWeight.objects.filter(animal=OuterRef('pk')).order_by('-date')[:1].values('weight_kg')
+    ))
     
     animal_types = dict(Animal.TYPE_CHOICES)
     

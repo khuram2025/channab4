@@ -17,7 +17,7 @@
         <a href="#" data-bs-toggle="modal" data-bs-target="#deleteAnimalModal{{ animal.pk }}"><i class="ri-delete-bin-line"></i></a>
       </div>
     </div>
-    <p style="margin: 0">Price: {{ animal.purchase_cost }}</p>
+    <p style="margin: 0">Weight: {{ animal.latest_weight }} KG</p>
     <p style="margin: 0">Age: {{ animal.dob|animal_age }}</p>
     <div style="display: flex; justify-content: space-between; margin-top: 10px; margin-left: 15px">
       <span style="display: inline-block; width: 30%; height: 25px; border: 1px solid #33a137; color: #33a137; line-height: 25px; text-align: center; border-radius: 6px">{{ animal.sex|capfirst }}</span>
