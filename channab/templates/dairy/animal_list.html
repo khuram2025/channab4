@@ -36,16 +36,19 @@
               </a>
 
               <i class="fas fa-filter filter-icon"></i>
-              <select id="filter" class="filter-select">
-                <option value="7days" class="filter-select-option">Last 7 days</option>
-                <option value="1month" class="filter-select-option">One Month</option>
-                <option value="1year" class="filter-select-option">1 Year</option>
+              <select id="age_filter" class="filter-select" onchange="location = this.value;">
+                <option value="?type={{ selected_type }}&age_range=all" {% if selected_age_range == 'all' %}selected{% endif %}>All</option>
+                <option value="?type={{ selected_type }}&age_range=0-3M" {% if selected_age_range == '0-3M' %}selected{% endif %}>From 0 to 3M</option>
+                <option value="?type={{ selected_type }}&age_range=3M-6M" {% if selected_age_range == '3M-6M' %}selected{% endif %}>From 3M to 6M</option>
+                <option value="?type={{ selected_type }}&age_range=6M-1Y" {% if selected_age_range == '6M-1Y' %}selected{% endif %}>From 6M to 1Y</option>
+                <option value="?type={{ selected_type }}&age_range=1Y-1.5Y" {% if selected_age_range == '1Y-1.5Y' %}selected{% endif %}>From 1Y to 1.5Y</option>
+                <option value="?type={{ selected_type }}&age_range=1.5Y+" {% if selected_age_range == '1.5Y+' %}selected{% endif %}>From 1.5Y to Above</option>
               </select>
             </div>
           </div>
           <div class="list-container slider">
             <div class="list-subcontainer {% if selected_type == 'all' %}selected{% endif %}">
-              <a href="?type=all">
+              <a href="?type=all&age_range={{ selected_age_range }}">
                 <div class="add-animal-button">
                   <span class="animal-type">All</span>
                   <span class="animal-count">{{ animals.count }}</span>
@@ -54,9 +57,9 @@
             </div>
             {% for animal_type in animals_by_type.keys %}
             <div class="list-subcontainer {% if selected_type == animal_type %}selected{% endif %}">
-              <a href="?type={{ animal_type }}">
+              <a href="?type={{ animal_type }}&age_range={{ selected_age_range }}">
                 <div class="add-animal-button">
-                  <span class="animal-type">{{ animal_type|get_animal_type_display }} </span>
+                  <span class="animal-type">{{ animal_type|get_animal_type_display }}</span>
                   <span class="animal-count">{{ counts_by_type|get_item:animal_type }}</span>
                 </div>
               </a>

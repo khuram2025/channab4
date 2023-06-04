@@ -7,6 +7,7 @@ from accounts.models import Farm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import MilkRecord, Animal, AnimalWeight
 from django.db.models import F
+from datetime import timedelta, date
 
 
 @login_required
@@ -62,8 +63,8 @@ def animal_list(request):
     farm = request.user.farm
     animals = Animal.objects.filter(farm=farm)
     
-    
     animal_types = dict(Animal.TYPE_CHOICES)
+    
     
     animals_by_type = {}
     counts_by_type = {}  
@@ -71,10 +72,33 @@ def animal_list(request):
     page_objs_by_type = {}
 
     selected_type = request.GET.get('type', 'all')  # get the type parameter from the URL
+    selected_age_range = request.GET.get('age_range', 'all')  # get the age range parameter from the URL
 
     # filter the animals based on the selected type
     if selected_type != 'all':
         animals = animals.filter(animal_type=selected_type)
+
+    now = date.today()
+    three_months_ago = now - timedelta(days=90)  # approximately 3 months
+    six_months_ago = now - timedelta(days=180)  # approximately 6 months
+    one_year_ago = now - timedelta(days=365)  # 1 year
+    one_and_half_years_ago = now - timedelta(days=547)  # 1.5 years
+
+    selected_age_range = request.GET.get('age_range', 'all')
+
+    if selected_age_range != 'all':
+        # filter by age range as before
+        if selected_age_range == '0-3M':
+            animals = animals.filter(dob__gte=three_months_ago)
+        elif selected_age_range == '3M-6M':
+            animals = animals.filter(dob__gte=six_months_ago, dob__lt=three_months_ago)
+        elif selected_age_range == '6M-1Y':
+            animals = animals.filter(dob__gte=one_year_ago, dob__lt=six_months_ago)
+        elif selected_age_range == '1Y-1.5Y':
+            animals = animals.filter(dob__gte=one_and_half_years_ago, dob__lt=one_year_ago)
+        else:  # '1.5Y+'
+            animals = animals.filter(dob__lt=one_and_half_years_ago)
+
 
     # Add paginator and page object for 'all' animals
     paginator_all = Paginator(animals, 200)
@@ -85,9 +109,10 @@ def animal_list(request):
         animals_of_type = animals.filter(animal_type=animal_type)
         animals_by_type[animal_type] = animals_of_type
         counts_by_type[animal_type] = animals_of_type.count() 
-        paginators_by_type[animal_type] = Paginator(animals_by_type[animal_type], 14)
+        paginators_by_type[animal_type] = Paginator(animals_of_type, 14)
         page_number = request.GET.get(f'{animal_type}_page')
         page_objs_by_type[animal_type] = paginators_by_type[animal_type].get_page(page_number)
+    
 
     return render(request, 'dairy/animal_list.html', {
         'animals': animals, 
@@ -95,8 +120,8 @@ def animal_list(request):
         'counts_by_type': counts_by_type, 
         'page_objs_by_type': page_objs_by_type,
         'selected_type': selected_type,
+        'selected_age_range': selected_age_range,
     })
-
 
 
 @login_required
