@@ -77,7 +77,7 @@ def animal_list(request):
         animals = animals.filter(animal_type=selected_type)
 
     # Add paginator and page object for 'all' animals
-    paginator_all = Paginator(animals, 14)
+    paginator_all = Paginator(animals, 200)
     page_number_all = request.GET.get('all_page')
     page_objs_by_type['all'] = paginator_all.get_page(page_number_all)
     
