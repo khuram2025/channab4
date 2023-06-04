@@ -342,6 +342,8 @@ def animal_milk_new(request):
     return render(request, 'dairy/animal_milk_edit.html', {'form': form, 'edit_mode': edit_mode, 'milk_record': milk_record})
 
 
+from datetime import timedelta
+
 @login_required
 def animal_weight_list(request):
     sort_by = request.GET.get('sort_by', 'date')
@@ -366,6 +368,12 @@ def animal_weight_list(request):
     for weight in weights:
         prev_weight = AnimalWeight.objects.filter(animal=weight.animal, date__lt=weight.date).order_by('-date').first()
         prev_weights[weight.pk] = prev_weight
+
+        # Calculate weight gain per day
+        if prev_weight:
+            days_passed = (weight.date - prev_weight.date).days
+            weight_gain_per_day = (weight.weight_kg - prev_weight.weight_kg) / days_passed if days_passed != 0 else 0
+            weight.weight_gain_per_day = round(weight_gain_per_day, 2)  # rounding to 2 decimal places
 
     return render(request, 'dairy/animal_weight_list.html', {'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order})
 

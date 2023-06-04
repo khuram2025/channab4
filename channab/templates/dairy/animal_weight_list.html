@@ -56,15 +56,16 @@
                             <a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
                           </th>
                           <th>
-                            <a href="?sort_by=weight_kg&sort_order={% if sort_by == 'weight_kg' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Weight (KG) {% if sort_by == 'weight_kg' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                            <a href="?sort_by=weight_kg&sort_order={% if sort_by == 'weight_kg' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">WT(KG) {% if sort_by == 'weight_kg' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
                           </th>
                           <th>
-                            <a href="?sort_by=weight_change_kg&sort_order={% if sort_by == 'weight_change_kg' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Weight Change (KG) {% if sort_by == 'weight_change_kg' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                            <a href="?sort_by=weight_change_kg&sort_order={% if sort_by == 'weight_change_kg' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">WTChg(KG) {% if sort_by == 'weight_change_kg' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
                           </th>
                           <th>
-                            <a href="?sort_by=weight_change_percent&sort_order={% if sort_by == 'weight_change_percent' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Weight Change (%) {% if sort_by == 'weight_change_percent' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
+                            <a href="?sort_by=weight_change_percent&sort_order={% if sort_by == 'weight_change_percent' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">WTChg(%) {% if sort_by == 'weight_change_percent' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
                           </th>
-                          <th>Description</th>
+                          <th>CPD</th>
+                          <th>Des</th>
                           <th>Option</th>
                         </tr>
                       </thead>
@@ -77,7 +78,8 @@
                           <td>{{ weight.weight_kg }}</td>
                           <td class="{% if prev_weight %}{% if weight.weight_kg|subtract:prev_weight.weight_kg < 0 %}text-danger{% else %}text-success{% endif %}{% endif %}">{% if prev_weight %} {{ weight.weight_kg|subtract:prev_weight.weight_kg }} {% else %} N/A {% endif %}</td>
                           <td class="{% if prev_weight %}{% if weight.weight_kg|subtract:prev_weight.weight_kg < 0 %}text-danger{% else %}text-success{% endif %}{% endif %}">{% if prev_weight %} {{ weight.weight_kg|subtract:prev_weight.weight_kg|div:prev_weight.weight_kg|mul:100|floatformat }}{% else %} N/A {% endif %}</td>
-                          <td>{{ weight.description }}</td>
+                          <td>{{ weight.weight_gain_per_day }} kg/day</td>
+                          <td>{{ weight.description }} kg/day</td>
                           <td>
                             <ul>
                               <li>
