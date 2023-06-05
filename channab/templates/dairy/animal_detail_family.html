@@ -1,0 +1,48 @@
+<div class="tab-pane" id="family">
+  <!-- Family content goes here -->
+  <div class="mb-3">
+    <a href="{% url 'dairy:create_family' animal.pk %}" class="btn btn-primary">Create Relation</a>
+    <a href="{% url 'dairy:update_parents' animal.pk %}" class="btn btn-secondary">Update Relation</a>
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Relation</button>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Animal Tag</th>
+        <th>Relation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if animal.mother %}
+      <tr>
+        <td>{{ animal.mother.tag }}</td>
+        <td>Mother</td>
+      </tr>
+      {% endif %} {% if animal.father %}
+      <tr>
+        <td>{{ animal.father.tag }}</td>
+        <td>Father</td>
+      </tr>
+      {% endif %} {% for sibling in animal.siblings.all %}
+      <tr>
+        <td>{{ sibling.tag }}</td>
+        <td>Sibling</td>
+      </tr>
+      {% endfor %}
+      <!-- The rest of your HTML above -->
+      {% for child in animal.children_mother.all %}
+      <tr>
+        <td>{{ child.tag }}</td>
+        <td>Child (From Mother)</td>
+      </tr>
+      {% endfor %} {% for child in animal.children_father.all %}
+      <tr>
+        <td>{{ child.tag }}</td>
+        <td>Child (From Father)</td>
+      </tr>
+      {% endfor %}
+      <!-- The rest of your HTML below -->
+    </tbody>
+  </table>
+</div>

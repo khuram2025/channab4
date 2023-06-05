@@ -18,6 +18,10 @@ urlpatterns = [
     path('animals/edit/<int:pk>/', views.animal_edit, name='animal_edit'),
     path('animals/<int:pk>/delete/', views.delete_animal, name='delete_animal'),
 
+    path('animal/<int:pk>/create_family/', views.create_family, name='create_family'),
+    path('animal/<int:pk>/update_parents/', views.update_parents, name='update_parents'),
+
+
 
     path('animal_milk/', views.animal_milk_list, name='animal_milk_list'),
     path('animal_milks/new/', views.animal_milk_new, name='animal_milk_new'),

@@ -1,0 +1,20 @@
+<form method="post">
+  {% csrf_token %}
+  <label for="father">Father:</label>
+  <select name="father" id="father">
+    <option value="">---</option>
+    {% for other_animal in animals %}
+      <option value="{{ other_animal.pk }}" {% if other_animal == animal.father %}selected{% endif %}>{{ other_animal }}</option>
+    {% endfor %}
+  </select>
+  <br>
+  <label for="mother">Mother:</label>
+  <select name="mother" id="mother">
+    <option value="">---</option>
+    {% for other_animal in animals %}
+      <option value="{{ other_animal.pk }}" {% if other_animal == animal.mother %}selected{% endif %}>{{ other_animal }}</option>
+    {% endfor %}
+  </select>
+  <br>
+  <input type="submit" value="Update Parents">
+</form>

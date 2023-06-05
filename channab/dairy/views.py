@@ -187,6 +187,63 @@ def animal_detail(request, pk):
 
     return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order,})
 
+@login_required
+def update_parents(request, pk):
+    farm = request.user.farm
+    animal = get_object_or_404(Animal, pk=pk, farm=farm)
+
+    if request.method == 'POST':
+        father_id = request.POST.get('father')
+        mother_id = request.POST.get('mother')
+
+        if father_id:
+            father = get_object_or_404(Animal, pk=father_id, farm=farm)
+            if father != animal:
+                animal.father = father
+
+        if mother_id:
+            mother = get_object_or_404(Animal, pk=mother_id, farm=farm)
+            if mother != animal:
+                animal.mother = mother
+
+        animal.save()
+
+        return redirect('animal_detail', pk=animal.pk)
+
+    else: 
+        animals = Animal.objects.filter(farm=farm).exclude(pk=animal.pk)
+        return render(request, 'dairy/update_parents.html', {'animal': animal, 'animals': animals})
+
+@login_required
+def create_family(request, pk):
+    farm = request.user.farm
+    animal = get_object_or_404(Animal, pk=pk, farm=farm)
+
+    if animal.father is not None and animal.mother is not None:
+        messages.warning(request, "The animal already has a father and mother.")
+        return redirect('animal_detail', pk=animal.pk)
+
+    if request.method == 'POST':
+        father_id = request.POST.get('father')
+        mother_id = request.POST.get('mother')
+
+        if father_id:
+            father = get_object_or_404(Animal, pk=father_id, farm=farm)
+            if father != animal:
+                animal.father = father
+
+        if mother_id:
+            mother = get_object_or_404(Animal, pk=mother_id, farm=farm)
+            if mother != animal:
+                animal.mother = mother
+
+        animal.save()
+
+        return redirect('animal_detail', pk=animal.pk)
+
+    else:
+        animals = Animal.objects.filter(farm=farm).exclude(pk=animal.pk)
+        return render(request, 'dairy/create_family.html', {'animal': animal, 'animals': animals})
 
 
 

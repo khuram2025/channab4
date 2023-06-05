@@ -54,6 +54,9 @@ class Animal(models.Model):
     ]
     animal_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='other')
     ANIMAL_TYPE_CHOICES_DICT = dict(TYPE_CHOICES)
+
+    mother = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children_mother')
+    father = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children_father')
     
     def save(self, *args, **kwargs):
             if self.image:
@@ -108,7 +111,29 @@ class Animal(models.Model):
                             break
         return image
     
+    def save(self, *args, **kwargs):
+        if self.mother == self or self.father == self:
+            raise ValidationError('An animal cannot be its own parent.')
+        if self.mother and self.mother.sex != 'female':
+            raise ValidationError('Mother must be a female animal.')
+        if self.father and self.father.sex != 'male':
+            raise ValidationError('Father must be a male animal.')
+        if self.mother and self in self.mother.get_descendants():
+            raise ValidationError('Invalid parent-child relationship.')
+        if self.father and self in self.father.get_descendants():
+            raise ValidationError('Invalid parent-child relationship.')
+        super().save(*args, **kwargs)
 
+    def get_descendants(self):
+        descendants = set()
+        for child in self.children_mother.all():
+            descendants.add(child)
+            descendants.update(child.get_descendants())
+        for child in self.children_father.all():
+            descendants.add(child)
+            descendants.update(child.get_descendants())
+        return descendants
+    
     def __str__(self):
         return f'{self.tag} ({self.category.title})'
 
