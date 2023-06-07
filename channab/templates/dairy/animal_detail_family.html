@@ -1,48 +1,88 @@
-<div class="tab-pane" id="family">
-  <!-- Family content goes here -->
-  <div class="mb-3">
-    <a href="{% url 'dairy:create_family' animal.pk %}" class="btn btn-primary">Create Relation</a>
-    <a href="{% url 'dairy:update_parents' animal.pk %}" class="btn btn-secondary">Update Relation</a>
-    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Relation</button>
-  </div>
+<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
+<hr />
 
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Animal Tag</th>
-        <th>Relation</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% if animal.mother %}
-      <tr>
-        <td>{{ animal.mother.tag }}</td>
-        <td>Mother</td>
-      </tr>
-      {% endif %} {% if animal.father %}
-      <tr>
-        <td>{{ animal.father.tag }}</td>
-        <td>Father</td>
-      </tr>
-      {% endif %} {% for sibling in animal.siblings.all %}
-      <tr>
-        <td>{{ sibling.tag }}</td>
-        <td>Sibling</td>
-      </tr>
-      {% endfor %}
-      <!-- The rest of your HTML above -->
-      {% for child in animal.children_mother.all %}
-      <tr>
-        <td>{{ child.tag }}</td>
-        <td>Child (From Mother)</td>
-      </tr>
-      {% endfor %} {% for child in animal.children_father.all %}
-      <tr>
-        <td>{{ child.tag }}</td>
-        <td>Child (From Father)</td>
-      </tr>
-      {% endfor %}
-      <!-- The rest of your HTML below -->
-    </tbody>
-  </table>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="main-box no-header clearfix">
+      <div class="main-box-body clearfix">
+        <div class="table-responsive">
+          <table class="table user-list">
+            <tbody>
+              {% if animal.father %}
+              <tr>
+                <td>
+                  <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" />
+                  <a href="#" class="user-link">{{ animal.father.tag }}</a>
+                  <span class="user-subhead">Father</span>
+                </td>
+                <td>
+                  <ul>
+                    <li>
+                      <a href="{% url 'dairy:update_parents' animal.pk %}">
+                        <i class="ri-pencil-line"></i>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" data-bs-toggle="modal" data-bs-target="#deleteRelationModal" data-relation-id="{{ animal.father.pk }}">
+                        <i class="ri-delete-bin-line"></i>
+                      </a>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+              {% endif %} {% if animal.mother %}
+              <tr>
+                <td>
+                  <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" />
+                  <a href="#" class="user-link">{{ animal.mother.tag }}</a>
+                  <span class="user-subhead">Mother</span>
+                </td>
+                <td>
+                  <ul>
+                    <li>
+                      <a href="{% url 'dairy:update_parents' animal.pk %}">
+                        <i class="ri-pencil-line"></i>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" data-bs-toggle="modal" data-bs-target="#deleteRelationModal" data-relation-id="{{ animal.mother.pk }}">
+                        <i class="ri-delete-bin-line"></i>
+                      </a>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+              {% endif %}{% for child in animal.children_mother.all %}
+              <tr>
+                <td>
+                  <img src="{{ child.image.url }}" alt="" />
+                  <a href="#" class="user-link">{{ child.tag }}</a>
+                  <span class="user-subhead">Child</span>
+                </td>
+                <td>...</td>
+              </tr>
+              {% endfor %} {% for child in animal.children_father.all %}
+              <tr>
+                <td>
+                  <img src="{{ child.image.url }}" alt="" />
+                  <a href="#" class="user-link">{{ child.tag }}</a>
+                  <span class="user-subhead">Child</span>
+                </td>
+              </tr>
+              {% endfor %} {% for sibling in animal.siblings.all %}
+              <tr>
+                <td>
+                  <img src="{{ sibling.image.url }}" alt="" />
+                  <a href="#" class="user-link">{{ sibling.tag }}</a>
+                  <span class="user-subhead">Siblings</span>
+                </td>
+                <td>...</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

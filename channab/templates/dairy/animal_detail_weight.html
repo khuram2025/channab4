@@ -1,84 +1,71 @@
 {% load dairy_extras %}
-<div class="tab-pane" id="weight">
-  <div class="table-responsive">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th class="d-none d-sm-table-cell">
-            <a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
-          </th>
-          <th class="d-none d-sm-table-cell">
-            <a href="?sort_by=weight_kg&sort_order={% if sort_by == 'weight_kg' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Weight (KG) {% if sort_by == 'weight_kg' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
-          </th>
-          <th class="d-none d-sm-table-cell">
-            <a href="?sort_by=weight_change_kg&sort_order={% if sort_by == 'weight_change_kg' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Weight Change (KG) {% if sort_by == 'weight_change_kg' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
-          </th>
-          <th class="d-none d-sm-table-cell">
-            <a href="?sort_by=weight_change_percent&sort_order={% if sort_by == 'weight_change_percent' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Weight Change (%) {% if sort_by == 'weight_change_percent' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
-          </th>
-          <th>Description</th>
-          <th>Option</th>
-          <th><a class="btn btn-solid" href="{% url 'dairy:animal_detail_weight_new' animal.pk %}">Add Weight</a></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for weight in weights %} {% with prev_weight=prev_weights|get_item:weight.pk %}
-        <tr data-toggle="collapse" data-target="#demo{{forloop.counter}}" class="accordion-toggle d-sm-none">
-          <td><i class="fas fa-plus-circle"></i></td>
-          <td>{{ weight.date }}</td>
-          <td>{{ weight.weight_kg }}</td>
-          <td class="d-none d-sm-table-cell">Sample Description</td>
-        </tr>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th></th>
+        <th class="d-none d-sm-table-cell"><a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+        <th class="d-none d-sm-table-cell"><a href="?sort_by=weight_kg&sort_order={% if sort_by == 'weight_kg' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">WTKG {% if sort_by == 'weight_kg' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+        <th class="d-none d-sm-table-cell"><a href="?sort_by=weight_change_kg&sort_order={% if sort_by == 'weight_change_kg' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">WChKG {% if sort_by == 'weight_change_kg' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+        <th class="d-none d-sm-table-cell"><a href="?sort_by=weight_change_percent&sort_order={% if sort_by == 'weight_change_percent' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">WCh% {% if sort_by == 'weight_change_percent' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+        <th class="d-none d-sm-table-cell">Description</th>
+        <th class="d-none d-sm-table-cell">Action</th>
+        <div style="width: 100%; max-width: 880px; height: 50px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white; padding: 0 10px">
+          <h5 style="margin: 0; color: #0da487">Animal List</h5>
+          <div style="display: flex; align-items: center">
+            <i class="fas fa-filter" style="color: #0da487; margin-right: 5px"></i>
+            <select id="filter" style="background-color: white; color: #0da487; border: 1px solid #0da487; height: 30px">
+              <option value="7days" style="background-color: white; color: #0da487">Last 7 days</option>
+              <option value="1month" style="background-color: white; color: #0da487">One Month</option>
+              <option value="1year" style="background-color: white; color: #0da487">1 Year</option>
+            </select>
+          </div>
+        </div>
+      </tr>
+    </thead>
+    <tbody>
+      {% for weight in weights %} {% with prev_weight=prev_weights|get_item:weight.pk %}
+      <tr data-toggle="collapse" data-target="#demo{{forloop.counter}}" class="accordion-toggle d-sm-none">
+        <td><i class="fas fa-plus-circle"></i></td>
+        <td>{{ weight.date }}</td>
+        <td>{{ weight.weight_kg }} KG</td>
+        <td class="d-none d-sm-table-cell">{{ weight.description }}</td>
+        <td>
+          <p><span class="{% if prev_weight %}{% if weight.weight_kg|subtract:prev_weight.weight_kg < 0 %}text-danger{% else %}text-success{% endif %}{% endif %}">{% if prev_weight %} {{ weight.weight_kg|subtract:prev_weight.weight_kg }} {% else %} N/A {% endif %}</span></p>
+        </td>
+      </tr>
+      <tr class="d-none d-sm-table-row">
+        <td></td>
+        <td>{{ weight.date }}</td>
+        <td>{{ weight.weight_kg }} KG</td>
+        <td class="{% if prev_weight %}{% if weight.weight_kg|subtract:prev_weight.weight_kg < 0 %}text-danger{% else %}text-success{% endif %}{% endif %}">{% if prev_weight %} {{ weight.weight_kg|subtract:prev_weight.weight_kg }} {% else %} N/A {% endif %}></td>
+        <td class="{% if prev_weight %}{% if weight.weight_kg|subtract:prev_weight.weight_kg < 0 %}text-danger{% else %}text-success{% endif %}{% endif %}">{% if prev_weight %} {{ weight.weight_kg|subtract:prev_weight.weight_kg|div:prev_weight.weight_kg|mul:100|floatformat }}{% else %} N/A {% endif %}</td>
+        <td>{{ weight.description }}</td>
+        <td>
+          <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
+          <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5" class="hiddenRow">
+          <div class="accordion-body collapse" id="demo{{forloop.counter}}">
+            <p><strong>Date:</strong> {{ weight.date }}</p>
+            <p><strong>Weight:</strong> {{ weight.weight_kg }} KG</p>
+            <p class="{% if prev_weight %}{% if weight.weight_kg|subtract:prev_weight.weight_kg < 0 %}text-danger{% else %}text-success{% endif %}{% endif %}">
+              <strong>Weight change:</strong>
+              {% if prev_weight %} {{ weight.weight_kg|subtract:prev_weight.weight_kg }} {% else %} N/A {% endif %}
+            </p>
 
-        <tr>
-          <td colspan="5" class="hiddenRow">
-            <div class="accordion-body collapse" id="demo{{forloop.counter}}">
-              <p><strong>Differnce:</strong> <span class="{% if prev_weight %}{% if weight.weight_kg|subtract:prev_weight.weight_kg < 0 %}text-danger{% else %}text-success{% endif %}{% endif %}">{% if prev_weight %} {{ weight.weight_kg|subtract:prev_weight.weight_kg }} {% else %} N/A {% endif %}</span></p>
-              <p><strong>Percentage:</strong> <span class="{% if prev_weight %}{% if weight.weight_kg|subtract:prev_weight.weight_kg < 0 %}text-danger{% else %}text-success{% endif %}{% endif %}">{% if prev_weight %} {{ weight.weight_kg|subtract:prev_weight.weight_kg|div:prev_weight.weight_kg|mul:100|floatformat }}{% else %} N/A {% endif %}</span></p>
-              <p>{{ weight.description }}</p>
-              <p>
-                <strong>Action:</strong>
-                <a href="{% url 'dairy:animal_weight_edit' weight.pk %}">
-                  <i class="ri-pencil-line"></i>
-                </a>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteWeightModal" data-weight-id="{{ weight.pk }}">
-                  <i class="ri-delete-bin-line"></i>
-                </a>
-              </p>
-            </div>
-          </td>
-        </tr>
+            <p>
+              <strong>Action:</strong>
+              <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
+              <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+            </p>
+          </div>
+        </td>
+      </tr>
 
-        <tr class="d-none d-sm-table-row">
-          <td>{{ weight.date }}</td>
-          <td>{{ weight.weight_kg }}</td>
-          <td class="{% if prev_weight %}{% if weight.weight_kg|subtract:prev_weight.weight_kg < 0 %}text-danger{% else %}text-success{% endif %}{% endif %}">{% if prev_weight %} {{ weight.weight_kg|subtract:prev_weight.weight_kg }} {% else %} N/A {% endif %}></td>
-          <td class="{% if prev_weight %}{% if weight.weight_kg|subtract:prev_weight.weight_kg < 0 %}text-danger{% else %}text-success{% endif %}{% endif %}">{% if prev_weight %} {{ weight.weight_kg|subtract:prev_weight.weight_kg|div:prev_weight.weight_kg|mul:100|floatformat }}{% else %} N/A {% endif %}</td>
-          <td>{{ weight.description }}</td>
-          <td>
-            <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
-            <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
-          </td>
-        </tr>
-
-        {% endwith %} {% endfor %}
-      </tbody>
-    </table>
-  </div>
+      {% endwith %} {% endfor %}
+    </tbody>
+  </table>
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
-<script>
-  $(document).ready(function () {
-    $("#tabs a").click(function (e) {
-      e.preventDefault();
-      $(this).tab("show");
-    });
-
-    $(".accordion-toggle").click(function () {
-      $(this).find(".fas").toggleClass("fa-plus-circle fa-minus-circle");
-      var target = $(this).attr("data-target");
-      $(target).collapse("toggle");
-    });
-  });
-</script>

@@ -1,25 +1,6 @@
 {%extends 'main/base.html'%} {%block content%} {%load static%}{% load dairy_extras %}
-<style>
-  .info-table-wrapper {
-    display: none;
-  }
-
-  .name-section {
-    display: none;
-  }
-
-  @media (min-width: 768px) {
-    .info-table-wrapper {
-      display: block;
-    }
-    .info-tab-mobile {
-      display: none;
-    }
-    .name-section {
-      display: block;
-    }
-  }
-</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
 
 <!-- tap on top start -->
 <div class="tap-top">
@@ -43,218 +24,220 @@
     <!-- Container-fluid starts-->
     <div class="page-body">
       <!-- All User Table Start -->
-      <div class="container" style="background-color: white">
+      <div class="container" style="background-color: white"></div>
+      <div class="row">
+        <div class="col-md-6 image-section">
+          {% if animal.image %}
+          <img src="{{ animal.image.url }}" alt="{{ animal.tag }} Image" class="product-image" />
+          {% else %}
+          <img src="{% static 'path/to/default/image.jpg' %}" id="img-1" data-zoom-image="{% static 'path/to/default/image.jpg' %}" class="img-fluid image_zoom_cls-0 blur-up lazyload detail-page-image" alt="Default Animal Image" />
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 detail-section">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="product-title">{{ animal.tag }}</h4>
+            <div class="action-icons">
+              <a href="{% url 'dairy:animal_edit' animal.pk %}"><i class="fas fa-pencil-alt"></i> Edit</a>
+              <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+            </div>
+          </div>
+
+          <div class="overview-content d-none d-md-block">{% include 'dairy/animal_detail_info.html' %}</div>
+        </div>
         <div class="row">
-          <div class="col-sm-12">
-            <!-- Desktop View -->
-            <div class="d-none d-md-flex col-12">
-              <div class="col-md-6">
-                <div class="product-left-box">
-                  <div class="product-main-2 no-arrow">
-                    <div class="col-md-6 image-section">
-                      {% if animal.image %}
-                      <img src="{{ animal.image.url }}" alt="{{ animal.tag }} Image" class="product-image" />
-                      {% else %}
-                      <img src="{% static 'path/to/default/image.jpg' %}" id="img-1" data-zoom-image="{% static 'path/to/default/image.jpg' %}" class="img-fluid image_zoom_cls-0 blur-up lazyload detail-page-image" alt="Default Animal Image" />
-                      {% endif %}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="responsive-container">
-                  <div class="right-box-contain">
-                    <div class="d-flex align-items-center">
-                      <h2 class="name mb-0">{{ animal.tag }}</h2>
-                      <a href="{% url 'dairy:animal_edit' animal.pk %}" class="btn btn-link btn-sm text-success ms-auto">
-                        <i class="fas fa-pencil-alt"></i>
-                      </a>
-                    </div>
-                    <!-- Include the detail file here -->
-                    <div class="info-table-wrapper">{% include 'dairy/animal_detail_info.html' %}</div>
-                  </div>
-                </div>
-              </div>
+          <div class="col-12">
+            <div class="scrolling-wrapper-flexbox">
+              <a class="nav-link active" data-target="#overview" href="#overview">Overview</a>
+              <a class="nav-link" data-target="#weight" href="#animal">Weight</a>
+              <a class="nav-link" data-target="#family" href="#family">Family</a>
+              <a class="nav-link" data-target="#milk" href="#milk">Milk</a>
+              <a class="nav-link" data-target="#ghar" href="#ghar">Health</a>
             </div>
 
-            <!-- Mobile View -->
-            <div class="d-block d-md-none">
-              <div class="col-12">
-                <div class="product-left-box">
-                  <div class="product-main-2 no-arrow">
-                    <div class="slider-image">
-                      {% if animal.image %}
-                      <img src="{{ animal.image.url }}" id="img-1" data-zoom-image="{{ animal.image.url }}" class="img-fluid image_zoom_cls-0 lazyload detail-page-image" alt="{{ animal.tag }} Image" />
-                      {% else %}
-                      <img src="{% static 'path/to/default/image.jpg' %}" id="img-1" data-zoom-image="{% static 'path/to/default/image.jpg' %}" class="img-fluid image_zoom_cls-0 blur-up lazyload detail-page-image" alt="Default Animal Image" />
-                      {% endif %}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12">
-                <div class="responsive-container">
-                  <div class="right-box-contain">
-                    <div class="d-flex align-items-center">
-                      <h2 class="name mb-0">{{ animal.tag }}</h2>
-                      <a href="{% url 'dairy:animal_edit' animal.pk %}" class="btn btn-link btn-sm text-success ms-auto">
-                        <i class="fas fa-pencil-alt"></i>
-                      </a>
-                    </div>
-                    <!-- Hidden on mobile view by default -->
-                    <div class="info-table-wrapper d-none">{% include 'dairy/animal_detail_info.html' %}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div class="tab-content">
+              <div class="tab-pane active d-md-none" id="overview">{% include 'dairy/animal_detail_info.html' %}</div>
+              <div class="tab-pane" id="family">{% include 'dairy/animal_detail_family.html' %}</div>
+              <div class="tab-pane" id="milk">{% include 'dairy/animal_detail_milk.html' %}</div>
 
-            <div class="col-12">
-              <div class="product-section-box">
-                <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">Info</button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="milk-tab" data-bs-toggle="tab" data-bs-target="#milk" type="button" role="tab" aria-controls="milk" aria-selected="false">Milk</button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="weight-tab" data-bs-toggle="tab" data-bs-target="#weight" type="button" role="tab" aria-controls="weight" aria-selected="false">Weight</button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review" type="button" role="tab" aria-controls="review" aria-selected="false">Tasks</button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="farm-members-tab" data-bs-toggle="tab" data-bs-target="#family" type="button" role="tab" aria-controls="family" aria-selected="false">Family</button>
-                  </li>
-                </ul>
-                <div class="tab-content" id="myTabContent">
-                  <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab">{% include 'dairy/animal_detail_info.html' %}</div>
-                  <div class="tab-pane fade" id="milk" role="tabpanel" aria-labelledby="milk-tab">{% include 'dairy/animal_detail_milk.html' %}</div>
-                  <div class="tab-pane fade" id="weight" role="tabpanel" aria-labelledby="weight-tab">{% include 'dairy/animal_detail_weight.html' %}</div>
-                  <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab"></div>
-                  <div class="tab-pane fade" id="family" role="tabpanel" aria-labelledby="family-tab">{% include 'dairy/animal_detail_family.html' %}</div>
+              <div class="tab-pane" id="weight">{% include 'dairy/animal_detail_weight.html' %}</div>
+              <div class="tab-pane" id="family">
+                <!-- Family tab content goes here -->
+              </div>
+              <div class="tab-pane" id="milk">
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th class="d-none d-sm-table-cell">Date</th>
+                        <th class="d-none d-sm-table-cell">Amount</th>
+                        <th>Description</th>
+                        <th class="d-none d-sm-table-cell">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr data-toggle="collapse" data-target="#demo1" class="accordion-toggle d-sm-none">
+                        <td><i class="fas fa-plus-circle"></i></td>
+                        <td>2023-05-01</td>
+                        <td>$500</td>
+                        <td class="d-none d-sm-table-cell">Sample Description</td>
+                        <td>
+                          <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                        </td>
+                      </tr>
+                      <tr class="d-none d-sm-table-row">
+                        <td></td>
+                        <td>2023-05-01</td>
+                        <td>$500</td>
+                        <td>Sample Description</td>
+                        <td>
+                          <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="5" class="hiddenRow">
+                          <div class="accordion-body collapse" id="demo1">
+                            <p><strong>Date:</strong> 2023-05-01</p>
+                            <p><strong>Amount:</strong> $500</p>
+                            <p><strong>Description:</strong> Sample Description</p>
+                            <p>
+                              <strong>Action:</strong>
+                              <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
+                              <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                            </p>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr data-toggle="collapse" data-target="#demo1" class="accordion-toggle d-sm-none">
+                        <td><i class="fas fa-plus-circle"></i></td>
+                        <td>2023-05-01</td>
+                        <td>$500</td>
+                        <td class="d-none d-sm-table-cell">Sample Description</td>
+                        <td>
+                          <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                        </td>
+                      </tr>
+                      <tr class="d-none d-sm-table-row">
+                        <td></td>
+                        <td>2023-05-01</td>
+                        <td>$500</td>
+                        <td>Sample Description</td>
+                        <td>
+                          <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="5" class="hiddenRow">
+                          <div class="accordion-body collapse" id="demo1">
+                            <p><strong>Date:</strong> 2023-05-01</p>
+                            <p><strong>Amount:</strong> $500</p>
+                            <p><strong>Description:</strong> Sample Description</p>
+                            <p>
+                              <strong>Action:</strong>
+                              <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
+                              <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                            </p>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr data-toggle="collapse" data-target="#demo1" class="accordion-toggle d-sm-none">
+                        <td><i class="fas fa-plus-circle"></i></td>
+                        <td>2023-05-01</td>
+                        <td>$500</td>
+                        <td class="d-none d-sm-table-cell">Sample Description</td>
+                        <td>
+                          <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                        </td>
+                      </tr>
+                      <tr class="d-none d-sm-table-row">
+                        <td></td>
+                        <td>2023-05-01</td>
+                        <td>$500</td>
+                        <td>Sample Description</td>
+                        <td>
+                          <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="5" class="hiddenRow">
+                          <div class="accordion-body collapse" id="demo1">
+                            <p><strong>Date:</strong> 2023-05-01</p>
+                            <p><strong>Amount:</strong> $500</p>
+                            <p><strong>Description:</strong> Sample Description</p>
+                            <p>
+                              <strong>Action:</strong>
+                              <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
+                              <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                            </p>
+                          </div>
+                        </td>
+                      </tr>
+                      <!-- Add more rows here -->
+                    </tbody>
+                  </table>
                 </div>
+              </div>
+
+              <div class="tab-pane" id="ghar">
+                <!-- Ghar tab content goes here -->
+              </div>
+              <div class="tab-pane" id="weight">
+                <!-- Weight tab content goes here -->
               </div>
             </div>
           </div>
         </div>
       </div>
-      <!-- All User Table Ends-->
-    </div>
 
-    <!-- Container-fluid end -->
+      <!-- Container-fluid end -->
+      <!-- Page Body End -->
+    </div>
     <!-- Page Body End -->
   </div>
-  <!-- Page Body End -->
-</div>
-<!-- page-wrapper End-->
-<!-- Modal Start -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body">
-        <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-        <p>Are you sure you want to log out?</p>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="button-box">
-          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-          <button type="button" class="btn btn--yes btn-primary">Yes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Delete Animal Weight Modal -->
-<div class="modal fade" id="deleteWeightModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteWeightModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body">
-        <h5 class="modal-title" id="deleteWeightModalLabel">Delete Animal Weight Record</h5>
-        <p>Are you sure you want to delete animal weight record?</p>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="button-box">
-          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-          <a id="confirm-delete-weight-button" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End Delete Animal Weight Modal -->
-<!-- Delete Animal Milk Record Modal -->
-<div class="modal fade" id="deleteMilkRecordModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteMilkRecordModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body">
-        <h5 class="modal-title" id="deleteMilkRecordModalLabel">Delete Animal Milk Record</h5>
-        <p>Are you sure you want to delete the animal milk record?</p>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="button-box">
-          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-          <a id="confirm-delete-milk-record-button" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End Delete Animal Milk Record Modal -->
-{% endblock %} {% block extra_js %}
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  {% endblock %} {% block extra_js %}
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      // Event listener for tab clicks
+      $(".nav-link").click(function (e) {
+        e.preventDefault();
 
-<script>
-  $(document).ready(function () {
-    $("#tabs a").click(function (e) {
-      e.preventDefault();
-      $(this).tab("show");
+        // Remove active class from all tabs
+        $(".nav-link").removeClass("active");
+
+        // Add active class to clicked tab
+        $(this).addClass("active");
+
+        // Hide all tab content
+        $(".tab-pane").removeClass("active");
+
+        // Show clicked tab's content
+        var target = $(this).attr("data-target");
+        $(target).addClass("active");
+      });
+
+      $(".accordion-toggle").click(function () {
+        $(this).find(".fas").toggleClass("fa-plus-circle fa-minus-circle");
+      });
     });
+  </script>
 
-    $(".accordion-toggle").click(function () {
-      $(this).find(".fas").toggleClass("fa-plus-circle fa-minus-circle");
+  <script>
+    $(document).ready(function () {
+      $(".accordion-toggle").click(function () {
+        $(this).find(".fas").toggleClass("fa-plus-circle fa-minus-circle");
+      });
     });
-  });
-</script>
+  </script>
 
-<script>
-  window.addEventListener("resize", function (event) {
-    // Get the window width
-    var width = window.innerWidth;
-    var infoTab = document.getElementById("info-tab");
-
-    // Check if width is less than or equal to 767
-    if (width <= 767) {
-      // If yes, then make the Info tab active
-      infoTab.setAttribute("aria-selected", "true");
-      infoTab.classList.add("active");
-    } else {
-      // If no, then make the Info tab not active
-      infoTab.setAttribute("aria-selected", "false");
-      infoTab.classList.remove("active");
-    }
-  });
-
-  // Call the resize function initially when the page loads
-  window.dispatchEvent(new Event("resize"));
-</script>
-
-<script>
-  $(document).ready(function () {
-    // ...
-
-    $("#deleteWeightModal").on("show.bs.modal", function (event) {
-      var button = $(event.relatedTarget);
-      var weightId = button.data("weight-id");
-      var url = "{% url 'dairy:animal_weight_delete' 0 %}".replace("0", weightId);
-      url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
-      $("#confirm-delete-weight-button").attr("href", url);
-    });
-    $("#deleteMilkRecordModal").on("show.bs.modal", function (event) {
-      var button = $(event.relatedTarget);
-      var milkRecordId = button.data("milk-record-id");
-      var url = "{% url 'dairy:animal_milk_delete' 0 %}".replace("0", milkRecordId);
-      url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
-      $("#confirm-delete-milk-record-button").attr("href", url);
-    });
-  });
-</script>
-
-{%endblock%}
+  {%endblock%}
+</div>

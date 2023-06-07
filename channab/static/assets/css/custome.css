@@ -1,6 +1,206 @@
 /*! CSS Used from: https://sego.dexignzone.com/xhtml/css/style.css */
 /*! @import https://sego.dexignzone.com/xhtml/icons/font-awesome-old/css/font-awesome.min.css */
 
+.image-section img {
+  max-width: 100%;
+  max-height: 250px;
+}
+
+.scrolling-wrapper-flexbox {
+  overflow-x: auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+.main-box.no-header {
+  padding-top: 20px;
+}
+.main-box {
+  background: #ffffff;
+  -webkit-box-shadow: 1px 1px 2px 0 #cccccc;
+  -moz-box-shadow: 1px 1px 2px 0 #cccccc;
+  -o-box-shadow: 1px 1px 2px 0 #cccccc;
+  -ms-box-shadow: 1px 1px 2px 0 #cccccc;
+  box-shadow: 1px 1px 2px 0 #cccccc;
+  margin-bottom: 16px;
+  -webikt-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.table a.table-link.danger {
+  color: #e74c3c;
+}
+.label {
+  border-radius: 3px;
+  font-size: 0.875em;
+  font-weight: 600;
+}
+.user-list tbody td .user-subhead {
+  font-size: 0.875em;
+  font-style: italic;
+}
+.user-list tbody td .user-link {
+  display: block;
+  font-size: 1.25em;
+  padding-top: 3px;
+  margin-left: 60px;
+}
+a {
+  color: #3498db;
+  outline: none !important;
+}
+.user-list tbody td > img {
+  position: relative;
+  max-width: 50px;
+  float: left;
+  margin-right: 15px;
+}
+
+.table thead tr th {
+  text-transform: uppercase;
+  font-size: 0.875em;
+}
+.table thead tr th {
+  border-bottom: 2px solid #e7ebee;
+}
+.table tbody tr td:first-child {
+  font-size: 1.125em;
+  font-weight: 300;
+}
+.table tbody tr td {
+  font-size: 0.875em;
+  vertical-align: middle;
+  border-top: 1px solid #e7ebee;
+  padding: 12px 8px;
+}
+a:hover {
+  text-decoration: none;
+}
+
+.nav-link {
+  flex: 1;
+  text-align: center;
+  padding: 5px 0;
+  margin: 0 5px;
+  color: #0da487; /* text color for non-active tabs */
+  border: 2px solid #0da487; /* border color for non-active tabs */
+  background-color: transparent; /* make non-active tab background transparent */
+  border-radius: 5px;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-link:hover,
+.nav-link:focus,
+.nav-link.active {
+  color: #fff; /* text color for active tab */
+  background-color: #0da487; /* background color for active tab */
+  border: 2px solid #0da487; /* border color for active tab */
+}
+
+.nav-link:not(.active) {
+  background-color: transparent;
+  color: #0da487;
+  /* make non-active tab background transparent */
+}
+
+.nav-pills.nav-justified > .nav-item {
+  flex-basis: 0;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.nav-pills.nav-justified > .nav-item > .nav-link {
+  padding: 10px;
+  border-radius: 0;
+}
+.nav-pills .nav-link {
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+@media (max-width: 576px) {
+  .nav-pills {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .nav-pills .nav-item {
+    display: inline-block;
+    float: none;
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .nav-pills::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .nav-pills {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+.scrolling-navbar {
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+.scrolling-navbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+.nav-item {
+  flex: 0 0 auto;
+}
+.nav-link {
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  max-width: 10rem;
+}
+
+@media (min-width: 601px) {
+  .image-section img {
+    width: 100%;
+    max-width: 540px;
+    object-fit: cover;
+  }
+}
+
+.action-icons a {
+  margin-left: 15px;
+}
+
+.nav-pills {
+  overflow-x: auto;
+  white-space: nowrap;
+  border-bottom: 0;
+  padding: 10px 0;
+}
+.nav-link {
+  text-decoration: none;
+}
+.table-responsive {
+  margin: auto;
+}
+
+.hiddenRow {
+  padding: 0 !important;
+}
+
+.nav-pills .nav-item {
+  display: inline-block;
+  flex: none;
+}
+@media (max-width: 768px) {
+  .action-icons {
+    flex-direction: row-reverse;
+  }
+}
+
+.overview-content {
+  margin-top: 15px;
+}
+
 .info-table-wrapper {
   display: none;
 }
