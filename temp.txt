@@ -70,3 +70,16 @@ Next column(1st Row animal title, 2nd row animal Age, 3rd Animal Sex, 4th Row, a
 if we click in any tab it should show the the related tab content on click by default Detail is Active)
 
 )
+###################
+
+Breeding module 
+
+need to build breeding module for the dairy farm where we will place female animal in breeding 
+for the cow default pragncey time is 283 days and for buffalow it is 310 days 
+Once animal inseminated then it should proceed with below 
+
+Follow up test(check ) after two months if animal is pragnet then status changed to Pragnacy Confirm 
+it should the time bar for each animal how many months or days reming from delivery 
+
+
+

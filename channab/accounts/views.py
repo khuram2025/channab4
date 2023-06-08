@@ -519,3 +519,4 @@ def salary_transaction_delete(request, pk):
 def logout_view(request):
     logout(request)
     return redirect(reverse('home:home'))
+

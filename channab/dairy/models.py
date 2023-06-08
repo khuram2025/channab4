@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db import models
 
 from django.utils.text import slugify
@@ -137,6 +138,8 @@ class Animal(models.Model):
     def __str__(self):
         return f'{self.tag} ({self.category.title})'
 
+
+
 from django.db.models import Q
 
 from django.core.exceptions import ValidationError
@@ -167,3 +170,18 @@ class AnimalWeight(models.Model):
 
     def __str__(self):
         return f'{self.animal.tag} - {self.weight_kg} kg on {self.date}'
+
+class Breeding(models.Model):
+    BREEDING_METHODS = [
+        ('NATURAL', 'Natural'),
+        ('AI', 'Artificial Insemination'),
+    ]
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE, limit_choices_to={'sex': 'F'})
+    breeding_date = models.DateField(default=timezone.now)
+    method = models.CharField(max_length=20, choices=BREEDING_METHODS)
+    bull = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, blank=True, related_name='+', limit_choices_to={'sex': 'M'})
+    ai_dose_name = models.CharField(max_length=200, null=True, blank=True)
+    doctor_name = models.CharField(max_length=200, null=True, blank=True)
+    comments = models.TextField(null=True, blank=True)
+    lactation_number = models.IntegerField(null=True, blank=True)  
+    attempt_number = models.IntegerField(null=True, blank=True) 

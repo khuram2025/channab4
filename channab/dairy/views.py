@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from .models import AnimalCategory, Animal
+from django.urls import reverse, reverse_lazy
+from .models import AnimalCategory, Animal, Breeding
 from .forms import AnimalCategoryForm, AnimalForm, AnimalWeightForm, MilkRecordForm
 from accounts.models import Farm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -145,6 +145,7 @@ def animal_create(request):
     else:
         form = AnimalForm()
     return render(request, 'dairy/animal_form.html', {'form': form, 'edit_mode': edit_mode})
+
 
 
 @login_required
@@ -515,3 +516,32 @@ def animal_weight_delete(request, pk):
     weight = get_object_or_404(AnimalWeight, pk=pk)
     weight.delete()
     return redirect('dairy:animal_weight_list')
+
+
+from django.views import generic
+from .models import Breeding
+from .forms import BreedingForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+@login_required
+def breeding_create(request):
+    if request.method == 'POST':
+        form = BreedingForm(request.POST)
+        form.fields['bull'].queryset = Animal.objects.filter(sex='male')
+        form.fields['animal'].queryset = Animal.objects.filter(sex='female')
+        print("POST data: ", request.POST)
+        if form.is_valid():
+            print("Form is valid")
+            breeding_record = form.save(commit=False)
+            breeding_record.farm = request.user.farm
+            print("Breeding record instance: ", breeding_record)
+            breeding_record.save()
+            return redirect('breeding_list')  # Replace with the actual url to the breeding list page
+        else:
+            print("Form is not valid")
+            print("Form errors: ", form.errors)
+    else:
+        form = BreedingForm()
+        form.fields['bull'].queryset = Animal.objects.filter(sex='male')
+        form.fields['animal'].queryset = Animal.objects.filter(sex='female')
+    return render(request, 'dairy/breeding_form.html', {'form': form})

@@ -1,0 +1,116 @@
+{% extends "home/base.html" %} {% load static %} {% load widget_tweaks %} {% block content %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+
+<div class="modal fade theme-modal" id="createBreeding" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel2">Add Breeding Record</h5>
+      </div>
+      <div class="modal-body">
+        <!--...-->
+        <form method="post" action="{% url 'dairy:breeding-new' %}">
+          {% csrf_token %}
+          <div class="row g-4">
+            <div class="col-6">
+              <div class="form-floating theme-form-floating">
+                {{ form.animal|add_class:"form-control" }}
+                <label for="{{ form.animal.auto_id }}">Animal</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-floating theme-form-floating">
+                {{ form.breeding_date|add_class:"form-control" }}
+                <label for="{{ form.breeding_date.auto_id }}">Breeding Date</label>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-floating theme-form-floating">
+                {{ form.method|add_class:"form-control" }}
+                <label for="{{ form.method.auto_id }}">Method</label>
+              </div>
+            </div>
+
+            <div class="col-6 natural" style="display: none">
+              <div class="form-floating theme-form-floating">
+                {{ form.bull|add_class:"form-control" }}
+                <label for="{{ form.bull.auto_id }}">Bull</label>
+              </div>
+            </div>
+
+            <div class="col-6 ai" style="display: none">
+              <div class="form-floating theme-form-floating">
+                {{ form.ai_dose_name|add_class:"form-control" }}
+                <label for="{{ form.ai_dose_name.auto_id }}">AI Dose Name</label>
+              </div>
+            </div>
+
+            <div class="col-6 ai" style="display: none">
+              <div class="form-floating theme-form-floating">
+                {{ form.doctor_name|add_class:"form-control" }}
+                <label for="{{ form.doctor_name.auto_id }}">Doctor Name</label>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-floating theme-form-floating">
+                {{ form.attempt_number|add_class:"form-control" }}
+                <label for="{{ form.attempt_number.auto_id }}">Attempt Number</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-floating theme-form-floating">
+                {{ form.lactation_number|add_class:"form-control" }}
+                <label for="{{ form.lactation_number.auto_id }}">Lactation Number</label>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-floating theme-form-floating">
+                {{ form.comments|add_class:"form-control" }}
+                <label for="{{ form.comments.auto_id }}">Comments</label>
+              </div>
+            </div>
+
+            <!-- Other form fields -->
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save</button>
+            <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal" id="closeButton">Close</button>
+          </div>
+        </form>
+        <!--...-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+  $(document).ready(function () {
+    var createBreedingModal = new bootstrap.Modal(document.getElementById("createBreeding"), {});
+    createBreedingModal.show();
+
+    flatpickr("#id_breeding_date", {
+      // make sure to use correct id
+      dateFormat: "Y-m-d",
+    });
+
+    $("#id_method")
+      .change(function () {
+        if ($(this).val() == "NATURAL") {
+          $(".natural").show();
+          $(".ai").hide();
+        } else if ($(this).val() == "AI") {
+          $(".natural").hide();
+          $(".ai").show();
+        }
+      })
+      .trigger("change");
+  });
+</script>
+
+{% endblock %}
