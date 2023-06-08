@@ -1,20 +1,59 @@
-<form method="post">
-  {% csrf_token %}
-  <label for="father">Father:</label>
-  <select name="father" id="father">
-    <option value="">---</option>
-    {% for other_animal in animals %}
-      <option value="{{ other_animal.pk }}" {% if other_animal == animal.father %}selected{% endif %}>{{ other_animal }}</option>
-    {% endfor %}
-  </select>
-  <br>
-  <label for="mother">Mother:</label>
-  <select name="mother" id="mother">
-    <option value="">---</option>
-    {% for other_animal in animals %}
-      <option value="{{ other_animal.pk }}" {% if other_animal == animal.mother %}selected{% endif %}>{{ other_animal }}</option>
-    {% endfor %}
-  </select>
-  <br>
-  <input type="submit" value="Update Parents">
-</form>
+{% extends "home/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+<div class="modal fade theme-modal" id="createFamily" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">Update Family for {{ animal.tag }}</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-6">
+                            <div class="form-floating theme-form-floating">
+                                <select id="father" name="father" class="form-control">
+                                    <option value="">---</option>
+                                    {% for other_animal in animals %}
+                                    <option value="{{ other_animal.pk }}" {% if other_animal == animal.father %}selected{% endif %}>{{ other_animal }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="father">Father</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-floating theme-form-floating">
+                                <select id="mother" name="mother" class="form-control">
+                                    <option value="">---</option>
+                                    {% for other_animal in animals %}
+                                    <option value="{{ other_animal.pk }}" {% if other_animal == animal.mother %}selected{% endif %}>{{ other_animal }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="mother">Mother</label>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Update Parents</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var createFamilyModal = new bootstrap.Modal(document.getElementById('createFamily'), {});
+        createFamilyModal.show();
+    });
+</script>
+{% endblock %}
