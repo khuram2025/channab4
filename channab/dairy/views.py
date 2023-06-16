@@ -370,13 +370,10 @@ def animal_milk_delete(request, pk):
 def animal_milk_new(request):
     edit_mode = False
     milk_record = None
-
     farm = request.user.farm
-    form = MilkRecordForm()
 
     if request.method == "POST":
-        form = MilkRecordForm(request.POST)
-        form.fields['animal'].queryset = Animal.objects.filter(farm=farm, sex='female')
+        form = MilkRecordForm(request.POST, farm=farm)
         if form.is_valid():
             animal = form.cleaned_data['animal']
             date = form.cleaned_data['date']
@@ -385,25 +382,22 @@ def animal_milk_new(request):
             if not created:
                 edit_mode = True
 
-            form = MilkRecordForm(request.POST, instance=milk_record)
+            form = MilkRecordForm(request.POST, instance=milk_record, farm=farm)
             if form.is_valid():
                 form.save()
                 return redirect('dairy:animal_milk_list')
     else:
         animal_id = request.GET.get('animal')
         date = request.GET.get('date')
-        form.fields['animal'].queryset = Animal.objects.filter(farm=farm, sex='female')
 
         if animal_id and date:
             animal = get_object_or_404(Animal, pk=animal_id)
             milk_record, _ = MilkRecord.objects.get_or_create(animal=animal, date=date)
             edit_mode = True
 
-        form = MilkRecordForm(instance=milk_record)
+        form = MilkRecordForm(instance=milk_record, farm=farm)
 
     return render(request, 'dairy/animal_milk_edit.html', {'form': form, 'edit_mode': edit_mode, 'milk_record': milk_record})
-
-
 from datetime import timedelta
 
 @login_required
@@ -422,9 +416,9 @@ def animal_weight_list(request):
     sort_by_field = sort_by_mapping.get(sort_by, 'date')
     
     if sort_order == 'asc':
-        weights = AnimalWeight.objects.all().select_related('animal').order_by(sort_by_field)
+        weights = AnimalWeight.objects.filter(animal__farm=request.user.farm).select_related('animal').order_by(sort_by_field)
     else:
-        weights = AnimalWeight.objects.all().select_related('animal').order_by(F(sort_by_field).desc(nulls_last=True))
+        weights = AnimalWeight.objects.filter(animal__farm=request.user.farm).select_related('animal').order_by(F(sort_by_field).desc(nulls_last=True))
     
     prev_weights = {}
     for weight in weights:
@@ -470,16 +464,17 @@ def animal_weight_detail(request, pk):
 def animal_detail_weight_new(request, pk):  # Add the 'pk' argument here
     edit_mode = False
     animal = get_object_or_404(Animal, pk=pk)  # Get the Animal instance using the 'pk' argument
+    
 
     if request.method == "POST":
-        form = AnimalWeightForm(request.POST)
+        form = AnimalWeightForm(request.POST, user=request.user)
         if form.is_valid():
             weight = form.save(commit=False)
             weight.animal = animal  # Set the animal attribute of the weight instance
             weight.save()
             return redirect('dairy:animal_weight_list')
     else:
-        form = AnimalWeightForm(initial={'animal': animal})  # Set the initial value of the 'animal' field
+        form = AnimalWeightForm(initial={'animal': animal}, user=request.user)  # Set the initial value of the 'animal' field
 
     return render(request, 'dairy/animal_weight_edit.html', {'form': form})
 
@@ -487,13 +482,13 @@ def animal_detail_weight_new(request, pk):  # Add the 'pk' argument here
 def animal_weight_new(request):
     edit_mode = False
     if request.method == "POST":
-        form = AnimalWeightForm(request.POST)
+        form = AnimalWeightForm(request.POST, user=request.user)
         if form.is_valid():
             weight = form.save(commit=False)
             weight.save()
             return redirect('dairy:animal_weight_list')
     else:
-        form = AnimalWeightForm()
+        form = AnimalWeightForm(user=request.user)
     return render(request, 'dairy/animal_weight_edit.html', {'form': form})
 
 @login_required

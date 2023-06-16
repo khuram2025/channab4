@@ -28,7 +28,8 @@ class AnimalCategory(models.Model):
 
 class Animal(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='animals')
-    tag = models.CharField(max_length=100, unique=True)
+    tag = models.CharField(max_length=100)
+    
     image = models.ImageField(upload_to='animals/', blank=True, null=True)
     dob = models.DateField(verbose_name='Date of Birth')
     purchase_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
@@ -59,43 +60,6 @@ class Animal(models.Model):
     mother = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children_mother')
     father = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children_father')
     
-    def save(self, *args, **kwargs):
-            if self.image:
-                # Open the original image
-                image = Image.open(self.image)
-
-                # Rotate the image if necessary based on the EXIF orientation
-                image = self._rotate_image(image)
-
-                # Resize the image while maintaining the aspect ratio
-                max_size = (800, 800)
-                image.thumbnail(max_size)
-
-                # Create a BytesIO object to hold the compressed image data
-                image_io = io.BytesIO()
-
-                # Save the image to the BytesIO object with JPEG format and quality of 70
-                image.save(image_io, format='JPEG', quality=70)
-
-                # Calculate the size of the compressed image
-                image_size = image_io.tell()
-
-                # If the image size is larger than 50 KB, further compress it
-                if image_size > 50000:
-                    # Calculate the desired compression ratio
-                    compression_ratio = 50000 / image_size
-
-                    # Create a new BytesIO object to hold the further compressed image data
-                    compressed_image_io = io.BytesIO()
-
-                    # Adjust the quality based on the compression ratio and save the image
-                    image.save(compressed_image_io, format='JPEG', quality=int(compression_ratio * 70))
-
-                    # Set the content of the image field to the further compressed image
-                    self.image = SimpleUploadedFile(self.image.name, compressed_image_io.getvalue())
-
-            super().save(*args, **kwargs)
-
     def _rotate_image(self, image):
         if hasattr(image, '_getexif'):
             exif_data = image._getexif()
@@ -112,6 +76,11 @@ class Animal(models.Model):
                             break
         return image
     
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['farm', 'tag'], name='unique_farm_tag')
+        ]
+
     def save(self, *args, **kwargs):
         if self.mother == self or self.father == self:
             raise ValidationError('An animal cannot be its own parent.')
@@ -123,7 +92,49 @@ class Animal(models.Model):
             raise ValidationError('Invalid parent-child relationship.')
         if self.father and self in self.father.get_descendants():
             raise ValidationError('Invalid parent-child relationship.')
+
+        if self.image:
+            # Open the original image
+            image = Image.open(self.image)
+
+            # Rotate the image if necessary based on the EXIF orientation
+            image = self._rotate_image(image)
+
+            # Resize the image while maintaining the aspect ratio
+            max_size = (800, 800)
+            image.thumbnail(max_size)
+
+            # If the image has transparency (an alpha channel), convert it to RGB
+            if image.mode in ('RGBA', 'LA'):
+                background = Image.new(image.mode[:-1], image.size, '#FFFFFF')
+                background.paste(image, image.split()[-1]) # alpha channel is used as mask
+                image = background
+
+            # Create a BytesIO object to hold the compressed image data
+            image_io = io.BytesIO()
+
+            # Save the image to the BytesIO object with JPEG format and quality of 70
+            image.save(image_io, format='JPEG', quality=70)
+
+            # Calculate the size of the compressed image
+            image_size = image_io.tell()
+
+            # If the image size is larger than 50 KB, further compress it
+            if image_size > 50000:
+                # Calculate the desired compression ratio
+                compression_ratio = 50000 / image_size
+
+                # Create a new BytesIO object to hold the further compressed image data
+                compressed_image_io = io.BytesIO()
+
+                # Adjust the quality based on the compression ratio and save the image
+                image.save(compressed_image_io, format='JPEG', quality=int(compression_ratio * 70))
+
+                # Set the content of the image field to the further compressed image
+                self.image = SimpleUploadedFile(self.image.name, compressed_image_io.getvalue())
+
         super().save(*args, **kwargs)
+
 
     def get_descendants(self):
         descendants = set()
