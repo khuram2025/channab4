@@ -330,11 +330,15 @@ def delete_milk_record(request, milk_record_id):
     animal_id = milk_record.animal.id
     milk_record.delete()
     return redirect('dairy/animal_detail.html', pk=animal_id)
+from datetime import timedelta
+from django.utils import timezone
+from django.db import models
 
 @login_required
 def animal_milk_list(request):
     sort_by = request.GET.get('sort_by', 'date')
     sort_order = request.GET.get('sort_order', 'desc')
+    time_filter = request.GET.get('time_filter', 'last_7_days')  # Default to last 7 days
 
     # Map sort_by parameter to the correct field
     sort_by_mapping = {
@@ -354,11 +358,34 @@ def animal_milk_list(request):
     else:
         milk_records = MilkRecord.objects.filter(animal__farm=farm).select_related('animal').order_by(F(sort_by_field).desc(nulls_last=True))
 
+    # Apply the time filter
+    if time_filter == 'last_7_days':
+        cutoff_date = timezone.now() - timedelta(days=7)
+        milk_records = milk_records.filter(date__gte=cutoff_date)
+    elif time_filter == 'one_month':
+        cutoff_date = timezone.now() - timedelta(days=30)
+        milk_records = milk_records.filter(date__gte=cutoff_date)
+
+    # Calculate the totals
+    total_first_time = milk_records.aggregate(total=models.Sum('first_time'))['total'] or 0
+    total_second_time = milk_records.aggregate(total=models.Sum('second_time'))['total'] or 0
+    total_third_time = milk_records.aggregate(total=models.Sum('third_time'))['total'] or 0
+    total_milk = total_first_time + total_second_time + total_third_time
+
     # Handle sorting by total_milk separately
     if sort_by == 'total_milk':
         milk_records = sorted(milk_records, key=lambda x: x.total_milk, reverse=sort_order == 'desc')
 
-    return render(request, 'dairy/animal_milk_list.html', {'milk_records': milk_records, 'sort_by': sort_by, 'sort_order': sort_order})
+    return render(request, 'dairy/animal_milk_list.html', {
+        'milk_records': milk_records,
+        'sort_by': sort_by,
+        'sort_order': sort_order,
+        'time_filter': time_filter,
+        'total_first_time': total_first_time,
+        'total_second_time': total_second_time,
+        'total_third_time': total_third_time,
+        'total_milk': total_milk,
+    })
 
 @login_required
 def animal_milk_delete(request, pk):

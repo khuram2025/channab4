@@ -23,72 +23,96 @@
       <!-- Animal Milk Records Table Start -->
       <div class="container-fluid">
         <div class="row">
-          <div class="col-sm-12">
-            <div class="card card-table">
-              <div class="card-body">
-                <div class="title-header option-title">
-                  <h5>Animal Milk Records</h5>
-                  <div class="d-flex align-items-center">
-                    <a class="btn btn-primary me-2" href="{% url 'dairy:animal_milk_new' %}">Add Milk Record</a>
-                  </div>
-                </div>
-
-                <div class="table-responsive milk-table">
-                  <div>
-                    <table class="table all-package theme-table" id="table_id">
-                      <thead>
-                        <tr>
-                          <th>
-                            <a href="?sort_by=tag&sort_order={% if sort_by == 'tag' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">TAG# {% if sort_by == 'tag' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
-                          </th>
-                          <th>
-                            <a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
-                          </th>
-                          <th>
-                            <a href="?sort_by=first_time&sort_order={% if sort_by == 'first_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">First Time (L) {% if sort_by == 'first_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
-                          </th>
-                          <th>
-                            <a href="?sort_by=second_time&sort_order={% if sort_by == 'second_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Second Time (L) {% if sort_by == 'second_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
-                          </th>
-                          <th>
-                            <a href="?sort_by=third_time&sort_order={% if sort_by == 'third_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Third Time (L) {% if sort_by == 'third_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a>
-                          </th>
-                          <th>Total Milk (L)</th>
-                          <th>Option</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for milk_record in milk_records %}
-                        <tr>
-                          <td><a href="{% url 'dairy:animal_detail' milk_record.animal.pk %}">{{ milk_record.animal.tag }}</a></td>
-                          <td>{{ milk_record.date }}</td>
-                          <td>{{ milk_record.first_time }}</td>
-                          <td>{{ milk_record.second_time }}</td>
-                          <td>{{ milk_record.third_time }}</td>
-                          <td>{{ milk_record.total_milk }}</td>
-                          <td>
-                            <ul>
-                              <li>
-                                <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}">
-                                  <i class="ri-pencil-line"></i>
-                                </a>
-                              </li>
-                              <li>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteMilkRecordModal" data-milk-record-id="{{ milk_record.pk }}">
-                                  <i class="ri-delete-bin-line"></i>
-                                </a>
-                              </li>
-                            </ul>
-                          </td>
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
+          <div class="list-container"><a href="{% url 'dairy:animal_milk_new' %}" class="add-animal-link">
+              <div>
+                <div class="add-animal-button">
+                  <span>Add Milk</span>
                 </div>
               </div>
+            </a>
+            <h6>1st {{ total_first_time }}</h6>
+            <h6>2nd {{ total_second_time }}</h6>
+            <h6>3rd {{ total_third_time }}</h6>
+            <h6>Tot {{ total_milk }}</h6>
+            <div class="list-subcontainer">
+
+
+              <i class="fas fa-filter filter-icon"></i>
+              <form method="get" class="time-filter-form d-flex align-items-center" id="filterForm">
+                <select name="time_filter" id="filter" class="filter-select" onchange="document.getElementById('filterForm').submit();">
+                  <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
+                  <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
+                  <option value="one_month" {% if time_filter == 'one_month' %}selected{% endif %}>30 days</option>
+                  <option value="custom" {% if time_filter == 'custom' %}selected{% endif %}>Custom</option>
+
+                </select>
+                <div id="customFilter" style="display: none;">
+
+                  <label for="startDate">Start Date:</label>
+                  <input type="date" id="startDate" name="startDate">
+
+                  <label for="endDate">End Date:</label>
+                  <input type="date" id="endDate" name="endDate">
+                </div>
+
+              </form>
             </div>
           </div>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th class="d-none d-sm-table-cell"><a href="?sort_by=tag&sort_order={% if sort_by == 'tag' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">TAG# {% if sort_by == 'tag' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+                  <th class="d-none d-sm-table-cell"><a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+                  <th class="d-none d-sm-table-cell"><a href="?sort_by=first_time&sort_order={% if sort_by == 'first_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">1st(L){% if sort_by == 'first_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+                  <th class="d-none d-sm-table-cell"><a href="?sort_by=second_time&sort_order={% if sort_by == 'second_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">2nd(L){% if sort_by == 'second_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+                  <th class="d-none d-sm-table-cell"><a href="?sort_by=third_time&sort_order={% if sort_by == 'third_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">3rd(L){% if sort_by == 'third_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+                  <th class="d-none d-sm-table-cell"><a href="?sort_by=third_time&sort_order={% if sort_by == 'third_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Total(L){% if sort_by == 'third_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+                  <th class="d-none d-sm-table-cell">Action</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                {% for milk_record in milk_records %}
+                <tr data-toggle="collapse" data-target="#demo{{forloop.counter}}" class="accordion-toggle d-sm-none">
+                  <td><i class="fas fa-plus-circle"></i></td>
+                  <td><a href="{% url 'dairy:animal_detail' milk_record.animal.pk %}">{{ milk_record.animal.tag }}</a></td>
+                  <td>{{ milk_record.date }}</td>
+                  <td>{{ milk_record.first_time }}Ltr</td>
+                  <td>{{ milk_record.second_time }}Ltr</td>
+                  <td>{{ milk_record.third_time }}Ltr</td>
+                  <td>{{ milk_record.total_milk }}Ltr</td>
+                </tr>
+                <tr class="d-none d-sm-table-row">
+                  <td><a href="{% url 'dairy:animal_detail' milk_record.animal.pk %}">{{ milk_record.animal.tag }}</a></td>
+                  <td>{{ milk_record.date }}</td>
+                  <td>{{ milk_record.first_time }}Ltr</td>
+                  <td>{{ milk_record.second_time }}Ltr</td>
+                  <td>{{ milk_record.third_time }}Ltr</td>
+                  <td>{{ milk_record.total_milk }}Ltr</td>
+                  <td>
+                    <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}"><i class="fas fa-pencil-alt"></i> </a>
+                    <a href="#"><i class="fas fa-trash-alt"></i> </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="5" class="hiddenRow">
+                    <div class="accordion-body collapse" id="demo{{forloop.counter}}">
+
+                      <p>
+                        <strong>Action:</strong>
+                        <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}"><i class="fas fa-pencil-alt"></i> Edit</a>
+                        <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
         </div>
       </div>
       <!-- Animal Milk Records Table Ends-->
@@ -129,19 +153,54 @@
 <!-- End Delete Animal Milk Record Modal -->
 <!-- page-wrapper End-->
 {% endblock %} {% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+  document.getElementById('filter').addEventListener('change', function () {
+    var value = this.value;
+
+    if (value === 'custom') {
+      document.getElementById('customFilter').style.display = 'block';
+    } else {
+      document.getElementById('customFilter').style.display = 'none';
+    }
+  });
+</script>
+
 
 <script>
   $(document).ready(function () {
-    // ...
+    // Event listener for tab clicks
+    $(".nav-link").click(function (e) {
+      e.preventDefault();
 
-    $("#deleteMilkRecordModal").on("show.bs.modal", function (event) {
-      var button = $(event.relatedTarget);
-      var milkRecordId = button.data("milk-record-id");
-      var url = "{% url 'dairy:animal_milk_delete' 0 %}".replace("0", milkRecordId);
-      url = url.endsWith("/") ? url : url + "/"; // Make sure the URL ends with a slash
-      $("#confirm-delete-button").attr("href", url);
+      // Remove active class from all tabs
+      $(".nav-link").removeClass("active");
+
+      // Add active class to clicked tab
+      $(this).addClass("active");
+
+      // Hide all tab content
+      $(".tab-pane").removeClass("active");
+
+      // Show clicked tab's content
+      var target = $(this).attr("data-target");
+      $(target).addClass("active");
+    });
+
+    $(".accordion-toggle").click(function () {
+      $(this).find(".fas").toggleClass("fa-plus-circle fa-minus-circle");
     });
   });
 </script>
 
-{% endblock %}
+<script>
+  $(document).ready(function () {
+    $(".accordion-toggle").click(function () {
+      $(this).find(".fas").toggleClass("fa-plus-circle fa-minus-circle");
+    });
+  });
+</script>
+
+{%endblock%}
