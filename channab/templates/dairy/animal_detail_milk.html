@@ -3,24 +3,42 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th class="d-none d-sm-table-cell"><a href="?sort_by=tag&sort_order={% if sort_by == 'tag' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">TAG# {% if sort_by == 'tag' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
         <th class="d-none d-sm-table-cell"><a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
         <th class="d-none d-sm-table-cell"><a href="?sort_by=first_time&sort_order={% if sort_by == 'first_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">1st(L){% if sort_by == 'first_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
         <th class="d-none d-sm-table-cell"><a href="?sort_by=second_time&sort_order={% if sort_by == 'second_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">2nd(L){% if sort_by == 'second_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
         <th class="d-none d-sm-table-cell"><a href="?sort_by=third_time&sort_order={% if sort_by == 'third_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">3rd(L){% if sort_by == 'third_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
         <th class="d-none d-sm-table-cell"><a href="?sort_by=third_time&sort_order={% if sort_by == 'third_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Total(L){% if sort_by == 'third_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
         <th class="d-none d-sm-table-cell">Action</th>
-        <div style="width: 100%; max-width: 880px; height: 50px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white; padding: 0 10px">
-          <h5 style="margin: 0; color: #0da487"><a class="btn btn-solid" href="{% url 'dairy:animal_milk_new'  %}">Add Milk</a></h5>
-          <div style="display: flex; align-items: center">
-            <i class="fas fa-filter" style="color: #0da487; margin-right: 5px"></i>
-            <select id="filter" style="background-color: white; color: #0da487; border: 1px solid #0da487; height: 30px">
-              <option value="7days" style="background-color: white; color: #0da487">Last 7 days</option>
-              <option value="1month" style="background-color: white; color: #0da487">One Month</option>
-              <option value="1year" style="background-color: white; color: #0da487">1 Year</option>
-            </select>
+        <div class="list-container"><a href="{% url 'dairy:animal_milk_new' %}" class="add-animal-link">
+              <div>
+                <div class="add-animal-button">
+                  <span>Add Milk</span>
+                </div>
+              </div>
+            </a>
+            <h6>1st {{ total_first_time }}</h6>
+            <h6>2nd {{ total_second_time }}</h6>
+            <h6>3rd {{ total_third_time }}</h6>
+            <h6>Tot {{ total_milk }}</h6>
+            <div class="list-subcontainer">
+
+
+              <i class="fas fa-filter filter-icon"></i>
+              <form method="get" class="time-filter-form d-flex align-items-center" id="filterForm">
+                <select name="time_filter" id="filter" class="filter-select" onchange="document.getElementById('filterForm').submit();">
+                  <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
+                  <option value="last_day" {% if time_filter == 'last_day' %}selected{% endif %}>Today</option>
+                  <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
+                  <option value="one_month" {% if time_filter == 'one_month' %}selected{% endif %}>30 days</option>
+                  <option value="four_months" {% if time_filter == 'four_months' %}selected{% endif %}>4 Months</option>
+                  <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>1 Year</option>
+           
+                </select>
+
+              </form>
+
+            </div>
           </div>
-        </div>
       </tr>
     </thead>
     <tbody>
@@ -34,7 +52,6 @@
         <td>{{ milk_record.total_milk }}Ltr</td>
       </tr>
       <tr class="d-none d-sm-table-row">
-        <td></td>
         <td>{{ milk_record.date }}</td>
         <td>{{ milk_record.first_time }}Ltr</td>
         <td>{{ milk_record.second_time }}Ltr</td>

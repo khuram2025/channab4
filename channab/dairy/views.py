@@ -9,6 +9,11 @@ from .models import MilkRecord, Animal, AnimalWeight
 from django.db.models import F
 from datetime import timedelta, date
 from django.db.models import Subquery, OuterRef
+from django.utils import timezone
+from django.db.models import Sum
+from datetime import timedelta
+from django.db.models import F
+
 
 
 @login_required
@@ -183,10 +188,49 @@ def animal_detail(request, pk):
         prev_weight = AnimalWeight.objects.filter(animal=weight.animal, date__lt=weight.date).order_by('-date').first()
         prev_weights[weight.pk] = prev_weight 
 
-    milk_records = MilkRecord.objects.filter(animal=animal)
+    # Assume time_filter is passed as a parameter in the GET request
+    time_filter = request.GET.get('time_filter', 'all')
+
+    # Filter MilkRecord instances based on the time_filter
+    if time_filter == 'all':
+        milk_records = MilkRecord.objects.filter(animal=animal)
+    elif time_filter == 'last_day':
+        one_day_ago = timezone.now() - timedelta(days=1)
+        milk_records = MilkRecord.objects.filter(animal=animal, date__gte=one_day_ago)
+    elif time_filter == 'last_7_days':
+        seven_days_ago = timezone.now() - timedelta(days=7)
+        milk_records = MilkRecord.objects.filter(animal=animal, date__gte=seven_days_ago)
+    elif time_filter == 'one_month':
+        one_month_ago = timezone.now() - timedelta(days=30)
+        milk_records = MilkRecord.objects.filter(animal=animal, date__gte=one_month_ago)
+    elif time_filter == 'four_months':
+        four_months_ago = timezone.now() - timedelta(days=120)
+        milk_records = MilkRecord.objects.filter(animal=animal, date__gte=four_months_ago)
+    elif time_filter == 'one_year':
+        one_year_ago = timezone.now() - timedelta(days=365)
+        milk_records = MilkRecord.objects.filter(animal=animal, date__gte=one_year_ago)
+
+    # Summarize milk_records to obtain total quantities
+    total_first_time = milk_records.aggregate(Sum('first_time'))['first_time__sum']
+    total_second_time = milk_records.aggregate(Sum('second_time'))['second_time__sum']
+    total_third_time = milk_records.aggregate(Sum('third_time'))['third_time__sum']
+    total_milk = milk_records.aggregate(total_milk=Sum(F('first_time')+F('second_time')+F('third_time')))['total_milk']
+
+
    
 
-    return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order,})
+    # Calculate total milk for each record as the sum of the three time fields
+    milk_records = milk_records.annotate(total_milk=F('first_time')+F('second_time')+F('third_time'))
+
+    # Then aggregate over these calculated total_milk values for all records
+    total_milk = milk_records.aggregate(total_milk_sum=Sum('total_milk'))['total_milk_sum']
+
+
+    milk_records = MilkRecord.objects.filter(animal=animal)
+
+   
+
+    return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 'total_first_time': total_first_time,'total_second_time': total_second_time,'total_third_time': total_third_time,'total_milk': total_milk,'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order,})
 
 @login_required
 def update_parents(request, pk):
