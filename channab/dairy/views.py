@@ -361,9 +361,27 @@ def animal_milk_list(request):
     # Apply the time filter
     if time_filter == 'last_7_days':
         cutoff_date = timezone.now() - timedelta(days=7)
-        milk_records = milk_records.filter(date__gte=cutoff_date)
+    elif time_filter == 'last_day':
+        cutoff_date = timezone.now() - timedelta(days=1)
+    elif time_filter == 'four_months':
+        cutoff_date = timezone.now() - timedelta(days=120)
+    elif time_filter == 'one_year':
+        cutoff_date = timezone.now() - timedelta(days=365)
     elif time_filter == 'one_month':
         cutoff_date = timezone.now() - timedelta(days=30)
+    elif time_filter == 'custom':
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+        if start_date and end_date:
+            cutoff_date = datetime.strptime(start_date, '%Y-%m-%d')
+            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+            milk_records = milk_records.filter(date__range=[cutoff_date, end_date])
+        else:
+            # Handle invalid custom date range
+            messages.error(request, 'Invalid custom date range')
+            return redirect('animal_milk_list')
+
+    if time_filter != 'custom':
         milk_records = milk_records.filter(date__gte=cutoff_date)
 
     # Calculate the totals
