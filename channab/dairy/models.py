@@ -54,7 +54,7 @@ class Animal(models.Model):
         ('calf', 'Calf'),
         ('other', 'Other'),
     ]
-    animal_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='other')
+    animal_type = models.CharField(max_length=200, choices=TYPE_CHOICES, default='other')
     ANIMAL_TYPE_CHOICES_DICT = dict(TYPE_CHOICES)
 
     mother = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children_mother')
@@ -189,7 +189,7 @@ class Breeding(models.Model):
     ]
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, limit_choices_to={'sex': 'F'})
     breeding_date = models.DateField(default=timezone.now)
-    method = models.CharField(max_length=20, choices=BREEDING_METHODS)
+    method = models.CharField(max_length=200, choices=BREEDING_METHODS)
     bull = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, blank=True, related_name='+', limit_choices_to={'sex': 'M'})
     ai_dose_name = models.CharField(max_length=200, null=True, blank=True)
     doctor_name = models.CharField(max_length=200, null=True, blank=True)
