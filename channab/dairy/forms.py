@@ -1,5 +1,7 @@
 from django import forms
 from .models import AnimalCategory, Animal
+from django.db.models import Q
+
 
 class AnimalCategoryForm(forms.ModelForm):
     class Meta:
@@ -22,7 +24,7 @@ class MilkRecordForm(forms.ModelForm):
         self.farm = kwargs.pop('farm', None)
         super(MilkRecordForm, self).__init__(*args, **kwargs)
         if self.farm:
-            self.fields['animal'].queryset = Animal.objects.filter(farm=self.farm, sex='female')
+            self.fields['animal'].queryset = Animal.objects.filter(farm=self.farm, sex='female', animal_type__in=['milking', 'preg_milking'])
 
     first_time = forms.DecimalField(max_digits=5, decimal_places=2, required=False)
     second_time = forms.DecimalField(max_digits=5, decimal_places=2, required=False)

@@ -87,7 +87,10 @@
                   <td>{{ milk_record.total_milk }}Ltr</td>
                   <td>
                     <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}"><i class="fas fa-pencil-alt"></i> </a>
-                    <a href="#"><i class="fas fa-trash-alt"></i> </a>
+                    <a href="#" data-toggle="modal" data-target="#deleteMilkRecordModal" data-url="{% url 'dairy:animal_milk_delete' milk_record.pk %}">
+  <i class="fas fa-trash-alt"></i>
+</a>
+
                   </td>
                 </tr>
                 <tr>
@@ -97,7 +100,10 @@
                       <p>
                         <strong>Action:</strong>
                         <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}"><i class="fas fa-pencil-alt"></i> Edit</a>
-                        <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                        <a href="#" data-toggle="modal" data-target="#deleteMilkRecordModal" data-url="{% url 'dairy:animal_milk_delete' milk_record.pk %}">
+  <i class="fas fa-trash-alt"></i>
+</a>
+
                       </p>
                     </div>
                   </td>
@@ -153,6 +159,7 @@
 </div>
 
 <!-- Delete Animal Milk Record Modal -->
+
 <div class="modal fade" id="deleteMilkRecordModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteMilkRecordModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -162,7 +169,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="button-box">
           <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-          <a id="confirm-delete-button" class="btn btn--yes btn-primary" href="#">Yes, delete</a>
+          <a id="confirm-delete-button" class="btn btn--yes btn-primary">Yes, delete</a>
         </div>
       </div>
     </div>
@@ -217,6 +224,14 @@
       $(this).find(".fas").toggleClass("fa-plus-circle fa-minus-circle");
     });
   });
+  $('#deleteMilkRecordModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget) // Button that triggered the modal
+  var deleteUrl = button.data('url') // Extract url from data-url attribute
+
+  var modal = $(this)
+  modal.find('#confirm-delete-button').attr('href', deleteUrl)
+})
+
 </script>
 
 <script>

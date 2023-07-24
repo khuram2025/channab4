@@ -374,6 +374,7 @@ def delete_milk_record(request, milk_record_id):
     animal_id = milk_record.animal.id
     milk_record.delete()
     return redirect('dairy/animal_detail.html', pk=animal_id)
+
 from datetime import timedelta
 from django.utils import timezone
 from django.db import models
