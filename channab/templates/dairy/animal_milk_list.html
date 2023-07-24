@@ -46,7 +46,7 @@
                   <option value="one_month" {% if time_filter == 'one_month' %}selected{% endif %}>30 days</option>
                   <option value="four_months" {% if time_filter == 'four_months' %}selected{% endif %}>4 Months</option>
                   <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>1 Year</option>
-           
+
                 </select>
 
               </form>
@@ -68,7 +68,7 @@
                 </tr>
               </thead>
               <tbody>
-                {% for milk_record in milk_records %}
+                {% for milk_record in page %}
                 <tr data-toggle="collapse" data-target="#demo{{forloop.counter}}" class="accordion-toggle d-sm-none">
                   <td><i class="fas fa-plus-circle"></i></td>
                   <td><a href="{% url 'dairy:animal_detail' milk_record.animal.pk %}">{{ milk_record.animal.tag }}</a></td>
@@ -88,8 +88,8 @@
                   <td>
                     <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}"><i class="fas fa-pencil-alt"></i> </a>
                     <a href="#" data-toggle="modal" data-target="#deleteMilkRecordModal" data-url="{% url 'dairy:animal_milk_delete' milk_record.pk %}">
-  <i class="fas fa-trash-alt"></i>
-</a>
+                      <i class="fas fa-trash-alt"></i>
+                    </a>
 
                   </td>
                 </tr>
@@ -101,8 +101,8 @@
                         <strong>Action:</strong>
                         <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}"><i class="fas fa-pencil-alt"></i> Edit</a>
                         <a href="#" data-toggle="modal" data-target="#deleteMilkRecordModal" data-url="{% url 'dairy:animal_milk_delete' milk_record.pk %}">
-  <i class="fas fa-trash-alt"></i>
-</a>
+                          <i class="fas fa-trash-alt"></i>
+                        </a>
 
                       </p>
                     </div>
@@ -110,8 +110,54 @@
                 </tr>
 
                 {% endfor %}
+
               </tbody>
             </table>
+            {% if page.paginator.num_pages > 1 %}
+<div class="pagination">
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      {% if page.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page.previous_page_number }}&sort_by={{sort_by}}&sort_order={{sort_order}}&time_filter={{time_filter}}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;</a>
+      </li>
+      {% endif %}
+
+      {% for num in page.paginator.page_range %}
+      {% if page.number == num %}
+      <li class="page-item active" aria-current="page">
+        <a class="page-link" style="background-color: #0da487;" href="?page={{ num }}&sort_by={{sort_by}}&sort_order={{sort_order}}&time_filter={{time_filter}}">{{ num }}</a>
+      </li>
+      {% elif num > page.number|add:'-3' and num < page.number|add:'3' %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ num }}&sort_by={{sort_by}}&sort_order={{sort_order}}&time_filter={{time_filter}}">{{ num }}</a>
+      </li>
+      {% endif %}
+      {% endfor %}
+
+      {% if page.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page.next_page_number }}&sort_by={{sort_by}}&sort_order={{sort_order}}&time_filter={{time_filter}}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;</a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+{% endif %}
+
+
           </div>
 
         </div>
@@ -225,13 +271,12 @@
     });
   });
   $('#deleteMilkRecordModal').on('show.bs.modal', function (event) {
-  var button = $(event.relatedTarget) // Button that triggered the modal
-  var deleteUrl = button.data('url') // Extract url from data-url attribute
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var deleteUrl = button.data('url') // Extract url from data-url attribute
 
-  var modal = $(this)
-  modal.find('#confirm-delete-button').attr('href', deleteUrl)
-})
-
+    var modal = $(this)
+    modal.find('#confirm-delete-button').attr('href', deleteUrl)
+  })
 </script>
 
 <script>

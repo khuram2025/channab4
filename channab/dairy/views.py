@@ -378,6 +378,8 @@ def delete_milk_record(request, milk_record_id):
 from datetime import timedelta
 from django.utils import timezone
 from django.db import models
+from django.core.paginator import Paginator
+
 
 @login_required
 def animal_milk_list(request):
@@ -406,14 +408,19 @@ def animal_milk_list(request):
     # Apply the time filter
     if time_filter == 'last_7_days':
         cutoff_date = timezone.now() - timedelta(days=7)
+        milk_records = milk_records.filter(date__gte=cutoff_date)
     elif time_filter == 'last_day':
         cutoff_date = timezone.now() - timedelta(days=1)
+        milk_records = milk_records.filter(date__gte=cutoff_date)
     elif time_filter == 'four_months':
         cutoff_date = timezone.now() - timedelta(days=120)
+        milk_records = milk_records.filter(date__gte=cutoff_date)
     elif time_filter == 'one_year':
         cutoff_date = timezone.now() - timedelta(days=365)
+        milk_records = milk_records.filter(date__gte=cutoff_date)
     elif time_filter == 'one_month':
         cutoff_date = timezone.now() - timedelta(days=30)
+        milk_records = milk_records.filter(date__gte=cutoff_date)
     elif time_filter == 'custom':
         start_date = request.GET.get('start_date')
         end_date = request.GET.get('end_date')
@@ -426,8 +433,7 @@ def animal_milk_list(request):
             messages.error(request, 'Invalid custom date range')
             return redirect('animal_milk_list')
 
-    if time_filter != 'custom':
-        milk_records = milk_records.filter(date__gte=cutoff_date)
+    # If time_filter == 'all', no filtering is applied.
 
     # Calculate the totals
     total_first_time = milk_records.aggregate(total=models.Sum('first_time'))['total'] or 0
@@ -438,8 +444,17 @@ def animal_milk_list(request):
     # Handle sorting by total_milk separately
     if sort_by == 'total_milk':
         milk_records = sorted(milk_records, key=lambda x: x.total_milk, reverse=sort_order == 'desc')
+    
+    paginator = Paginator(milk_records, 10)
+
+    # Get the page number from the GET request, default to 1 if not provided
+    page_number = request.GET.get('page', 1)
+
+    # Get the Page object for the given page number
+    page = paginator.get_page(page_number)
 
     return render(request, 'dairy/animal_milk_list.html', {
+        'page': page,
         'milk_records': milk_records,
         'sort_by': sort_by,
         'sort_order': sort_order,
@@ -449,6 +464,7 @@ def animal_milk_list(request):
         'total_third_time': total_third_time,
         'total_milk': total_milk,
     })
+
 
 @login_required
 def animal_milk_delete(request, pk):
