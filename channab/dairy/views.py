@@ -67,7 +67,7 @@ from django.core.paginator import Paginator
 @login_required
 def animal_list(request):
     farm = request.user.farm
-    animals = Animal.objects.filter(farm=farm)
+    animals = Animal.objects.filter(farm=farm).order_by('id')  # Add order_by here
     animals = animals.annotate(latest_weight=Subquery(
         AnimalWeight.objects.filter(animal=OuterRef('pk')).order_by('-date')[:1].values('weight_kg')
     ))
@@ -110,16 +110,22 @@ def animal_list(request):
 
 
     # Add paginator and page object for 'all' animals
-    paginator_all = Paginator(animals, 200)
-    page_number_all = request.GET.get('all_page')
+    paginator_all = Paginator(animals, 2)
+    page_number_all = request.GET.get('page')
     page_objs_by_type['all'] = paginator_all.get_page(page_number_all)
+
+    print('Total animals:', animals.count())
+    print('Total pages:', paginator_all.num_pages)
+    print('Has previous page:', page_objs_by_type['all'].has_previous())
+    print('Has next page:', page_objs_by_type['all'].has_next())
+
     
     for animal_type in animal_types:
         animals_of_type = animals.filter(animal_type=animal_type)
         animals_by_type[animal_type] = animals_of_type
         counts_by_type[animal_type] = animals_of_type.count() 
         paginators_by_type[animal_type] = Paginator(animals_of_type, 14)
-        page_number = request.GET.get(f'{animal_type}_page')
+        page_number = request.GET.get('page')
         page_objs_by_type[animal_type] = paginators_by_type[animal_type].get_page(page_number)
     
 
@@ -445,7 +451,7 @@ def animal_milk_list(request):
     if sort_by == 'total_milk':
         milk_records = sorted(milk_records, key=lambda x: x.total_milk, reverse=sort_order == 'desc')
     
-    paginator = Paginator(milk_records, 10)
+    paginator = Paginator(milk_records, 50)
 
     # Get the page number from the GET request, default to 1 if not provided
     page_number = request.GET.get('page', 1)
