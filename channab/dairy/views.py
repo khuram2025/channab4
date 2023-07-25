@@ -4,7 +4,6 @@ from django.urls import reverse, reverse_lazy
 from .models import AnimalCategory, Animal, Breeding
 from .forms import AnimalCategoryForm, AnimalForm, AnimalWeightForm, MilkRecordForm
 from accounts.models import Farm
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import MilkRecord, Animal, AnimalWeight
 from django.db.models import F
 from datetime import timedelta, date
@@ -12,9 +11,22 @@ from django.db.models import Subquery, OuterRef
 from django.utils import timezone
 from django.db.models import Sum
 from datetime import timedelta
-from django.db.models import F
+from django.db.models import F, Q
+from django.http import JsonResponse
+from django.core import serializers
 
+def search(request):
+    q = request.GET.get('q', '')
 
+    animals = Animal.objects.filter(
+        Q(tag__icontains=q) |
+        Q(category__title__icontains=q) |
+        Q(sex__icontains=q) |
+        Q(status__icontains=q)
+    )
+
+    data = serializers.serialize('json', animals)
+    return JsonResponse(data, safe=False)
 
 @login_required
 def animal_category_list(request):
@@ -110,7 +122,7 @@ def animal_list(request):
 
 
     # Add paginator and page object for 'all' animals
-    paginator_all = Paginator(animals, 2)
+    paginator_all = Paginator(animals, 10)
     page_number_all = request.GET.get('page')
     page_objs_by_type['all'] = paginator_all.get_page(page_number_all)
 

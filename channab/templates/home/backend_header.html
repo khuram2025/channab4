@@ -18,6 +18,16 @@
 
     <div class="nav-right col-6 pull-right right-header p-0">
       <ul class="nav-menus">
+        <!-- Add this block for search bar -->
+        <!-- Add this block for search bar -->
+        <div class="add-animal-button search-box">
+          <input type="text" class="search-input" placeholder="Search..." name="q" id="q" />
+          <i class="ri-search-line search-icon"></i>
+        </div>
+        <div id="search-results"></div>
+        <!-- End of search bar block -->
+
+        <!-- End of search bar block -->
         <li class="onhover-dropdown">
           <div class="notification-box">
             <i class="ri-notification-line"></i>
@@ -109,3 +119,44 @@
     </div>
   </div>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $(".search-input").on("input", function () {
+      var q = $(this).val();
+      $.ajax({
+        url: '{% url '
+        dairy: search ' %}',
+        data: {
+          'q': q
+        },
+        dataType: 'json',
+        success: function (data) {
+          // Clear the search results
+          $("#search-results").empty();
+
+          // Parse the JSON data
+          var animals = JSON.parse(data);
+
+          // Check if there are any results
+          if (animals.length > 0) {
+            // Create the dropdown list
+            var dropdown = $('<ul>').addClass('search-dropdown');
+
+            // Loop through each animal and add it to the dropdown
+            $.each(animals, function (i, animal) {
+              dropdown.append(
+                '<li>' +
+                '<a href="/dairy/animal/' + animal.pk + '/">' + animal.fields.tag + '</a>' +
+                '</li>'
+              );
+            });
+
+            // Append the dropdown to the search results
+            $("#search-results").append(dropdown);
+          }
+        }
+      });
+    });
+  });
+</script>

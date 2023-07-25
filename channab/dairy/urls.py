@@ -20,6 +20,7 @@ urlpatterns = [
 
     path('animal/<int:pk>/create_family/', views.create_family, name='create_family'),
     path('animal/<int:pk>/update_parents/', views.update_parents, name='update_parents'),
+    path('search/', views.search, name='search'),
 
 
 
