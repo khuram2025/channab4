@@ -121,42 +121,61 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-  $(document).ready(function () {
-    $(".search-input").on("input", function () {
-      var q = $(this).val();
-      $.ajax({
-        url: '{% url '
-        dairy: search ' %}',
-        data: {
-          'q': q
-        },
-        dataType: 'json',
-        success: function (data) {
-          // Clear the search results
-          $("#search-results").empty();
+      $(document).ready(function(){
+      $(".search-input").on("input", function(){
+        var q = $(this).val();
+        $.ajax({
+          url: '{% url 'dairy:search' %}',
+          data: {
+            'q': q
+          },
+          dataType: 'json',
+          success: function(data){
+            // Clear the search results
+            $("#search-results").empty();
 
-          // Parse the JSON data
-          var animals = JSON.parse(data);
+            // Parse the JSON data
+            var animals = JSON.parse(data);
 
-          // Check if there are any results
-          if (animals.length > 0) {
-            // Create the dropdown list
-            var dropdown = $('<ul>').addClass('search-dropdown');
+            // Check if there are any results
+            if (animals.length > 0) {
+              // Create the dropdown list
+              var dropdown = $('<ul>').addClass('search-dropdown');
 
-            // Loop through each animal and add it to the dropdown
-            $.each(animals, function (i, animal) {
-              dropdown.append(
-                '<li>' +
-                '<a href="/dairy/animal/' + animal.pk + '/">' + animal.fields.tag + '</a>' +
-                '</li>'
-              );
-            });
+              // Loop through each animal and add it to the dropdown
+              $.each(animals, function(i, animal) {
+    dropdown.append(
+      '<li>' +
+      '<a href="/dairy/animal/' + animal.pk + '/">' + animal.fields.tag + '</a>' +
+      '</li>'
+    );
+  });
 
-            // Append the dropdown to the search results
-            $("#search-results").append(dropdown);
+              // Append the dropdown to the search results
+              $("#search-results").append(dropdown);
+            }
           }
-        }
+        });
       });
     });
-  });
+
+
+        $(document).ready(function(){
+        $(".search-input").on("input", function(){
+          var q = $(this).val().toLowerCase();
+
+          // Loop through each row in the table
+          $("table tbody tr").each(function() {
+            // Get the text of the row
+            var rowText = $(this).text().toLowerCase();
+
+            // If the row text contains the search query, show the row, otherwise hide it
+            if (rowText.indexOf(q) !== -1) {
+              $(this).show();
+            } else {
+              $(this).hide();
+            }
+          });
+        });
+      });
 </script>

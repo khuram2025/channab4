@@ -6,6 +6,20 @@
   min-width: 150px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
+  top: 100%; /* Position it at the bottom of search box */
+  left: 0; /* Align it to the left side of search box */
+  width: 100%; /* Make it the same width as the search box */
+  border-radius: 0 0 3px 3px; /* Round the bottom corners */
+}
+
+.search-dropdown li {
+  border-bottom: 1px solid #ccc; /* Add a divider line */
+  padding: 10px 0; /* Add some padding */
+  display: block; /* Display as block to ensure each item is on a new line */
+}
+
+.search-dropdown li:last-child {
+  border-bottom: none; /* Remove the bottom border from the last item */
 }
 
 .search-dropdown a {
@@ -29,8 +43,9 @@
   display: flex;
   align-items: center;
   padding: 0 5px;
-  position: relative;
+  position: relative; /* Set position to relative */
 }
+
 @media screen and (max-width: 600px) {
   .search-box {
     width: 120px !important;

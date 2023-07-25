@@ -15,14 +15,19 @@ from django.db.models import F, Q
 from django.http import JsonResponse
 from django.core import serializers
 
+@login_required
 def search(request):
     q = request.GET.get('q', '')
+
+    # Get the farm of the logged in user
+    user_farm = request.user.farm
 
     animals = Animal.objects.filter(
         Q(tag__icontains=q) |
         Q(category__title__icontains=q) |
         Q(sex__icontains=q) |
-        Q(status__icontains=q)
+        Q(status__icontains=q),
+        farm=user_farm  # Limit search to the user's farm
     )
 
     data = serializers.serialize('json', animals)
