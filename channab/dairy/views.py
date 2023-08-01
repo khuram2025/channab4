@@ -404,31 +404,36 @@ from django.db import models
 from django.core.paginator import Paginator
 
 
+def calculate_totals(milk_records):
+    total_first_time = milk_records.aggregate(total=models.Sum('first_time'))['total'] or 0
+    total_second_time = milk_records.aggregate(total=models.Sum('second_time'))['total'] or 0
+    total_third_time = milk_records.aggregate(total=models.Sum('third_time'))['total'] or 0
+    total_milk = total_first_time + total_second_time + total_third_time
+
+    return total_first_time, total_second_time, total_third_time, total_milk
+
 @login_required
 def animal_milk_list(request):
     sort_by = request.GET.get('sort_by', 'date')
     sort_order = request.GET.get('sort_order', 'desc')
     time_filter = request.GET.get('time_filter', 'last_7_days')  # Default to last 7 days
 
-    # Map sort_by parameter to the correct field
     sort_by_mapping = {
         'tag': 'animal__tag',
         'date': 'date',
         'first_time': 'first_time',
         'second_time': 'second_time',
         'third_time': 'third_time',
-        'total_milk': '',  # This will be handled separately
+        'total_milk': '',
     }
     sort_by_field = sort_by_mapping.get(sort_by, 'date')
 
-    # Filter milk_records by the farm of the logged-in user
     farm = request.user.farm
     if sort_order == 'asc':
         milk_records = MilkRecord.objects.filter(animal__farm=farm).select_related('animal').order_by(sort_by_field)
     else:
         milk_records = MilkRecord.objects.filter(animal__farm=farm).select_related('animal').order_by(F(sort_by_field).desc(nulls_last=True))
 
-    # Apply the time filter
     if time_filter == 'last_7_days':
         cutoff_date = timezone.now() - timedelta(days=7)
         milk_records = milk_records.filter(date__gte=cutoff_date)
@@ -452,28 +457,30 @@ def animal_milk_list(request):
             end_date = datetime.strptime(end_date, '%Y-%m-%d')
             milk_records = milk_records.filter(date__range=[cutoff_date, end_date])
         else:
-            # Handle invalid custom date range
             messages.error(request, 'Invalid custom date range')
             return redirect('animal_milk_list')
 
-    # If time_filter == 'all', no filtering is applied.
+    total_first_time, total_second_time, total_third_time, total_milk = calculate_totals(milk_records)
 
-    # Calculate the totals
-    total_first_time = milk_records.aggregate(total=models.Sum('first_time'))['total'] or 0
-    total_second_time = milk_records.aggregate(total=models.Sum('second_time'))['total'] or 0
-    total_third_time = milk_records.aggregate(total=models.Sum('third_time'))['total'] or 0
-    total_milk = total_first_time + total_second_time + total_third_time
+    if time_filter == 'last_7_days':
+        cutoff_date = timezone.now() - timedelta(days=14)
+        prev_cutoff_date = timezone.now() - timedelta(days=7)
+    elif time_filter == 'last_day':
+        cutoff_date = timezone.now() - timedelta(days=2)
+        prev_cutoff_date = timezone.now() - timedelta(days=1)
+    else:
+        cutoff_date = timezone.now() - timedelta(days=30)
+        prev_cutoff_date = timezone.now() - timedelta(days=60)
+    # Add more conditions for other filters...
 
-    # Handle sorting by total_milk separately
+    previous_milk_records = MilkRecord.objects.filter(animal__farm=farm, date__range=[cutoff_date, prev_cutoff_date])
+    prev_total_first_time, prev_total_second_time, prev_total_third_time, prev_total_milk = calculate_totals(previous_milk_records)
+
     if sort_by == 'total_milk':
         milk_records = sorted(milk_records, key=lambda x: x.total_milk, reverse=sort_order == 'desc')
-    
+
     paginator = Paginator(milk_records, 50)
-
-    # Get the page number from the GET request, default to 1 if not provided
     page_number = request.GET.get('page', 1)
-
-    # Get the Page object for the given page number
     page = paginator.get_page(page_number)
 
     return render(request, 'dairy/animal_milk_list.html', {
@@ -486,8 +493,11 @@ def animal_milk_list(request):
         'total_second_time': total_second_time,
         'total_third_time': total_third_time,
         'total_milk': total_milk,
+        'prev_total_first_time': prev_total_first_time,
+        'prev_total_second_time': prev_total_second_time,
+        'prev_total_third_time': prev_total_third_time,
+        'prev_total_milk': prev_total_milk,
     })
-
 
 @login_required
 def animal_milk_delete(request, pk):

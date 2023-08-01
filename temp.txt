@@ -46,17 +46,19 @@ Mother of Animal C
 Mother of Animal D 
 
 Animal C Relation Tree:
-Child of Animal A 
-Child of Animal B 
+Child of Animal A (Father)
+Child of Animal B (Mohter)
 Brother of Animal D   
 
 Animal A Relation Tree:
-Child of Animal A 
-Child of Animal B 
+Child of Animal A (Father)
+Child of Animal B (Mohter)
 Sister of Animal C
 
-Animal cannot be added as father/mother/child to himslef
-Ifa a relation adeed in an animal automaticley relation should be created in family tree to other  related animal 
+Animal cannot be added as father/mother/child to itslef
+If a relation added in an animal automaticley relation should be created in family tree to other related animal 
+
+Make CRUD Family 
 
 
 give me the BeautiFull UI for animalDeatil page flutter
