@@ -7,6 +7,7 @@ from accounts.models import Farm
 from .models import MilkRecord, Animal, AnimalWeight
 from django.db.models import F
 from datetime import timedelta, date
+from calendar import monthrange
 from django.db.models import Subquery, OuterRef
 from django.utils import timezone
 from django.db.models import Sum
@@ -404,6 +405,16 @@ from django.db import models
 from django.core.paginator import Paginator
 
 
+from datetime import datetime, timedelta
+from calendar import monthrange
+from django.db.models import F
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils import timezone
+from django.db import models
+
 def calculate_totals(milk_records):
     total_first_time = milk_records.aggregate(total=models.Sum('first_time'))['total'] or 0
     total_second_time = milk_records.aggregate(total=models.Sum('second_time'))['total'] or 0
@@ -411,6 +422,46 @@ def calculate_totals(milk_records):
     total_milk = total_first_time + total_second_time + total_third_time
 
     return total_first_time, total_second_time, total_third_time, total_milk
+def get_date_range(time_filter):
+    """
+    Returns a tuple of start and end dates for a specific time filter.
+    """
+    if time_filter == 'last_7_days':
+        end_date = timezone.now()
+        start_date = end_date - timedelta(days=7)
+    elif time_filter == 'last_day':
+        end_date = timezone.now()
+        start_date = end_date
+    elif time_filter == 'today':
+        end_date = timezone.now()
+        start_date = end_date
+    elif time_filter == 'yesterday':
+        end_date = timezone.now() - timedelta(days=1)
+        start_date = end_date
+    elif time_filter == 'four_months':
+        end_date = timezone.now()
+        start_date = end_date - timedelta(days=120)
+    elif time_filter == 'one_year':
+        end_date = timezone.now()
+        start_date = end_date - timedelta(days=365)
+    elif time_filter == 'this_month':
+        end_date = timezone.now()
+        start_date = end_date.replace(day=1)
+    elif time_filter == 'last_month':
+        end_date = timezone.now().replace(day=1) - timedelta(days=1)
+        start_date = end_date.replace(day=1)
+    elif time_filter == 'custom':
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+        if start_date and end_date:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d')
+            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        else:
+            raise ValueError('Invalid custom date range')
+    else:
+        raise ValueError('Invalid time filter')
+
+    return start_date, end_date
 
 @login_required
 def animal_milk_list(request):
@@ -434,47 +485,29 @@ def animal_milk_list(request):
     else:
         milk_records = MilkRecord.objects.filter(animal__farm=farm).select_related('animal').order_by(F(sort_by_field).desc(nulls_last=True))
 
-    if time_filter == 'last_7_days':
-        cutoff_date = timezone.now() - timedelta(days=7)
-        milk_records = milk_records.filter(date__gte=cutoff_date)
-    elif time_filter == 'last_day':
-        cutoff_date = timezone.now() - timedelta(days=1)
-        milk_records = milk_records.filter(date__gte=cutoff_date)
-    elif time_filter == 'four_months':
-        cutoff_date = timezone.now() - timedelta(days=120)
-        milk_records = milk_records.filter(date__gte=cutoff_date)
-    elif time_filter == 'one_year':
-        cutoff_date = timezone.now() - timedelta(days=365)
-        milk_records = milk_records.filter(date__gte=cutoff_date)
-    elif time_filter == 'one_month':
-        cutoff_date = timezone.now() - timedelta(days=30)
-        milk_records = milk_records.filter(date__gte=cutoff_date)
-    elif time_filter == 'custom':
-        start_date = request.GET.get('start_date')
-        end_date = request.GET.get('end_date')
-        if start_date and end_date:
-            cutoff_date = datetime.strptime(start_date, '%Y-%m-%d')
-            end_date = datetime.strptime(end_date, '%Y-%m-%d')
-            milk_records = milk_records.filter(date__range=[cutoff_date, end_date])
-        else:
-            messages.error(request, 'Invalid custom date range')
-            return redirect('animal_milk_list')
+    # Get the date range for the current and previous periods
+    start_date, end_date = get_date_range(time_filter)
 
-    total_first_time, total_second_time, total_third_time, total_milk = calculate_totals(milk_records)
+    if time_filter in ['today', 'yesterday']:
+        prev_end_date = start_date - timedelta(days=1)
+        prev_start_date = prev_end_date
 
-    if time_filter == 'last_7_days':
-        cutoff_date = timezone.now() - timedelta(days=14)
-        prev_cutoff_date = timezone.now() - timedelta(days=7)
-    elif time_filter == 'last_day':
-        cutoff_date = timezone.now() - timedelta(days=2)
-        prev_cutoff_date = timezone.now() - timedelta(days=1)
+    elif time_filter in ['this_month', 'last_month']:
+        prev_end_date = start_date - timedelta(days=1)
+        prev_start_date = prev_end_date.replace(day=1)
     else:
-        cutoff_date = timezone.now() - timedelta(days=30)
-        prev_cutoff_date = timezone.now() - timedelta(days=60)
-    # Add more conditions for other filters...
+        prev_end_date = start_date - timedelta(days=1)
+        prev_start_date = start_date - (end_date - start_date + timedelta(days=1))
 
-    previous_milk_records = MilkRecord.objects.filter(animal__farm=farm, date__range=[cutoff_date, prev_cutoff_date])
-    prev_total_first_time, prev_total_second_time, prev_total_third_time, prev_total_milk = calculate_totals(previous_milk_records)
+
+
+    # Apply the time filter to the querysets
+    milk_records = milk_records.filter(date__range=[start_date, end_date])
+    prev_milk_records = MilkRecord.objects.filter(animal__farm=farm, date__range=[prev_start_date, prev_end_date])
+
+    # Calculate totals
+    total_first_time, total_second_time, total_third_time, total_milk = calculate_totals(milk_records)
+    prev_total_first_time, prev_total_second_time, prev_total_third_time, prev_total_milk = calculate_totals(prev_milk_records)
 
     if sort_by == 'total_milk':
         milk_records = sorted(milk_records, key=lambda x: x.total_milk, reverse=sort_order == 'desc')
@@ -498,6 +531,7 @@ def animal_milk_list(request):
         'prev_total_third_time': prev_total_third_time,
         'prev_total_milk': prev_total_milk,
     })
+
 
 @login_required
 def animal_milk_delete(request, pk):

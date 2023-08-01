@@ -43,8 +43,10 @@
                   <select name="time_filter" id="filter" class="filter-select" onchange="document.getElementById('filterForm').submit();">
                     <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
                     <option value="last_day" {% if time_filter == 'last_day' %}selected{% endif %}>Today</option>
+                    <option value="yesterday" {% if time_filter == 'yesterday' %}selected{% endif %}>Yesterday</option>
                     <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
-                    <option value="one_month" {% if time_filter == 'one_month' %}selected{% endif %}>30 days</option>
+                    <option value="this_month" {% if time_filter == 'this_month' %}selected{% endif %}>This Month</option>
+                    <option value="last_month" {% if time_filter == 'last_month' %}selected{% endif %}>Last Month</option>
                     <option value="four_months" {% if time_filter == 'four_months' %}selected{% endif %}>4 Months</option>
                     <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>1 Year</option>
 
