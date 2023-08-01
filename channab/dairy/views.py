@@ -467,7 +467,7 @@ def get_date_range(time_filter):
 def animal_milk_list(request):
     sort_by = request.GET.get('sort_by', 'date')
     sort_order = request.GET.get('sort_order', 'desc')
-    time_filter = request.GET.get('time_filter', 'last_7_days')  # Default to last 7 days
+    time_filter = request.GET.get('time_filter', 'today')  # Default to last 7 days
 
     sort_by_mapping = {
         'tag': 'animal__tag',
