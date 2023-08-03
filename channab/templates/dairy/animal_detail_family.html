@@ -32,7 +32,9 @@
   <!-- Mother Card -->
   <div style="width: 100%; max-width: 880px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
     <a href="{% url 'dairy:animal_detail' animal.mother.pk %}" style="width: 100px; height: 100px; display: block">
+      {% if animal.mother.image %}
       <img src="{{ animal.mother.image.url }}" alt="Animal's mother" style="width: 100%; height: 100%; object-fit: cover" />
+      {% endif %}
     </a>
     <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
       <div style="display: flex; justify-content: space-between; align-items: center">
