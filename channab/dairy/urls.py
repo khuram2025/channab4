@@ -17,9 +17,13 @@ urlpatterns = [
     path('animals/create/', views.animal_create, name='animal_create'),
     path('animals/edit/<int:pk>/', views.animal_edit, name='animal_edit'),
     path('animals/<int:pk>/delete/', views.delete_animal, name='delete_animal'),
+    
 
     path('animal/<int:pk>/create_family/', views.create_family, name='create_family'),
-    path('animal/<int:pk>/update_parents/', views.update_parents, name='update_parents'),
+    path('animal/<int:pk>/update_family/', views.update_family, name='update_family'),
+    path('animal/<int:pk>/delete_family/', views.delete_family, name='delete_family'),
+
+
     path('search/', views.search, name='search'),
 
 

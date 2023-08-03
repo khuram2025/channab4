@@ -88,9 +88,9 @@ class Animal(models.Model):
             raise ValidationError('Mother must be a female animal.')
         if self.father and self.father.sex != 'male':
             raise ValidationError('Father must be a male animal.')
-        if self.mother and self in self.mother.get_descendants():
+        if self.mother and self in self.mother.get_descendants(include_children=False):
             raise ValidationError('Invalid parent-child relationship.')
-        if self.father and self in self.father.get_descendants():
+        if self.father and self in self.father.get_descendants(include_children=False):
             raise ValidationError('Invalid parent-child relationship.')
 
         if self.image:
@@ -136,15 +136,25 @@ class Animal(models.Model):
         super().save(*args, **kwargs)
 
 
-    def get_descendants(self):
+    def get_descendants(self, include_children=True):
         descendants = set()
-        for child in self.children_mother.all():
-            descendants.add(child)
-            descendants.update(child.get_descendants())
-        for child in self.children_father.all():
-            descendants.add(child)
-            descendants.update(child.get_descendants())
+        if include_children:
+            for child in self.children_mother.all():
+                descendants.add(child)
+                descendants.update(child.get_descendants())
+            for child in self.children_father.all():
+                descendants.add(child)
+                descendants.update(child.get_descendants())
         return descendants
+    @property
+    def all_children(self):
+        return self.children_mother.all() | self.children_father.all()
+    
+    @property
+    def siblings(self):
+        mother_children = self.mother.children_mother.all() if self.mother else Animal.objects.none()
+        father_children = self.father.children_father.all() if self.father else Animal.objects.none()
+        return (mother_children | father_children).exclude(id=self.id)
     
     def __str__(self):
         return f'{self.tag} ({self.category.title})'

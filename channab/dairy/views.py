@@ -15,6 +15,7 @@ from datetime import timedelta
 from django.db.models import F, Q
 from django.http import JsonResponse
 from django.core import serializers
+from django.core.exceptions import ValidationError
 
 @login_required
 def search(request):
@@ -193,6 +194,8 @@ def animal_edit(request, pk):
 
 from django.http import HttpResponseRedirect, JsonResponse
 
+import logging
+logger = logging.getLogger(__name__)
 
 @login_required
 def animal_detail(request, pk):
@@ -248,6 +251,7 @@ def animal_detail(request, pk):
 
     # Then aggregate over these calculated total_milk values for all records
     total_milk = milk_records.aggregate(total_milk_sum=Sum('total_milk'))['total_milk_sum']
+    logger.debug(f'Animal father: {animal.father}')
 
 
     milk_records = MilkRecord.objects.filter(animal=animal)
@@ -256,64 +260,81 @@ def animal_detail(request, pk):
 
     return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 'total_first_time': total_first_time,'total_second_time': total_second_time,'total_third_time': total_third_time,'total_milk': total_milk,'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order,})
 
-@login_required
-def update_parents(request, pk):
-    farm = request.user.farm
-    animal = get_object_or_404(Animal, pk=pk, farm=farm)
-
-    if request.method == 'POST':
-        father_id = request.POST.get('father')
-        mother_id = request.POST.get('mother')
-
-        if father_id:
-            father = get_object_or_404(Animal, pk=father_id, farm=farm)
-            if father != animal:
-                animal.father = father
-
-        if mother_id:
-            mother = get_object_or_404(Animal, pk=mother_id, farm=farm)
-            if mother != animal:
-                animal.mother = mother
-
-        animal.save()
-
-        return redirect('animal_detail', pk=animal.pk)
-
-    else: 
-        animals = Animal.objects.filter(farm=farm).exclude(pk=animal.pk)
-        return render(request, 'dairy/update_parents.html', {'animal': animal, 'animals': animals})
 
 @login_required
 def create_family(request, pk):
-    farm = request.user.farm
-    animal = get_object_or_404(Animal, pk=pk, farm=farm)
+    animal = get_object_or_404(Animal, pk=pk)
 
-    if animal.father is not None and animal.mother is not None:
-        messages.warning(request, "The animal already has a father and mother.")
-        return redirect('animal_detail', pk=animal.pk)
+    if request.method == 'POST':
+        father_id = request.POST.get('father')
+        mother_id = request.POST.get('mother')
+
+        print(f"Father ID: {father_id}")
+        print(f"Mother ID: {mother_id}")
+
+        if father_id:
+            father = get_object_or_404(Animal, pk=father_id)
+            animal.father = father
+        if mother_id:
+            mother = get_object_or_404(Animal, pk=mother_id)
+            animal.mother = mother
+
+        try:
+            animal.save()
+            messages.success(request, "Family created successfully.")
+            return redirect('dairy:animal_detail', pk=animal.pk)
+        except ValidationError as e:
+            messages.error(request, str(e))
+            # render the form again, possibly with error messages
+    
+    # Fetch all animals, excluding the current one
+    animals = Animal.objects.exclude(pk=animal.pk)
+    
+    return render(request, 'dairy/create_family.html', {'animal': animal, 'animals': animals})
+
+
+@login_required
+def update_family(request, pk):
+    animal = get_object_or_404(Animal, pk=pk)
 
     if request.method == 'POST':
         father_id = request.POST.get('father')
         mother_id = request.POST.get('mother')
 
         if father_id:
-            father = get_object_or_404(Animal, pk=father_id, farm=farm)
-            if father != animal:
-                animal.father = father
-
+            father = get_object_or_404(Animal, pk=father_id)
+            animal.father = father
         if mother_id:
-            mother = get_object_or_404(Animal, pk=mother_id, farm=farm)
-            if mother != animal:
-                animal.mother = mother
+            mother = get_object_or_404(Animal, pk=mother_id)
+            animal.mother = mother
 
         animal.save()
-
+        messages.success(request, "Family updated successfully.")
         return redirect('animal_detail', pk=animal.pk)
 
-    else:
-        animals = Animal.objects.filter(farm=farm).exclude(pk=animal.pk)
-        return render(request, 'dairy/create_family.html', {'animal': animal, 'animals': animals})
+    return render(request, 'dairy/update_parents.html', {'animal': animal})
 
+@login_required
+def delete_family(request, pk):
+    animal = get_object_or_404(Animal, pk=pk)
+    relation_id = request.POST.get('relation_id')
+
+    if request.method == 'POST':
+        if relation_id == "father" and animal.father:
+            animal.father.children_father.remove(animal)
+            animal.father = None
+        elif relation_id == "mother" and animal.mother:
+            animal.mother.children_mother.remove(animal)
+            animal.mother = None
+        else:
+            messages.error(request, "Invalid relation specified.")
+            return redirect('dairy:animal_detail', pk=animal.pk)
+
+        animal.save()
+        messages.success(request, "Family relation deleted successfully.")
+        return redirect('dairy:animal_detail', pk=animal.pk)
+
+    return render(request, 'confirm_delete_family.html', {'animal': animal})
 
 
 

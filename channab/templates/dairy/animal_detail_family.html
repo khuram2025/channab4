@@ -1,88 +1,118 @@
-<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
-<hr />
+{% load dairy_extras %}
+<div style="width: 100%; max-width: 880px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+  <a href="{% url 'dairy:create_family' animal.pk %}" class="btn btn-primary" style="margin-bottom: 10px"> <i class="ri-add-line"></i> Add Family Relation </a>
 
-<div class="row">
-  <div class="col-lg-12">
-    <div class="main-box no-header clearfix">
-      <div class="main-box-body clearfix">
-        <div class="table-responsive">
-          <table class="table user-list">
-            <tbody>
-              {% if animal.father %}
-              <tr>
-                <td>
-                  <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" />
-                  <a href="#" class="user-link">{{ animal.father.tag }}</a>
-                  <span class="user-subhead">Father</span>
-                </td>
-                <td>
-                  <ul>
-                    <li>
-                      <a href="{% url 'dairy:update_parents' animal.pk %}">
-                        <i class="ri-pencil-line"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" data-bs-toggle="modal" data-bs-target="#deleteRelationModal" data-relation-id="{{ animal.father.pk }}">
-                        <i class="ri-delete-bin-line"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-              {% endif %} {% if animal.mother %}
-              <tr>
-                <td>
-                  <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" />
-                  <a href="#" class="user-link">{{ animal.mother.tag }}</a>
-                  <span class="user-subhead">Mother</span>
-                </td>
-                <td>
-                  <ul>
-                    <li>
-                      <a href="{% url 'dairy:update_parents' animal.pk %}">
-                        <i class="ri-pencil-line"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" data-bs-toggle="modal" data-bs-target="#deleteRelationModal" data-relation-id="{{ animal.mother.pk }}">
-                        <i class="ri-delete-bin-line"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-              {% endif %}{% for child in animal.children_mother.all %}
-              <tr>
-                <td>
-                  <img src="{{ child.image.url }}" alt="" />
-                  <a href="#" class="user-link">{{ child.tag }}</a>
-                  <span class="user-subhead">Child</span>
-                </td>
-                <td>...</td>
-              </tr>
-              {% endfor %} {% for child in animal.children_father.all %}
-              <tr>
-                <td>
-                  <img src="{{ child.image.url }}" alt="" />
-                  <a href="#" class="user-link">{{ child.tag }}</a>
-                  <span class="user-subhead">Child</span>
-                </td>
-              </tr>
-              {% endfor %} {% for sibling in animal.siblings.all %}
-              <tr>
-                <td>
-                  <img src="{{ sibling.image.url }}" alt="" />
-                  <a href="#" class="user-link">{{ sibling.tag }}</a>
-                  <span class="user-subhead">Siblings</span>
-                </td>
-                <td>...</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+  {% if animal.father %}
+  <!-- Father Card -->
+  <div style="width: 100%; max-width: 880px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+    <a href="{% url 'dairy:animal_detail' animal.father.pk %}" style="width: 100px; height: 100px; display: block">
+      <img src="{{ animal.father.image.url }}" alt="Animal's father" style="width: 100%; height: 100%; object-fit: cover" />
+    </a>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <div>
+          <a href="{% url 'dairy:animal_detail' animal.father.pk %}" style="color: inherit; text-decoration: none">
+            <h4 style="margin: 0">{{ animal.father.tag }}</h4>
+            <p style="margin: 0">Age: {{ animal.father.dob|animal_age }}</p>
+            <p style="margin: 0">Sex: {{ animal.father.sex}}</p>
+            <p style="margin: 0">Relation: Father</p>
+          </a>
+        </div>
+        <div>
+          <a href="{% url 'dairy:animal_edit' animal.father.pk %}"><i class="ri-pencil-line"></i></a>
+          <a href="#" data-bs-toggle="modal" data-bs-target="#deleteRelationModal" data-relation-id="father"><i class="ri-delete-bin-line"></i></a>
         </div>
       </div>
+    </div>
+  </div>
+  {% else %}
+  <p>No father data available.</p>
+
+  {% endif %} {% if animal.mother %}
+  <!-- Mother Card -->
+  <div style="width: 100%; max-width: 880px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+    <a href="{% url 'dairy:animal_detail' animal.mother.pk %}" style="width: 100px; height: 100px; display: block">
+      <img src="{{ animal.mother.image.url }}" alt="Animal's mother" style="width: 100%; height: 100%; object-fit: cover" />
+    </a>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <div>
+          <a href="{% url 'dairy:animal_detail' animal.mother.pk %}" style="color: inherit; text-decoration: none">
+            <h4 style="margin: 0">{{ animal.mother.tag }}</h4>
+            <p style="margin: 0">Age: {{ animal.mother.dob|animal_age }}</p>
+            <p style="margin: 0">Sex: {{ animal.mother.sex }}</p>
+            <p style="margin: 0">Relation: Mother</p>
+          </a>
+        </div>
+        <div>
+          <a href="{% url 'dairy:animal_edit' animal.mother.pk %}"><i class="ri-pencil-line"></i></a>
+          <a href="#" data-bs-toggle="modal" data-bs-target="#deleteRelationModal" data-relation-id="mother"><i class="ri-delete-bin-line"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %} {% for child in animal.all_children %}
+  <!-- Child Card -->
+  <div style="width: 100%; max-width: 880px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+    <a href="{% url 'dairy:animal_detail' child.pk %}" style="width: 100px; height: 100px; display: block">
+      <img src="{{ child.image.url }}" alt="Animal's child" style="width: 100%; height: 100%; object-fit: cover" />
+    </a>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <div>
+          <a href="{% url 'dairy:animal_detail' child.pk %}" style="color: inherit; text-decoration: none">
+            <h4 style="margin: 0">{{ child.tag }}</h4>
+            <p style="margin: 0">Age: {{ child.dob|animal_age }}</p>
+            <p style="margin: 0">Sex: {{ child.sex }}</p>
+            <p style="margin: 0">Relation: Child</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %} {% for sibling in animal.siblings %}
+  <!-- Sibling Card -->
+  <div style="width: 100%; max-width: 880px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+    <a href="{% url 'dairy:animal_detail' sibling.pk %}" style="width: 100px; height: 100px; display: block">
+      <img src="{{ sibling.image.url }}" alt="Animal's sibling" style="width: 100%; height: 100%; object-fit: cover" />
+    </a>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <div>
+          <a href="{% url 'dairy:animal_detail' sibling.pk %}" style="color: inherit; text-decoration: none">
+            <h4 style="margin: 0">{{ sibling.tag }}</h4>
+            <p style="margin: 0">Age: {{ sibling.dob|animal_age }}</p>
+            <p style="margin: 0">Sex: {{ sibling.sex }}</p>
+            <p style="margin: 0">Relation: Sibling</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Modal for deleting relation -->
+<div class="modal fade" id="deleteRelationModal" tabindex="-1" role="dialog" aria-labelledby="deleteRelationModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteRelationModalLabel">Delete Relation</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="{% url 'dairy:delete_family' animal.pk %}" method="POST">
+        {% csrf_token %}
+        <div class="modal-body">
+          <p>Are you sure you want to delete this relation?</p>
+          <input type="hidden" id="relation-id" name="relation_id" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Delete</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

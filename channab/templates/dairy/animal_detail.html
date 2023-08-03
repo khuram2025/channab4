@@ -264,6 +264,17 @@
         $(this).find(".fas").toggleClass("fa-plus-circle fa-minus-circle");
       });
     });
+
+    $("#deleteRelationModal").on("show.bs.modal", function (event) {
+      var button = $(event.relatedTarget);
+      var relation_id = button.data("relation-id");
+      var modal = $(this);
+      modal.find(".modal-body #relation-id").val(relation_id);
+    });
+    $('a[data-bs-target="#deleteRelationModal"]').on("click", function () {
+      var relationId = $(this).data("relation-id");
+      $("#relation-id").val(relationId);
+    });
   </script>
 
   {%endblock%}
