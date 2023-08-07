@@ -4,8 +4,10 @@
 
 {% block content %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 
 <div class="modal fade theme-modal" id="createFamily" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
@@ -53,11 +55,17 @@
         </div>
     </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var createFamilyModal = new bootstrap.Modal(document.getElementById('createFamily'), {});
         createFamilyModal.show();
+        $('#father').select2({
+            minimumResultsForSearch: 0 // always show the search box
+        });
+        $('#mother').select2({
+            minimumResultsForSearch: 0 // always show the search box
+        });
     });
 </script>
 {% endblock %}
