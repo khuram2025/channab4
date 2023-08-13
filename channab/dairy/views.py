@@ -520,8 +520,6 @@ def animal_milk_list(request):
         prev_end_date = start_date - timedelta(days=1)
         prev_start_date = start_date - (end_date - start_date + timedelta(days=1))
 
-
-
     # Apply the time filter to the querysets
     milk_records = milk_records.filter(date__range=[start_date, end_date])
     prev_milk_records = MilkRecord.objects.filter(animal__farm=farm, date__range=[prev_start_date, prev_end_date])
@@ -537,44 +535,31 @@ def animal_milk_list(request):
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
 
-    # Fetch records for the last two days
-    last_two_days_records = MilkRecord.objects.filter(animal__farm=farm, date__gte=date.today() - timedelta(days=2)).select_related('animal')
-    last_two_days_records_dict = {}
-    for record in last_two_days_records:
-        if record.animal.tag not in last_two_days_records_dict:
-            last_two_days_records_dict[record.animal.tag] = [record]
-        else:
-            last_two_days_records_dict[record.animal.tag].append(record)
-    
-    # Calculate the differences
-    milk_differences = {}
-    for tag, records in last_two_days_records_dict.items():
-        if len(records) == 2:
-            milk_differences[tag] = {
-                'first_time_diff': records[0].first_time - records[1].first_time,
-                'second_time_diff': records[0].second_time - records[1].second_time,
-                'third_time_diff': records[0].third_time - records[1].third_time,
-                'total_milk_diff': records[0].total_milk - records[1].total_milk,
-            }
+    # Create a dictionary to store milk records with the combination of animal's tag and date as the key
+    milk_records_dict = {(record.animal.tag, record.date): record for record in milk_records}
 
-  # Assign the differences to each milk_record in the page
+    # Initialize the difference attributes for each milk_record
     for milk_record in page:
-        milk_diff = milk_differences.get(milk_record.animal.tag)
-        if milk_diff:
-            milk_record.first_time_diff = milk_diff['first_time_diff']
-            milk_record.second_time_diff = milk_diff['second_time_diff']
-            milk_record.third_time_diff = milk_diff['third_time_diff']
-            milk_record.total_milk_diff = milk_diff['total_milk_diff']
+        milk_record.first_time_diff = 0
+        milk_record.second_time_diff = 0
+        milk_record.third_time_diff = 0
+        milk_record.total_milk_diff = 0
 
+        # Calculate differences based on the previous day's record
+        previous_date = milk_record.date - timedelta(days=1)
+        prev_record_key = (milk_record.animal.tag, previous_date)
+        prev_record = milk_records_dict.get(prev_record_key)
+        if prev_record:
+            milk_record.first_time_diff = (milk_record.first_time or 0) - (prev_record.first_time or 0)
+            milk_record.second_time_diff = (milk_record.second_time or 0) - (prev_record.second_time or 0)
+            milk_record.third_time_diff = (milk_record.third_time or 0) - (prev_record.third_time or 0)
+            milk_record.total_milk_diff = (milk_record.total_milk or 0) - (prev_record.total_milk or 0)
 
-
-    print(milk_record.first_time_diff, milk_record.second_time_diff, milk_record.third_time_diff, milk_record.total_milk_diff,)
-
-
+        # Print the results for debugging
+        print(milk_record.first_time_diff, milk_record.second_time_diff, milk_record.third_time_diff, milk_record.total_milk_diff)
 
     return render(request, 'dairy/animal_milk_list.html', {
         'page': page,
-        'milk_differences': milk_differences,
         'milk_records': milk_records,
         'sort_by': sort_by,
         'sort_order': sort_order,
