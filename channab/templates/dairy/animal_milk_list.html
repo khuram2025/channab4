@@ -311,67 +311,68 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-  var ctx = document.getElementById('myChart').getContext('2d');
-  var myChart = new Chart(ctx, {
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['1st Time', '2nd Time', '3rd Time', 'Total'],
-      datasets: [{
-          label: 'Current Period',
-          data: [{
-            {
-              total_first_time
-            }
-          }, {
-            {
-              total_second_time
-            }
-          }, {
-            {
-              total_third_time
-            }
-          }, {
-            {
-              total_milk
-            }
-          }],
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1
+        labels: ['1st Time', '2nd Time', '3rd Time', 'Total'],
+        datasets: [{
+            label: 'Current Period',
+            data: [{{ total_first_time }}, {{ total_second_time }}, {{ total_third_time }}, {{ total_milk }}],
+			 
+							  
+			 
+			  
+			 
+							   
+			 
+			  
+			 
+							  
+			 
+			  
+			 
+						
+			 
+			 
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
         },
         {
-          label: 'Previous Period',
-          data: [{
-            {
-              prev_total_first_time
-            }
-          }, {
-            {
-              prev_total_second_time
-            }
-          }, {
-            {
-              prev_total_third_time
-            }
-          }, {
-            {
-              prev_total_milk
-            }
-          }],
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
-        }
-      ]
+            label: 'Previous Period',
+            data: [{{ prev_total_first_time }}, {{ prev_total_second_time }}, {{ prev_total_third_time }}, {{ prev_total_milk }}],
+			 
+								   
+			 
+			  
+			 
+									
+			 
+			  
+			 
+								   
+			 
+			  
+			 
+							 
+			 
+			 
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+	   
     },
     options: {
-      scales: {
-        y: {
-          beginAtZero: true
+        scales: {
+            y: {
+                beginAtZero: true
+            }
         }
-      }
+	   
     }
-  });
+});
 </script>
 
 
