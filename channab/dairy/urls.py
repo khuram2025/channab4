@@ -27,7 +27,7 @@ urlpatterns = [
     path('search/', views.search, name='search'),
 
 
-
+    path('total_animal_milk/', views.total_milk_list, name='total_animal_milk_list'),
     path('animal_milk/', views.animal_milk_list, name='animal_milk_list'),
     path('animal_milks/new/', views.animal_milk_new, name='animal_milk_new'),
     path('animal_milks/<int:pk>/edit/', views.animal_milk_edit, name='animal_milk_edit'),

@@ -576,6 +576,85 @@ def animal_milk_list(request):
 
 
 @login_required
+def total_milk_list(request):
+    # Sorting, filtering and pagination logic remains similar
+    sort_by = request.GET.get('sort_by', 'date')
+    sort_order = request.GET.get('sort_order', 'desc')
+    time_filter = request.GET.get('time_filter', 'today')  # Default to last 7 days
+
+    farm = request.user.farm
+
+    # Get the date range for the current and previous periods
+    start_date, end_date = get_date_range(time_filter)
+
+    if time_filter in ['today', 'yesterday']:
+        prev_end_date = start_date - timedelta(days=1)
+        prev_start_date = prev_end_date
+    elif time_filter in ['this_month', 'last_month']:
+        prev_end_date = start_date - timedelta(days=1)
+        prev_start_date = prev_end_date.replace(day=1)
+    else:
+        prev_end_date = start_date - timedelta(days=1)
+        prev_start_date = start_date - (end_date - start_date + timedelta(days=1))
+
+    # Aggregate records by date
+    aggregated_records = (
+        MilkRecord.objects.filter(animal__farm=farm, date__range=[start_date, end_date])
+        .values('date')
+        .annotate(
+            total_first_time=models.Sum('first_time'),
+            total_second_time=models.Sum('second_time'),
+            total_third_time=models.Sum('third_time'),
+        )
+        .annotate(
+            total_milk=models.F('total_first_time') + models.F('total_second_time') + models.F('total_third_time')
+        )
+        .order_by(sort_by)
+    )
+
+    prev_aggregated_records = (
+        MilkRecord.objects.filter(animal__farm=farm, date__range=[prev_start_date, prev_end_date])
+        .values('date')
+        .annotate(
+            total_first_time=models.Sum('first_time'),
+            total_second_time=models.Sum('second_time'),
+            total_third_time=models.Sum('third_time'),
+        )
+        .annotate(
+            total_milk=models.F('total_first_time') + models.F('total_second_time') + models.F('total_third_time')
+        )
+    )
+
+    # Create a dictionary for easy lookup
+    prev_totals_dict = {record['date']: record for record in prev_aggregated_records}
+
+    # Calculate the difference
+    for record in aggregated_records:
+        prev_record = prev_totals_dict.get(record['date'] - timedelta(days=1))
+        if prev_record:
+            record['first_time_diff'] = record['total_first_time'] - prev_record['total_first_time']
+            record['second_time_diff'] = record['total_second_time'] - prev_record['total_second_time']
+            record['third_time_diff'] = record['total_third_time'] - prev_record['total_third_time']
+            record['total_milk_diff'] = record['total_milk'] - prev_record['total_milk']
+        else:
+            record['first_time_diff'] = 0
+            record['second_time_diff'] = 0
+            record['third_time_diff'] = 0
+            record['total_milk_diff'] = 0
+
+    paginator = Paginator(aggregated_records, 50)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+
+    return render(request, 'dairy/total_milk_list.html', {
+        'page': page,
+        'sort_by': sort_by,
+        'sort_order': sort_order,
+        'time_filter': time_filter,
+    })
+
+
+@login_required
 def animal_milk_delete(request, pk):
     milk_record = get_object_or_404(MilkRecord, pk=pk)
     milk_record.delete()

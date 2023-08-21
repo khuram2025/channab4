@@ -1,0 +1,420 @@
+{% extends 'main/base.html' %} {% block content %} {% load static %} {% load dairy_extras %}
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {% include 'home/backend_header.html' %}
+  <!-- Page Header Ends-->
+  <!-- mobile fix menu start -->
+  {% include 'home/mobile_menu.html' %}
+  <!-- mobile fix menu end -->
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {% include 'home/backend_sidebar.html' %}
+    <!-- Page Sidebar Ends-->
+    <!-- Page Body Start -->
+    <!-- Container-fluid starts-->
+    <div class="page-body">
+      <!-- Animal Milk Records Table Start -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-8 col-md-12">
+            <div class="list-container"><a href="{% url 'dairy:animal_milk_new' %}" class="add-animal-link">
+                <div>
+                  <div class="add-animal-button">
+                    <span>Add Milk</span>
+                  </div>
+                </div>
+              </a>
+              <h6>1st {{ total_first_time }}</h6>
+              <h6>2nd {{ total_second_time }}</h6>
+              <h6>3rd {{ total_third_time }}</h6>
+              <h6>Tot {{ total_milk }}</h6>
+              <div class="list-subcontainer">
+
+
+                <i class="fas fa-filter filter-icon"></i>
+                <form method="get" class="time-filter-form d-flex align-items-center" id="filterForm">
+                  <select name="time_filter" id="filter" class="filter-select" onchange="document.getElementById('filterForm').submit();">
+                    <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
+                    <option value="last_day" {% if time_filter == 'last_day' %}selected{% endif %}>Today</option>
+                    <option value="yesterday" {% if time_filter == 'yesterday' %}selected{% endif %}>Yesterday</option>
+                    <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
+                    <option value="this_month" {% if time_filter == 'this_month' %}selected{% endif %}>This Month</option>
+                    <option value="last_month" {% if time_filter == 'last_month' %}selected{% endif %}>Last Month</option>
+                    <option value="four_months" {% if time_filter == 'four_months' %}selected{% endif %}>4 Months</option>
+                    <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>1 Year</option>
+
+                  </select>
+
+                </form>
+
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th class="d-none d-sm-table-cell"><a href="?sort_by=date&sort_order={% if sort_by == 'date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date {% if sort_by == 'date' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+                    <th class="d-none d-sm-table-cell"><a href="?sort_by=first_time&sort_order={% if sort_by == 'first_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">1st(L){% if sort_by == 'first_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+                    <th class="d-none d-sm-table-cell"><a href="?sort_by=second_time&sort_order={% if sort_by == 'second_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">2nd(L){% if sort_by == 'second_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+                    <th class="d-none d-sm-table-cell"><a href="?sort_by=third_time&sort_order={% if sort_by == 'third_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">3rd(L){% if sort_by == 'third_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+                    <th class="d-none d-sm-table-cell"><a href="?sort_by=third_time&sort_order={% if sort_by == 'third_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Total(L){% if sort_by == 'third_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
+                    <th class="d-none d-sm-table-cell">Action</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for milk_record in page %}
+                  <tr data-toggle="collapse" data-target="#demo{{forloop.counter}}" class="accordion-toggle d-sm-none">
+                    <td><i class="fas fa-plus-circle"></i></td>
+                    <td>{{ milk_record.date }}</td>
+                    <td>
+                      {{ milk_record.first_time }}
+                      {% if milk_record.first_time_diff > 0 %}
+                      <span class="text-success">({{ milk_record.first_time_diff|default:"0" }})</span>
+                      {% elif milk_record.first_time_diff < 0 %}
+                      <span class="text-danger">({{ milk_record.first_time_diff|default:"0" }})</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {{ milk_record.second_time }}
+                      {% if milk_record.second_time_diff > 0 %}
+                      <span class="text-success">({{ milk_record.second_time_diff|default:"0" }})</span>
+                      {% elif milk_record.second_time_diff < 0 %}
+                      <span class="text-danger">({{ milk_record.second_time_diff|default:"0" }})</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {{ milk_record.third_time }}
+                      {% if milk_record.third_time_diff > 0 %}
+                      <span class="text-success">({{ milk_record.third_time_diff|default:"0" }})</span>
+                      {% elif milk_record.third_time_diff < 0 %}
+                      <span class="text-danger">({{ milk_record.third_time_diff|default:"0" }})</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {{ milk_record.total_milk }}
+                      {% if milk_record.total_milk_diff > 0 %}
+                      <span class="text-success">({{ milk_record.total_milk_diff|default:"0" }})</span>
+                      {% elif milk_record.total_milk_diff < 0 %}
+                      <span class="text-danger">({{ milk_record.total_milk_diff|default:"0" }})</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  <tr class="d-none d-sm-table-row">
+                    <td><a href="{% url 'dairy:animal_detail' milk_record.animal.pk %}">{{ milk_record.animal.tag }}</a></td>
+                    <td>{{ milk_record.date }}</td>
+                    <td>
+                      {{ milk_record.first_time }}
+                      {% if milk_record.first_time_diff > 0 %}
+                      <span class="text-success">({{ milk_record.first_time_diff|default:"0" }})</span>
+                      {% elif milk_record.first_time_diff < 0 %}
+                      <span class="text-danger">({{ milk_record.first_time_diff|default:"0" }})</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {{ milk_record.second_time }}
+                      {% if milk_record.second_time_diff > 0 %}
+                      <span class="text-success">({{ milk_record.second_time_diff|default:"0" }})</span>
+                      {% elif milk_record.second_time_diff < 0 %}
+                      <span class="text-danger">({{ milk_record.second_time_diff|default:"0" }})</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {{ milk_record.third_time }}
+                      {% if milk_record.third_time_diff > 0 %}
+                      <span class="text-success">({{ milk_record.third_time_diff|default:"0" }})</span>
+                      {% elif milk_record.third_time_diff < 0 %}
+                      <span class="text-danger">({{ milk_record.third_time_diff|default:"0" }})</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {{ milk_record.total_milk }}
+                      {% if milk_record.total_milk_diff > 0 %}
+                      <span class="text-success">({{ milk_record.total_milk_diff|default:"0" }})</span>
+                      {% elif milk_record.total_milk_diff < 0 %}
+                      <span class="text-danger">({{ milk_record.total_milk_diff|default:"0" }})</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}"><i class="fas fa-pencil-alt"></i> </a>
+                      <a href="#" data-toggle="modal" data-target="#deleteMilkRecordModal" data-url="{% url 'dairy:animal_milk_delete' milk_record.pk %}">
+                        <i class="fas fa-trash-alt"></i>
+                      </a>
+                    </td>
+                  </tr>
+
+
+                  <tr>
+                    <td colspan="5" class="hiddenRow">
+                      <div class="accordion-body collapse" id="demo{{forloop.counter}}">
+
+                        <p>
+                          <strong>Action:</strong>
+                          <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}"><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <a href="#" data-toggle="modal" data-target="#deleteMilkRecordModal" data-url="{% url 'dairy:animal_milk_delete' milk_record.pk %}">
+                            <i class="fas fa-trash-alt"></i>
+                          </a>
+
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+
+                  {% endfor %}
+
+                </tbody>
+              </table>
+              {% if page.paginator.num_pages > 1 %}
+              <div class="pagination">
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination">
+                    {% if page.has_previous %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ page.previous_page_number }}&sort_by={{sort_by}}&sort_order={{sort_order}}&time_filter={{time_filter}}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page.paginator.page_range %}
+                    {% if page.number == num %}
+                    <li class="page-item active" aria-current="page">
+                      <a class="page-link" style="background-color: #0da487;" href="?page={{ num }}&sort_by={{sort_by}}&sort_order={{sort_order}}&time_filter={{time_filter}}">{{ num }}</a>
+                    </li>
+                    {% elif num > page.number|add:'-3' and num < page.number|add:'3' %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ num }}&sort_by={{sort_by}}&sort_order={{sort_order}}&time_filter={{time_filter}}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ page.next_page_number }}&sort_by={{sort_by}}&sort_order={{sort_order}}&time_filter={{time_filter}}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;</a>
+                    </li>
+                    {% endif %}
+                  </ul>
+                </nav>
+              </div>
+              {% endif %}
+
+
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12">
+            <canvas id="myChart"></canvas>
+          </div>
+
+        </div>
+      </div>
+      <!-- Animal Milk Records Table Ends-->
+
+      <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+          <div class="row">
+            <div class="col-md-12 footer-copyright text-center">
+              <p class="mb-0">Copyright 2023 © Fastkart theme by pixelstrap</p>
+            </div>
+          </div>
+        </footer>
+        <!-- footer end-->
+      </div>
+    </div>
+    <!-- Container-fluid end -->
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- Custom Filter Modal -->
+<div class="modal fade" id="customFilterModal" tabindex="-1" role="dialog" aria-labelledby="customFilterModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="customFilterModalLabel">Custom Filter</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="">
+        <div id="customFilter" style="{% if time_filter != 'custom' %}display: none;{% endif %}">
+          <label for="startDate">Start Date:</label>
+          <input type="date" id="startDate" name="start_date">
+
+          <label for="endDate">End Date:</label>
+          <input type="date" id="endDate" name="end_date">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Animal Milk Record Modal -->
+
+<div class="modal fade" id="deleteMilkRecordModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteMilkRecordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="deleteMilkRecordModalLabel">Delete Animal Milk Record</h5>
+        <p>Are you sure you want to delete the animal milk record?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+          <a id="confirm-delete-button" class="btn btn--yes btn-primary">Yes, delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Delete Animal Milk Record Modal -->
+<!-- page-wrapper End-->
+{% endblock %} {% block extra_js %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+
+
+<script>
+  $(document).ready(function () {
+    $('#filter').on('change', function () {
+      if (this.value === 'custom') {
+        $('#customFilterModal').modal('show');
+      }
+    });
+  });
+</script>
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['1st Time', '2nd Time', '3rd Time', 'Total'],
+        datasets: [{
+            label: 'Current Period',
+            data: [{{ total_first_time }}, {{ total_second_time }}, {{ total_third_time }}, {{ total_milk }}],
+			 
+							  
+			 
+			  
+			 
+							   
+			 
+			  
+			 
+							  
+			 
+			  
+			 
+						
+			 
+			 
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        },
+        {
+            label: 'Previous Period',
+            data: [{{ prev_total_first_time }}, {{ prev_total_second_time }}, {{ prev_total_third_time }}, {{ prev_total_milk }}],
+			 
+								   
+			 
+			  
+			 
+									
+			 
+			  
+			 
+								   
+			 
+			  
+			 
+							 
+			 
+			 
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+	   
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+	   
+    }
+});
+</script>
+
+
+
+
+<script>
+  $(document).ready(function () {
+    // Event listener for tab clicks
+    $(".nav-link").click(function (e) {
+      e.preventDefault();
+
+      // Remove active class from all tabs
+      $(".nav-link").removeClass("active");
+
+      // Add active class to clicked tab
+      $(this).addClass("active");
+
+      // Hide all tab content
+      $(".tab-pane").removeClass("active");
+
+      // Show clicked tab's content
+      var target = $(this).attr("data-target");
+      $(target).addClass("active");
+    });
+
+    $(".accordion-toggle").click(function () {
+      $(this).find(".fas").toggleClass("fa-plus-circle fa-minus-circle");
+    });
+  });
+  $('#deleteMilkRecordModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var deleteUrl = button.data('url') // Extract url from data-url attribute
+
+    var modal = $(this)
+    modal.find('#confirm-delete-button').attr('href', deleteUrl)
+  })
+</script>
+
+<script>
+  $(document).ready(function () {
+    $(".accordion-toggle").click(function () {
+      $(this).find(".fas").toggleClass("fa-plus-circle fa-minus-circle");
+    });
+  });
+</script>
+
+{%endblock%}
