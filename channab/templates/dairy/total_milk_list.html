@@ -65,7 +65,7 @@
                     <th class="d-none d-sm-table-cell"><a href="?sort_by=second_time&sort_order={% if sort_by == 'second_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">2nd(L){% if sort_by == 'second_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
                     <th class="d-none d-sm-table-cell"><a href="?sort_by=third_time&sort_order={% if sort_by == 'third_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">3rd(L){% if sort_by == 'third_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
                     <th class="d-none d-sm-table-cell"><a href="?sort_by=third_time&sort_order={% if sort_by == 'third_time' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Total(L){% if sort_by == 'third_time' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %}</a></th>
-                    <th class="d-none d-sm-table-cell">Action</th>
+
 
                   </tr>
                 </thead>
@@ -75,101 +75,61 @@
                     <td><i class="fas fa-plus-circle"></i></td>
                     <td>{{ milk_record.date }}</td>
                     <td>
-                      {{ milk_record.first_time }}
-                      {% if milk_record.first_time_diff > 0 %}
-                      <span class="text-success">({{ milk_record.first_time_diff|default:"0" }})</span>
-                      {% elif milk_record.first_time_diff < 0 %}
-                      <span class="text-danger">({{ milk_record.first_time_diff|default:"0" }})</span>
+                      {{ milk_record.total_first_time }}
+                      {% if milk_record.first_time_diff %}
+                      <span class="{{ milk_record.first_time_diff|positive_or_negative }}">({{ milk_record.first_time_diff }})</span>
                       {% endif %}
                     </td>
                     <td>
-                      {{ milk_record.second_time }}
-                      {% if milk_record.second_time_diff > 0 %}
-                      <span class="text-success">({{ milk_record.second_time_diff|default:"0" }})</span>
-                      {% elif milk_record.second_time_diff < 0 %}
-                      <span class="text-danger">({{ milk_record.second_time_diff|default:"0" }})</span>
+                      {{ milk_record.total_second_time }}
+                      {% if milk_record.second_time_diff %}
+                      <span class="{{ milk_record.second_time_diff|positive_or_negative }}">({{ milk_record.second_time_diff }})</span>
                       {% endif %}
                     </td>
                     <td>
-                      {{ milk_record.third_time }}
-                      {% if milk_record.third_time_diff > 0 %}
-                      <span class="text-success">({{ milk_record.third_time_diff|default:"0" }})</span>
-                      {% elif milk_record.third_time_diff < 0 %}
-                      <span class="text-danger">({{ milk_record.third_time_diff|default:"0" }})</span>
+                      {{ milk_record.total_third_time }}
+                      {% if milk_record.third_time_diff %}
+                      <span class="{{ milk_record.third_time_diff|positive_or_negative }}">({{ milk_record.third_time_diff }})</span>
                       {% endif %}
                     </td>
                     <td>
                       {{ milk_record.total_milk }}
-                      {% if milk_record.total_milk_diff > 0 %}
-                      <span class="text-success">({{ milk_record.total_milk_diff|default:"0" }})</span>
-                      {% elif milk_record.total_milk_diff < 0 %}
-                      <span class="text-danger">({{ milk_record.total_milk_diff|default:"0" }})</span>
+                      {% if milk_record.total_diff %}
+                      <span class="{{ milk_record.total_diff|positive_or_negative }}">({{ milk_record.total_diff }})</span>
                       {% endif %}
                     </td>
                   </tr>
                   <tr class="d-none d-sm-table-row">
-                    <td><a href="{% url 'dairy:animal_detail' milk_record.animal.pk %}">{{ milk_record.animal.tag }}</a></td>
                     <td>{{ milk_record.date }}</td>
                     <td>
-                      {{ milk_record.first_time }}
-                      {% if milk_record.first_time_diff > 0 %}
-                      <span class="text-success">({{ milk_record.first_time_diff|default:"0" }})</span>
-                      {% elif milk_record.first_time_diff < 0 %}
-                      <span class="text-danger">({{ milk_record.first_time_diff|default:"0" }})</span>
+                      {{ milk_record.total_first_time }}
+                      {% if milk_record.first_time_diff %}
+                      <span class="{{ milk_record.first_time_diff|positive_or_negative }}">({{ milk_record.first_time_diff }})</span>
                       {% endif %}
                     </td>
                     <td>
-                      {{ milk_record.second_time }}
-                      {% if milk_record.second_time_diff > 0 %}
-                      <span class="text-success">({{ milk_record.second_time_diff|default:"0" }})</span>
-                      {% elif milk_record.second_time_diff < 0 %}
-                      <span class="text-danger">({{ milk_record.second_time_diff|default:"0" }})</span>
+                      {{ milk_record.total_second_time }}
+                      {% if milk_record.second_time_diff %}
+                      <span class="{{ milk_record.second_time_diff|positive_or_negative }}">({{ milk_record.second_time_diff }})</span>
                       {% endif %}
                     </td>
                     <td>
-                      {{ milk_record.third_time }}
-                      {% if milk_record.third_time_diff > 0 %}
-                      <span class="text-success">({{ milk_record.third_time_diff|default:"0" }})</span>
-                      {% elif milk_record.third_time_diff < 0 %}
-                      <span class="text-danger">({{ milk_record.third_time_diff|default:"0" }})</span>
+                      {{ milk_record.total_third_time }}
+                      {% if milk_record.third_time_diff %}
+                      <span class="{{ milk_record.third_time_diff|positive_or_negative }}">({{ milk_record.third_time_diff }})</span>
                       {% endif %}
                     </td>
                     <td>
                       {{ milk_record.total_milk }}
-                      {% if milk_record.total_milk_diff > 0 %}
-                      <span class="text-success">({{ milk_record.total_milk_diff|default:"0" }})</span>
-                      {% elif milk_record.total_milk_diff < 0 %}
-                      <span class="text-danger">({{ milk_record.total_milk_diff|default:"0" }})</span>
+                      {% if milk_record.total_diff %}
+                      <span class="{{ milk_record.total_diff|positive_or_negative }}">({{ milk_record.total_diff }})</span>
                       {% endif %}
                     </td>
-                    <td>
-                      <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}"><i class="fas fa-pencil-alt"></i> </a>
-                      <a href="#" data-toggle="modal" data-target="#deleteMilkRecordModal" data-url="{% url 'dairy:animal_milk_delete' milk_record.pk %}">
-                        <i class="fas fa-trash-alt"></i>
-                      </a>
-                    </td>
                   </tr>
-
-
-                  <tr>
-                    <td colspan="5" class="hiddenRow">
-                      <div class="accordion-body collapse" id="demo{{forloop.counter}}">
-
-                        <p>
-                          <strong>Action:</strong>
-                          <a href="{% url 'dairy:animal_milk_edit' milk_record.pk %}"><i class="fas fa-pencil-alt"></i> Edit</a>
-                          <a href="#" data-toggle="modal" data-target="#deleteMilkRecordModal" data-url="{% url 'dairy:animal_milk_delete' milk_record.pk %}">
-                            <i class="fas fa-trash-alt"></i>
-                          </a>
-
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-
                   {% endfor %}
-
                 </tbody>
+
+
               </table>
               {% if page.paginator.num_pages > 1 %}
               <div class="pagination">
@@ -268,21 +228,6 @@
 
 <!-- Delete Animal Milk Record Modal -->
 
-<div class="modal fade" id="deleteMilkRecordModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteMilkRecordModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body">
-        <h5 class="modal-title" id="deleteMilkRecordModalLabel">Delete Animal Milk Record</h5>
-        <p>Are you sure you want to delete the animal milk record?</p>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="button-box">
-          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-          <a id="confirm-delete-button" class="btn btn--yes btn-primary">Yes, delete</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 <!-- End Delete Animal Milk Record Modal -->
 <!-- page-wrapper End-->
 {% endblock %} {% block extra_js %}
@@ -305,108 +250,73 @@
   });
 </script>
 
-</script>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-var ctx = document.getElementById('myChart').getContext('2d');
-var myChart = new Chart(ctx, {
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctx, {
     type: 'bar',
     data: {
-        labels: ['1st Time', '2nd Time', '3rd Time', 'Total'],
-        datasets: [{
-            label: 'Current Period',
-            data: [{{ total_first_time }}, {{ total_second_time }}, {{ total_third_time }}, {{ total_milk }}],
-			 
-							  
-			 
-			  
-			 
-							   
-			 
-			  
-			 
-							  
-			 
-			  
-			 
-						
-			 
-			 
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1
+      labels: ['1st Time', '2nd Time', '3rd Time', 'Total'],
+      datasets: [{
+          label: 'Current Period',
+          data: [{
+            {
+              total_first_time
+            }
+          }, {
+            {
+              total_second_time
+            }
+          }, {
+            {
+              total_third_time
+            }
+          }, {
+            {
+              total_milk
+            }
+          }],
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
         },
         {
-            label: 'Previous Period',
-            data: [{{ prev_total_first_time }}, {{ prev_total_second_time }}, {{ prev_total_third_time }}, {{ prev_total_milk }}],
-			 
-								   
-			 
-			  
-			 
-									
-			 
-			  
-			 
-								   
-			 
-			  
-			 
-							 
-			 
-			 
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-        }]
-	   
+          label: 'Previous Period',
+          data: [{
+            {
+              prev_total_first_time
+            }
+          }, {
+            {
+              prev_total_second_time
+            }
+          }, {
+            {
+              prev_total_third_time
+            }
+          }, {
+            {
+              prev_total_milk
+            }
+          }],
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }
+      ]
+
     },
     options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
+      scales: {
+        y: {
+          beginAtZero: true
         }
-	   
+      }
+
     }
-});
-</script>
-
-
-
-
-<script>
-  $(document).ready(function () {
-    // Event listener for tab clicks
-    $(".nav-link").click(function (e) {
-      e.preventDefault();
-
-      // Remove active class from all tabs
-      $(".nav-link").removeClass("active");
-
-      // Add active class to clicked tab
-      $(this).addClass("active");
-
-      // Hide all tab content
-      $(".tab-pane").removeClass("active");
-
-      // Show clicked tab's content
-      var target = $(this).attr("data-target");
-      $(target).addClass("active");
-    });
-
-    $(".accordion-toggle").click(function () {
-      $(this).find(".fas").toggleClass("fa-plus-circle fa-minus-circle");
-    });
   });
-  $('#deleteMilkRecordModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget) // Button that triggered the modal
-    var deleteUrl = button.data('url') // Extract url from data-url attribute
-
-    var modal = $(this)
-    modal.find('#confirm-delete-button').attr('href', deleteUrl)
-  })
 </script>
 
 <script>

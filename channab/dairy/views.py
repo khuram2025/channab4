@@ -627,30 +627,48 @@ def total_milk_list(request):
 
     # Create a dictionary for easy lookup
     prev_totals_dict = {record['date']: record for record in prev_aggregated_records}
+    # Get the date range for the current and previous periods
+    milk_records = MilkRecord.objects.filter(animal__farm=farm)
+
+    # Filter the milk_records based on the date range
+    milk_records = milk_records.filter(date__range=[start_date, end_date])
+    filtered_milk_records = milk_records.filter(date__range=[start_date, end_date])
+
+    # Calculate totals
+    total_first_time, total_second_time, total_third_time, total_milk = calculate_totals(filtered_milk_records)
+
+
 
     # Calculate the difference
-    for record in aggregated_records:
-        prev_record = prev_totals_dict.get(record['date'] - timedelta(days=1))
+   
+    aggregated_list = list(aggregated_records)
+    aggregated_list.sort(key=lambda x: x['date'])
+
+    prev_record = None
+    for record in aggregated_list:
         if prev_record:
-            record['first_time_diff'] = record['total_first_time'] - prev_record['total_first_time']
-            record['second_time_diff'] = record['total_second_time'] - prev_record['total_second_time']
-            record['third_time_diff'] = record['total_third_time'] - prev_record['total_third_time']
-            record['total_milk_diff'] = record['total_milk'] - prev_record['total_milk']
-        else:
-            record['first_time_diff'] = 0
-            record['second_time_diff'] = 0
-            record['third_time_diff'] = 0
-            record['total_milk_diff'] = 0
+            record['first_time_diff'] = (record['total_first_time'] or 0) - (prev_record['total_first_time'] or 0)
+            record['second_time_diff'] = (record['total_second_time'] or 0) - (prev_record['total_second_time'] or 0)
+            record['third_time_diff'] = (record['total_third_time'] or 0) - (prev_record['total_third_time'] or 0)
+            record['total_diff'] = (record['total_milk'] or 0) - (prev_record['total_milk'] or 0)
+
+           
+
+        prev_record = record
 
     paginator = Paginator(aggregated_records, 50)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
-
+   
     return render(request, 'dairy/total_milk_list.html', {
         'page': page,
         'sort_by': sort_by,
         'sort_order': sort_order,
         'time_filter': time_filter,
+        'total_first_time': total_first_time,
+        'total_second_time': total_second_time,
+        'total_third_time': total_third_time,
+        'total_milk': total_milk,
     })
 
 
