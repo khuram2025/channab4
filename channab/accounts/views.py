@@ -264,9 +264,17 @@ def calculate_salary_status(member):
 
     today = date.today()
 
+    today = date.today()
+
     if hasattr(member, 'profile') and member.profile.joining_date is not None:
         joining_date = member.profile.joining_date
-        days_worked = (today - joining_date).days
+        end_date = member.profile.end_date
+        if end_date and end_date < today:
+            # If end date is provided and it's in the past, use the end date for calculations
+            days_worked = (end_date - joining_date).days
+        else:
+            days_worked = (today - joining_date).days
+
         daily_salary = member.total_salary() / 30
         expected_salary_till_now = round(days_worked * daily_salary)  # Round to the nearest integer
         remaining_salary = expected_salary_till_now - total_salary_received

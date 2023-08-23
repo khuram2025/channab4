@@ -51,7 +51,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ('profile_picture', 'first_name', 'last_name', 'city', 'facebook', 'youtube', 'joining_date')
+        fields = ('profile_picture', 'first_name', 'last_name', 'city', 'facebook', 'youtube', 'joining_date', 'end_date')
 
     joining_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})

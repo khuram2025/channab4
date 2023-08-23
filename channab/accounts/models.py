@@ -108,6 +108,7 @@ class Profile(models.Model):
     facebook = models.URLField(max_length=200, blank=True, null=True)  
     youtube = models.URLField(max_length=200, blank=True, null=True)
     joining_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         super(Profile, self).save(*args, **kwargs)

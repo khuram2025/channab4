@@ -1,139 +1,146 @@
-
-
 {% extends "home/base.html" %} {% block content %}
 {% load static %}
 {% load widget_tweaks %}
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          var editProfileModal = new bootstrap.Modal(document.getElementById('editProfile'), {});
-          editProfileModal.show();
-  
-          document.getElementById('id_profile_picture').addEventListener('change', function (event) {
-            previewImage(event.target);
-          });
-  
-          document.getElementById('change_picture_icon').addEventListener('click', function () {
-            document.getElementById('id_profile_picture').click();
-          });
-        });
-  
-        function previewImage(input) {
-          if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-              document.getElementById('profile_picture_preview').src = e.target.result;
+
+    <head>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var editProfileModal = new bootstrap.Modal(document.getElementById('editProfile'), {});
+                editProfileModal.show();
+
+                document.getElementById('id_profile_picture').addEventListener('change', function (event) {
+                    previewImage(event.target);
+                });
+
+                document.getElementById('change_picture_icon').addEventListener('click', function () {
+                    document.getElementById('id_profile_picture').click();
+                });
+            });
+
+            function previewImage(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('profile_picture_preview').src = e.target.result;
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
             }
-            reader.readAsDataURL(input.files[0]);
-          }
-        }
-      </script>
-  </head>
-  <body>
-    {% include 'home/mobile_menu.html' %}
-    <div class="modal fade theme-modal" id="editProfile" tabindex="-1" aria-labelledby="exampleModalLabel2"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel2">Edit Profile</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                    <div class="row g-4">
-                        <div class="col-xxl-12 text-center mb-4">
-                            <div style="position: relative;">
-                                {% if request.user.profile.profile_picture %}
-                                    <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture" id="profile_picture_preview" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
-                                {% else %}
-                                    <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Profile Picture" id="profile_picture_preview" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
-                                {% endif %}
-                                <i class="fa fa-pencil" id="change_picture_icon" style="position: absolute; bottom: 0; right: 0; background-color: rgba(0,0,0,0.5); color: white; padding: 5px; cursor: pointer;"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="col-xxl-12">
-                            <div class="form-floating theme-form-floating" style="display: none;">
-                                <label for="{{ form.profile_picture.auto_id }}">Change Profile Picture</label>
-                                {{ form.profile_picture|add_class:"form-control" }}
-                            </div>
-                        </div>
-                        <div class="col-xxl-6">
-                            <div class="form-floating theme-form-floating">
-                                {{ form.first_name|add_class:"form-control" }}
-                                <label for="{{ form.first_name.auto_id }}">First Name</label>
-                            </div>
-                        </div>
-                        
-                        <div class="col-xxl-6">
-                            <div class="form-floating theme-form-floating">
-                                {{ form.last_name|add_class:"form-control" }}
-                                <label for="{{ form.last_name.auto_id }}">Last Name</label>
-                            </div>
-                        </div>
+        </script>
+    </head>
 
-                        <div class="col-xxl-6">
-    <div class="form-floating theme-form-floating">
-        {{ form.mobile|add_class:"form-control" }}
-        <label for="{{ form.mobile.auto_id }}">Mobile Number</label>
-    </div>
-</div>
-
-                        <div class="col-xxl-6">
-                            <div class="form-floating theme-form-floating">
-                                {{ form.joining_date|add_class:"form-control" }}
-                                <label for="{{ form.joining_date.auto_id }}">Joining Date</label>
-                            </div>
-                        </div>
-
-                        <div class="col-6">
-                            <div class="form-floating theme-form-floating">
-                                {{ form.role|add_class:"form-control" }}
-                                <label for="{{ form.role.auto_id }}">Role</label>
-                            </div>
-                        </div>
-
-                       
-
-                        <div class="col-xxl-6">
-                            <div class="form-floating theme-form-floating">
-                                {{ form.city|add_class:"form-control" }}
-                                <label for="{{ form.city.auto_id }}">City</label>
-                            </div>
-                        </div>
-
-                        <div class="col-xxl-6">
-                            <div class="form-floating theme-form-floating">
-                                {{ form.facebook|add_class:"form-control" }}
-                                <label for="{{ form.facebook.auto_id }}">Facebook</label>
-                            </div>
-                        </div>
-                        <div class="col-xxl-6">
-                            <div class="form-floating theme-form-floating">
-                                {{ form.youtube|add_class:"form-control" }}
-                                <label for="{{ form.youtube.auto_id }}">Youtube</label>
-                            </div>
-                        </div>
+    <body>
+        {% include 'home/mobile_menu.html' %}
+        <div class="modal fade theme-modal" id="editProfile" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel2">Edit Profile</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
+                    <div class="modal-body">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row g-4">
+                                <div class="col-xxl-12 text-center mb-4">
+                                    <div style="position: relative;">
+                                        {% if request.user.profile.profile_picture %}
+                                        <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture" id="profile_picture_preview" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                                        {% else %}
+                                        <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Profile Picture" id="profile_picture_preview" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                                        {% endif %}
+                                        <i class="fa fa-pencil" id="change_picture_icon" style="position: absolute; bottom: 0; right: 0; background-color: rgba(0,0,0,0.5); color: white; padding: 5px; cursor: pointer;"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-12">
+                                    <div class="form-floating theme-form-floating" style="display: none;">
+                                        <label for="{{ form.profile_picture.auto_id }}">Change Profile Picture</label>
+                                        {{ form.profile_picture|add_class:"form-control" }}
+                                    </div>
+                                </div>
+                                <div class="col-xxl-6">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.first_name|add_class:"form-control" }}
+                                        <label for="{{ form.first_name.auto_id }}">First Name</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-6">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.last_name|add_class:"form-control" }}
+                                        <label for="{{ form.last_name.auto_id }}">Last Name</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-6">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.mobile|add_class:"form-control" }}
+                                        <label for="{{ form.mobile.auto_id }}">Mobile Number</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-6">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.joining_date|add_class:"form-control" }}
+                                        <label for="{{ form.joining_date.auto_id }}">Joining Date</label>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-6">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.end_date|add_class:"form-control" }}
+                                        <label for="{{ form.end_date.auto_id }}">End Date</label>
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="col-6">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.role|add_class:"form-control" }}
+                                        <label for="{{ form.role.auto_id }}">Role</label>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col-xxl-6">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.city|add_class:"form-control" }}
+                                        <label for="{{ form.city.auto_id }}">City</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-6">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.facebook|add_class:"form-control" }}
+                                        <label for="{{ form.facebook.auto_id }}">Facebook</label>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-6">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.youtube|add_class:"form-control" }}
+                                        <label for="{{ form.youtube.auto_id }}">Youtube</label>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
+                    </div>
+                    </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-animation btn-md fw-bold"
-                        data-bs-dismiss="modal">Close</button>
-                    <button type="submit"
-                        class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
-                </div>
-            </form>
             </div>
         </div>
-    </div>
-<!-- Edit Profile End -->
-</body>
+        <!-- Edit Profile End -->
+    </body>
+
 </html>
 {% endblock %}
