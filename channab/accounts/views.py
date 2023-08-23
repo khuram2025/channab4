@@ -298,6 +298,9 @@ def member_detail(request, member_id):
     salary_transactions = SalaryTransaction.objects.filter(farm_member=member)
     salary_status = calculate_salary_status(member)
     
+    # List of keys you want to exclude
+    excluded_keys = ["total_salary_received", "expected_salary_till_now", "remaining_salary"]
+    
     if request.method == 'POST':
         form = SalaryComponentForm(request.POST)
         if form.is_valid():
@@ -308,7 +311,13 @@ def member_detail(request, member_id):
     else:
         form = SalaryComponentForm()
 
-    return render(request, 'accounts/member_detail.html', {'member': member, 'form': form, 'salary_transactions': salary_transactions, 'salary_status': salary_status})
+    return render(request, 'accounts/member_detail.html', {
+        'member': member, 
+        'form': form, 
+        'salary_transactions': salary_transactions, 
+        'salary_status': salary_status,
+        'excluded_keys': excluded_keys
+    })
 
 
 from .forms import SalaryComponentForm
