@@ -1,0 +1,67 @@
+{% extends "home/base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<html lang="en">
+    <head>
+        <!-- Add any extra CSS or JavaScript imports here -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    </head>
+
+    <body>
+        {% include 'home/mobile_menu.html' %}
+        <div class="modal fade theme-modal" id="updateSalaryComponent" tabindex="-1" aria-labelledby="updateSalaryComponentLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateSalaryComponentLabel">Update Salary Component</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'accounts:update_salary_component' member_id=member.pk component_id=component.pk %}">
+                            {% csrf_token %}
+                            <div class="row g-4">
+                                <div class="col-xxl-6">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.name|add_class:"form-control" }}
+                                        <label for="{{ form.name.auto_id }}">Component Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-6">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.amount|add_class:"form-control" }}
+                                        <label for="{{ form.amount.auto_id }}">Amount</label>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-12">
+                                    <div class="form-floating theme-form-floating">
+                                        {{ form.duration|add_class:"form-control" }}
+                                        <label for="{{ form.duration.auto_id }}">Duration</label>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="close-button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Update Component</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        $('#updateSalaryComponent').modal('show');
+    });
+</script>
+
+{% endblock %}

@@ -17,6 +17,9 @@ urlpatterns = [
     
     path('member/<int:member_id>/salary/', views.salary_components, name='salary_components'),
     path('member/<int:member_id>/salary/add/', views.add_salary_component, name='add_salary_component'),
+    path('member/<int:member_id>/salary/<int:component_id>/update/', views.update_salary_component, name='update_salary_component'),
+    path('member/<int:member_id>/salary/<int:component_id>/delete/', views.delete_salary_component, name='delete_salary_component'),
+
     
     path('salary_transactions/', views.salary_transaction_list, name='salary_transaction_list'),
     path('get_salary_components/<int:user_id>/', views.get_salary_components, name='get_salary_components'),

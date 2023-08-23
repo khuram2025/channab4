@@ -345,6 +345,42 @@ def add_salary_component(request, member_id):
     }
     return render(request, 'accounts/add_salary_component.html', context)
 
+@login_required
+def update_salary_component(request, member_id, component_id):
+    member = get_object_or_404(CustomUser, pk=member_id)
+    component = get_object_or_404(SalaryComponent, pk=component_id, member=member)
+
+    if request.method == 'POST':
+        form = SalaryComponentForm(request.POST, instance=component)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:salary_components', member_id=member.pk)
+    else:
+        form = SalaryComponentForm(instance=component)
+
+    context = {
+        'form': form,
+        'member': member,
+        'component': component
+    }
+    return render(request, 'accounts/update_salary_component.html', context)
+
+@login_required
+def delete_salary_component(request, member_id, component_id):
+    member = get_object_or_404(CustomUser, pk=member_id)
+    component = get_object_or_404(SalaryComponent, pk=component_id, member=member)
+
+    if request.method == 'POST':
+        component.delete()
+        return redirect('accounts:member_detail', member_id=member.pk)  # Redirecting to member_detail
+    
+    context = {
+        'member': member,
+        'component': component
+    }
+    return render(request, 'accounts/delete_salary_component_confirm.html', context)
+
+
 
 def salary_transaction_list(request):
     transactions = SalaryTransaction.objects.all()
