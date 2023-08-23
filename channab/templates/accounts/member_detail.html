@@ -15,11 +15,15 @@
   .name-section-mobile {
     display: none;
   }
+
   @media (max-width: 767px) {
-      .col-xl-6, .col-xxl-12, .col-12 {
-         padding-left: 0 !important;
-         padding-right: 0 !important;
-      }
+
+    .col-xl-6,
+    .col-xxl-12,
+    .col-12 {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
   }
 
   @media (min-width: 768px) {
@@ -160,8 +164,6 @@
                         </div>
                         <div class="tab-pane fade" id="salary" role="tabpanel" aria-labelledby="salary-tab">
                           <div class="col-sm-12" style="padding-top: 15px;">
-
-
                             <div class="title-header option-title">
                               <h3>Salary Information</h3>
                               <!-- Add/Edit Allowance Button -->
@@ -208,15 +210,13 @@
                                   {% endif %}
                                 </tr>
                                 {% for component, data in salary_status.items %}
-    {% if component not in excluded_keys %}
-        <tr>
-            <td>{{ component }} Received</td>
-            <td>{{ data.received_amount }}</td>
-        </tr>
-    {% endif %}
-{% endfor %}
-
-
+                                {% if component not in excluded_keys %}
+                                <tr>
+                                  <td>{{ component }} Received</td>
+                                  <td>{{ data.received_amount }}</td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
                                 <tr>
                                   <td>Employee Total Salary till now</td>
                                   <td>{{ salary_status.expected_salary_till_now }}</td>
@@ -258,61 +258,102 @@
                           </div>
                         </div>
                         <div class="tab-pane fade" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
-                          
-                          <div class="col-sm-12">
-                            <div class="card card-table">
-                              <div class="card-body">
-                                <div class="title-header option-title">
-                                  <h5>Salary Transactions</h5>
-                                  {% if salary_transaction.pk %}
-                                  <a href="{% url 'accounts:salary_transaction_update_member' member_id=member.pk pk=salary_transaction.pk %}" class="btn btn-primary">Update Salary Amount</a>
-                                  {% else %}
-                                  <a href="{% url 'accounts:salary_transaction_update_member' member_id=member.pk pk=0 %}" class="btn btn-primary">Add Salary Amount</a>
-                                  {% endif %}
+                          <div class="col-sm-12" style="padding-top: 15px;">
+                            <div class="list-container">
+                              {% if salary_transaction.pk %}
+<a href="{% url 'accounts:salary_transaction_update_member' member_id=member.pk pk=salary_transaction.pk %}" class="add-animal-link">
+    <div>
+        <div class="add-animal-button">
+            <span>Update Salary Amount</span>
+        </div>
+    </div>
+</a>
+{% else %}
+<a href="{% url 'accounts:salary_transaction_update_member' member_id=member.pk pk=0 %}" class="add-animal-link">
+    <div>
+        <div class="add-animal-button">
+            <span>Add Salary Amount</span>
+        </div>
+    </div>
+</a>
+{% endif %}
 
-                                </div>
-                                <div class="table-responsive transactions-table">
-                                  <div>
-                                    <table class="table all-package theme-table" id="table_id">
-                                      <thead>
-                                        <tr>
-                                          <th>Date</th>
-                                          <th>Salary Component</th>
-                                          <th>Amount</th>
-                                          <th>Description</th>
-                                          <th>Options</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {% for transaction in salary_transactions %}
-                                        <tr>
-                                          <td>{{ transaction.transaction_date }}</td>
-                                          <td>{{ transaction.component.name }} ({{ transaction.component.duration|title }})</td>
-                                          <td>{{ transaction.amount_paid }}</td>
-                                          <td>{{ transaction.description }}</td>
-                                          <td>
-                                            <ul>
-                                              <li>
-                                                <a href="{% url 'accounts:salary_transaction_update' transaction.pk %}">
-                                                  <i class="ri-pencil-line"></i>
-                                                </a>
-                                              </li>
-                                              <li>
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" data-transaction-id="{{ transaction.pk }}">
-                                                  <i class="ri-delete-bin-line"></i>
-                                                </a>
-                                              </li>
-                                            </ul>
-                                          </td>
-                                        </tr>
-                                        {% endfor %}
 
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
+                              <div class="list-subcontainer">
+
+
+                                <i class="fas fa-filter filter-icon"></i>
+                                <form method="get" class="time-filter-form d-flex align-items-center" id="filterForm">
+                                  <select name="time_filter" id="filter" class="filter-select" onchange="document.getElementById('filterForm').submit();">
+                                    <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
+                                    <option value="last_day" {% if time_filter == 'last_day' %}selected{% endif %}>Today</option>
+                                    <option value="yesterday" {% if time_filter == 'yesterday' %}selected{% endif %}>Yesterday</option>
+                                    <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
+                                    <option value="this_month" {% if time_filter == 'this_month' %}selected{% endif %}>This Month</option>
+                                    <option value="last_month" {% if time_filter == 'last_month' %}selected{% endif %}>Last Month</option>
+                                    <option value="four_months" {% if time_filter == 'four_months' %}selected{% endif %}>4 Months</option>
+                                    <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>1 Year</option>
+
+                                  </select>
+
+                                </form>
+
                               </div>
                             </div>
+                            
+                            <div class="table-responsive transactions-table">
+                              <table class="table table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Description</th>
+                                    <th>Options</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for transaction in salary_transactions %}
+                                  <tr data-toggle="collapse" data-target="#transactionDetail{{forloop.counter}}" class="accordion-toggle d-sm-none">
+
+                                    <td>{{ transaction.transaction_date }}</td>
+                                    <td>{{ transaction.component.name }} ({{ transaction.component.duration|title }})</td>
+                                    <td>{{ transaction.amount_paid }}</td>
+                                    <td>{{ transaction.description }}</td>
+                                    <td>
+                                      <a href="{% url 'accounts:salary_transaction_update' transaction.pk %}"><i class="ri-pencil-line"></i></a>
+                                      <a href="#" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" data-transaction-id="{{ transaction.pk }}"><i class="ri-delete-bin-line"></i></a>
+                                    </td>
+                                  </tr>
+
+                                  <tr class="d-none d-sm-table-row">
+                                    <td>{{ transaction.transaction_date }}</td>
+                                    <td>{{ transaction.component.name }} ({{ transaction.component.duration|title }})</td>
+                                    <td>{{ transaction.amount_paid }}</td>
+                                    <td>{{ transaction.description }}</td>
+                                    <td>
+                                      <a href="{% url 'accounts:salary_transaction_update' transaction.pk %}"><i class="ri-pencil-line"></i></a>
+                                      <a href="#" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" data-transaction-id="{{ transaction.pk }}"><i class="ri-delete-bin-line"></i></a>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <td colspan="5" class="hiddenRow">
+                                      <div class="accordion-body collapse" id="transactionDetail{{forloop.counter}}">
+                                        <strong>Action:</strong>
+                                        <a href="{% url 'accounts:salary_transaction_update' transaction.pk %}"><i class="ri-pencil-line"></i> Edit</a>
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" data-transaction-id="{{ transaction.pk }}"><i class="ri-delete-bin-line"></i> Delete</a>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                            </div>
+
+
+
+
                           </div>
                         </div>
                       </div>
