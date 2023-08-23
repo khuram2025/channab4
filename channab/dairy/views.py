@@ -131,14 +131,7 @@ def animal_list(request):
     # Add paginator and page object for 'all' animals
     paginator_all = Paginator(animals, 10)
     page_number_all = request.GET.get('page')
-    page_objs_by_type['all'] = paginator_all.get_page(page_number_all)
-
-    print('Total animals:', animals.count())
-    print('Total pages:', paginator_all.num_pages)
-    print('Has previous page:', page_objs_by_type['all'].has_previous())
-    print('Has next page:', page_objs_by_type['all'].has_next())
-
-    
+    page_objs_by_type['all'] = paginator_all.get_page(page_number_all) 
     for animal_type in animal_types:
         animals_of_type = animals.filter(animal_type=animal_type)
         animals_by_type[animal_type] = animals_of_type

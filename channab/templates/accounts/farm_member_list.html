@@ -42,38 +42,35 @@ Here is the adjusted template according to your request: {% extends 'main/base.h
                   </div>
                 </div>
                 <div>
-                  <div class="table-responsive">
-                    <table class="table all-package theme-table table-product" id="table_id">
-                      <thead>
-                        <tr>
-                          <th>First Name</th>
-                          <th>Last Name</th>
-                          <th>Mobile</th>
-                          <th>Email</th>
-                          <th>Role</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for member in farm_members %}
-                        <tr>
-                          <td>
-                            <a href="{% url 'accounts:member_detail' member.pk %}">{{ member.first_name }}</a>
-                          </td>
-                          <td>{{ member.last_name }}</td>
-                          <td>
-                            <a href="{% url 'accounts:member_detail' member.pk %}">{{ member.mobile }} </a>
-                          </td>
-                          <td>{{ member.email }}</td>
-                          <td>{{ member.get_role_display }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                          <td colspan="5">No farm members found.</td>
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
+                  {% for member in farm_members %}
+                  <div style="width: 100%; max-width: 880px; height: 150px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+                    <a href="{% url 'accounts:member_detail' member.pk %}" style="width: 150px; height: 150px; display: block">
+                      {% if member.profile.profile_picture %}
+                      <img src="{{ member.profile.profile_picture.url }}" id="img-1" data-zoom-image="{{ member.profile.profile_picture.url }}" class="img-fluid image_zoom_cls-0 lazyload" alt="Profile Picture" />
+                      {% else %}
+                      <img src="{% static 'path/to/default/image.jpg' %}" id="img-1" data-zoom-image="{% static 'path/to/default/image.jpg' %}" class="img-fluid image_zoom_cls-0 blur-up lazyload" alt="Default Profile Picture" />
+                      {% endif %}
+                    </a>
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
+                      <div style="display: flex; justify-content: space-between; align-items: center">
+                        <a href="{% url 'accounts:member_detail' member.pk %}" style="color: inherit; text-decoration: none">
+                          <h4 style="margin: 0">{{ member.first_name }} {{ member.last_name }}</h4>
+                        </a>
+                        <div>
+                          <!-- Edit and Delete buttons or icons can go here -->
+                        </div>
+                      </div>
+                      <p style="margin: 0">Mobile: <a href="{% url 'accounts:member_detail' member.pk %}">{{ member.mobile }}</a></p>
+                      <p style="margin: 0">Email: {{ member.email }}</p>
+                      <p style="margin: 0">Role: {{ member.get_role_display }}</p>
+                      <!-- Additional member details can be added here if needed -->
+                    </div>
                   </div>
+                  {% empty %}
+                  <div style="width: 100%; max-width: 880px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+                    <div style="padding: 10px; text-align: center">No farm members found.</div>
+                  </div>
+                  {% endfor %}
                 </div>
               </div>
             </div>
