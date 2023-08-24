@@ -75,6 +75,15 @@
                                         <label for="{{ form.transaction_date.auto_id }}">Transaction Date</label>
                                     </div>
                                 </div>
+                             
+<div class="col-xxl-12">
+    <div class="form-floating theme-form-floating">
+        {{ form.description|add_class:"form-control" }}
+        <label for="{{ form.description.auto_id }}">Description/Comment</label>
+    </div>
+</div>
+
+
                             </div>
                     </div>
                     <div class="modal-footer">

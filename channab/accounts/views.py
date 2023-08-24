@@ -490,17 +490,15 @@ def salary_transaction_update_member(request, member_id, pk):
             edit_mode = False
 
     if request.method == 'POST':
-        form = SalaryTransactionForm(request.POST, instance=transaction, farm=farm)
+        form = SalaryTransactionForm(request.POST, instance=transaction, farm=farm, member=member)
         if form.is_valid():
             if transaction is not None:
-               
                 transaction.transaction_date = form.cleaned_data['transaction_date']
                 transaction.farm_member = form.cleaned_data['farm_member']
                 transaction.component = form.cleaned_data['component']
                 transaction.amount_paid = form.cleaned_data['amount_paid']
                 transaction.save()
             else:
-                
                 transaction = form.save(commit=False)
                 transaction.farm_member = member
                 transaction.save()
@@ -512,7 +510,9 @@ def salary_transaction_update_member(request, member_id, pk):
 
             return redirect('accounts:salary_transaction_list')
     else:
-        form = SalaryTransactionForm(instance=transaction, farm=farm)
+        form = SalaryTransactionForm(instance=transaction, farm=farm, member=member)
+        if not edit_mode:
+            form.fields['farm_member'].initial = member
 
     context = {
         'form': form,

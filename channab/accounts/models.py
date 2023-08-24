@@ -143,6 +143,7 @@ class SalaryTransaction(models.Model):
     component = models.ForeignKey(SalaryComponent, on_delete=models.CASCADE)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     transaction_date = models.DateField()
+    description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -49,3 +49,11 @@ def positive_or_negative(value):
     elif value < 0:
         return "text-danger"
     return ""
+@register.filter(name='truncatechars_ellipsis')
+def truncatechars_ellipsis(value, arg):
+    if value is None:
+        return ""  # Return an empty string if the value is None
+
+    if len(value) > arg:
+        return value[:arg] + '...'
+    return value

@@ -1,4 +1,5 @@
-{%extends 'main/base.html'%} {%block content%} {%load static%}
+{%extends 'main/base.html'%} {%block content%} {% load dairy_extras %} {%load static%}
+
 <style>
   .info-table-wrapper {
     display: none;
@@ -326,7 +327,8 @@
                                     <td>{{ transaction.transaction_date }}</td>
                                     <td>{{ transaction.component.name }} ({{ transaction.component.duration|title }})</td>
                                     <td>{{ transaction.amount_paid }}</td>
-                                    <td>{{ transaction.description }}</td>
+                                    <td>{{ transaction.description|truncatechars_ellipsis:10 }}</td>
+
                                     <td>
                                       <a href="{% url 'accounts:salary_transaction_update' transaction.pk %}"><i class="ri-pencil-line"></i></a>
                                       <a href="#" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" data-transaction-id="{{ transaction.pk }}"><i class="ri-delete-bin-line"></i></a>
@@ -337,7 +339,7 @@
                                     <td>{{ transaction.transaction_date }}</td>
                                     <td>{{ transaction.component.name }} ({{ transaction.component.duration|title }})</td>
                                     <td>{{ transaction.amount_paid }}</td>
-                                    <td>{{ transaction.description }}</td>
+                                    <td>{{ transaction.description|truncatechars_ellipsis:10 }}</td>
                                     <td>
                                       <a href="{% url 'accounts:salary_transaction_update' transaction.pk %}"><i class="ri-pencil-line"></i></a>
                                       <a href="#" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" data-transaction-id="{{ transaction.pk }}"><i class="ri-delete-bin-line"></i></a>

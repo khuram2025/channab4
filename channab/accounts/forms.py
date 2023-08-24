@@ -123,13 +123,18 @@ class SalaryComponentForm(forms.ModelForm):
 
 class SalaryTransactionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        member = kwargs.pop('member', None)
         farm = kwargs.pop('farm', None)
         super(SalaryTransactionForm, self).__init__(*args, **kwargs)
-        if farm:
+
+        if member:
+            self.fields['farm_member'].queryset = CustomUser.objects.filter(pk=member.pk)
+        elif farm:
             self.fields['farm_member'].queryset = CustomUser.objects.filter(farm=farm)
             self.fields['component'].queryset = SalaryComponent.objects.filter(member__farm=farm)
 
     class Meta:
         model = SalaryTransaction
-        fields = ('farm_member', 'component', 'amount_paid', 'transaction_date')
+        fields = ('farm_member', 'component', 'amount_paid', 'transaction_date', 'description' )
+
 
