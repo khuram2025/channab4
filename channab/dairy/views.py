@@ -257,6 +257,8 @@ def animal_detail(request, pk):
     total_milk = milk_records.aggregate(total_milk_sum=Sum('computed_total_milk'))['total_milk_sum']
     logger.debug(f'Animal father: {animal.father}')
     active_tab = request.GET.get('active_tab', 'overview')
+    print(time_filter)
+
     return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 
                                                         'active_tab': active_tab,
                                                         'total_first_time': total_first_time,'total_second_time': total_second_time,'total_third_time': total_third_time,'total_milk': total_milk,'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order,})
