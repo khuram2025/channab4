@@ -96,7 +96,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         member.save()
 
     def __str__(self):
-        return self.mobile
+        return f"{self.first_name} {self.last_name}" if self.first_name and self.last_name else self.mobile
+
 
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)

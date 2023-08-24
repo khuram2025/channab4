@@ -49,8 +49,9 @@
                                             <option value="">-----</option>
                                             {% for farm_member in form.farm_member.field.queryset %}
                                             <option value="{{ farm_member.pk }}" {% if form.farm_member.value == farm_member.pk %}selected{% endif %}>
-                                                {{ farm_member.name|default:farm_member.mobile }}
-                                            </option>
+    {{ farm_member }}
+</option>
+
                                             {% endfor %}
                                         </select>
                                         <label for="{{ form.farm_member.auto_id }}">Farm Member</label>

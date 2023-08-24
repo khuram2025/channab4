@@ -493,16 +493,14 @@ def salary_transaction_update_member(request, member_id, pk):
         form = SalaryTransactionForm(request.POST, instance=transaction, farm=farm)
         if form.is_valid():
             if transaction is not None:
-                print("Updating existing transaction")
-                # Update the existing transaction
+               
                 transaction.transaction_date = form.cleaned_data['transaction_date']
                 transaction.farm_member = form.cleaned_data['farm_member']
                 transaction.component = form.cleaned_data['component']
                 transaction.amount_paid = form.cleaned_data['amount_paid']
                 transaction.save()
             else:
-                print("Creating new transaction")
-                # Create a new transaction
+                
                 transaction = form.save(commit=False)
                 transaction.farm_member = member
                 transaction.save()
