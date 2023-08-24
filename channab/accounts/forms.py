@@ -114,7 +114,7 @@ class ResetPasswordForm(forms.Form):
 
 
 from django import forms
-from .models import SalaryComponent
+from .models import SalaryComponent, Farm
 
 class SalaryComponentForm(forms.ModelForm):
     class Meta:
@@ -137,4 +137,8 @@ class SalaryTransactionForm(forms.ModelForm):
         model = SalaryTransaction
         fields = ('farm_member', 'component', 'amount_paid', 'transaction_date', 'description' )
 
+class FarmUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Farm
+        fields = ['name', 'description', 'location', 'profile_picture']
 

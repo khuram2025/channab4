@@ -1,27 +1,5 @@
 {%extends 'main/base.html'%} {%block content%} {%load static%}
-<style>
-  .info-table-wrapper {
-    display: none;
-  }
-
-  .name-section {
-    display: none;
-  }
-
-  @media (min-width: 768px) {
-    .info-table-wrapper {
-      display: block;
-    }
-
-    .info-tab-mobile {
-      display: none;
-    }
-
-    .name-section {
-      display: block;
-    }
-  }
-</style>
+<!-- Insert your styling here -->
 
 <!-- tap on top start -->
 <div class="tap-top">
@@ -42,9 +20,7 @@
     {%include 'home/backend_sidebar.html'%}
     <!-- Page Sidebar Ends-->
     <!-- Page Body Start -->
-    <!-- Container-fluid starts-->
     <div class="page-body">
-      <!-- All User Table Start -->
       <div class="container" style="background-color: white">
         <div class="row">
           <div class="col-sm-12">
@@ -52,61 +28,45 @@
               <div class="col-xxl-12">
                 <div class="row g-4">
                   <div class="col-xl-6">
-                    <div class="product-left-box">
-                      <div class="row g-2">
-                        <div class="col-xxl-10 col-lg-12 col-md-10 order-xxl-2 order-lg-1 order-md-2">
-                          <div class="product-main-2 no-arrow">
-                            <div>
-                              <div class="slider-image">
-                                {% if profile.profile_picture %}
-                                <img src="{{ profile.profile_picture.url }}" id="img-1" data-zoom-image="{{ profile.profile_picture.url }}" class="img-fluid image_zoom_cls-0 lazyload" alt="Profile Picture" />
-                                {% else %}
-                                <img src="{% static 'path/to/default/image.jpg' %}" id="img-1" data-zoom-image="{% static 'path/to/default/image.jpg' %}" class="img-fluid image_zoom_cls-0 blur-up lazyload" alt="Default Profile Picture" />
-                                {% endif %}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-xxl-2 col-lg-12 col-md-2 order-xxl-1 order-lg-2 order-md-1"></div>
-                      </div>
+                    <div class="slider-image">
+                      {% if farm.profile_picture %}
+                      <img src="{{ farm.profile_picture.url }}" id="img-1" data-zoom-image="{{ farm.profile_picture.url }}" class="img-fluid image_zoom_cls-0 lazyload" alt="Farm Picture" />
+                      {% else %}
+                      <img src="{% static 'path/to/default/DairyFarm01.jpg' %}" id="img-1" data-zoom-image="{% static 'path/to/default/DairyFarm01.jpg' %}" class="img-fluid image_zoom_cls-0 blur-up lazyload" alt="Default Farm Picture" />
+                      {% endif %}
                     </div>
                   </div>
-
                   <div class="col-xl-6">
                     <div class="responsive-container">
                       <div class="right-box-contain">
                         <div class="d-flex align-items-center">
-                          <h2 class="name mb-0">{{ form.first_name.value }} {{form.last_name.value}}</h2>
-                          <a href="{% url 'accounts:edit_profile' %}" class="btn btn-link btn-sm text-success ms-auto">
+                          <h2 class="name mb-0">{{ farm.name }}</h2>
+                          <!-- Adjust this if you have an edit farm URL -->
+                          <a href="{% url 'accounts:edit_farm' farm.id %}" class="btn btn-link btn-sm text-success ms-auto">
                             <i class="fas fa-pencil-alt"></i>
                           </a>
                         </div>
                         <div class="name-section">
-                          <p>Role: {{ form.role.value }}</p>
-                          <p>City: {{ form.city.value }}</p>
-                          <p>Email: {{ form.email.value }}</p>
+                          <p>Admin: {{ farm.admin }}</p>
+                          <p>Description: {{ farm.description }}</p>
+                          <p>Location: {{ farm.location }}</p>
                         </div>
                       </div>
                     </div>
                   </div>
-
                   <div class="col-12">
                     <div class="product-section-box">
-                      <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
+                      <!-- Tab structure starts here -->
+                      <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist" style="margin-bottom: 10px">
                         <li class="nav-item" role="presentation">
                           <button class="nav-link info-tab-mobile show active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">Info</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                          <button class="nav-link" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="false">Account</button>
+                          <button class="nav-link" id="employee-tab" data-bs-toggle="tab" data-bs-target="#employee" type="button" role="tab" aria-controls="employee" aria-selected="false">Employee</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                          <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review" type="button" role="tab" aria-controls="review" aria-selected="false">Tasks</button>
+                          <button class="nav-link" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button" role="tab" aria-controls="status" aria-selected="false">Farm Status</button>
                         </li>
-                        {% if request.user.role == "admin" %}
-                        <li class="nav-item" role="presentation">
-                          <button class="nav-link" id="farm-members-tab" data-bs-toggle="tab" data-bs-target="#farm_members" type="button" role="tab" aria-controls="farm_members" aria-selected="false">Farm Members</button>
-                        </li>
-                        {% endif %}
                       </ul>
                       <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade info-table-wrapper show active" id="info" role="tabpanel" aria-labelledby="info-tab">
@@ -114,32 +74,27 @@
                             <table class="table info-table">
                               <tbody>
                                 <tr>
-                                  <td>Role</td>
-                                  <td>{{ form.role.value }}</td>
+                                  <td>Farm Name</td>
+                                  <td>{{ farm.name }}</td>
                                 </tr>
                                 <tr>
-                                  <td>City</td>
-                                  <td>{{ form.city.value }}</td>
+                                  <td>Admin</td>
+                                  <td>{{ farm.admin }}</td>
                                 </tr>
                                 <tr>
-                                  <td>Email</td>
-                                  <td>{{ form.email.value }}</td>
+                                  <td>Description</td>
+                                  <td>{{ farm.description }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Location</td>
+                                  <td>{{ farm.location }}</td>
                                 </tr>
                               </tbody>
                             </table>
                           </div>
                         </div>
 
-                        <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
-                          <!-- Account content goes here -->
-                        </div>
-                        <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
-                          <!-- Tasks content goes here -->
-                        </div>
-                        {% if request.user.role == "admin" %}
-
-                        <div class="tab-pane fade" id="farm_members" role="tabpanel" aria-labelledby="farm-members-tab">
-                          <a class="add-animal-button" style="margin: 10px 0; width: 150px" href="{% url 'accounts:create_farm_member' %}">Add Farm Member</a>
+                        <div class="tab-pane fade" id="employee" role="tabpanel" aria-labelledby="employee-tab">
                           {% for member in farm_members %}
                           <div style="width: 100%; max-width: 880px; height: 150px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
                             <a href="{% url 'accounts:member_detail' member.pk %}" style="width: 150px; height: 150px; display: block">
@@ -168,12 +123,14 @@
                               <p style="margin: 0">Mobile: <a href="{% url 'accounts:member_detail' member.pk %}">{{ member.mobile }}</a></p>
                               <p style="margin: 0">Email: {{ member.email }}</p>
                               <p style="margin: 0">Role: {{ member.get_role_display }}</p>
-                              <!-- Additional member details can be added here if needed -->
                             </div>
                           </div>
                           {% endfor %}
                         </div>
-                        {% endif %}
+
+                        <div class="tab-pane fade" id="status" role="tabpanel" aria-labelledby="status-tab">
+                          <!-- Farm Status content goes here -->
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -183,28 +140,13 @@
           </div>
         </div>
       </div>
-      <!-- All User Table Ends-->
     </div>
-    <!-- Container-fluid end -->
     <!-- Page Body End -->
   </div>
   <!-- Page Body End -->
 </div>
 <!-- page-wrapper End-->
+
 <!-- Modal Start -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body">
-        <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-        <p>Are you sure you want to log out?</p>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="button-box">
-          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-          <button type="button" class="btn btn--yes btn-primary">Yes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Adjust this modal as per your requirements -->
 {%endblock%}

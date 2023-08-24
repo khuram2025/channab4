@@ -14,6 +14,10 @@ urlpatterns = [
     path('reset_password/<int:pk>/', views.reset_password, name='reset_password'),
     path('delete_member/<int:pk>/', views.delete_member, name='delete_member'),
     path('farm_member_list/', views.farm_member_list, name='farm_member_list'),
+
+    path('farm/', views.farm_view, name='farm_detail'),
+    path('edit_farm/<int:farm_id>/', views.edit_farm, name='edit_farm'),
+
     
     path('member/<int:member_id>/salary/', views.salary_components, name='salary_components'),
     path('member/<int:member_id>/salary/add/', views.add_salary_component, name='add_salary_component'),

@@ -1,0 +1,94 @@
+{% extends "home/base.html" %} 
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var editFarmModal = new bootstrap.Modal(document.getElementById('editFarm'), {});
+      editFarmModal.show();
+
+      document.getElementById('id_profile_picture').addEventListener('change', function (event) {
+        previewImage(event.target);
+      });
+
+      document.getElementById('change_picture_icon').addEventListener('click', function () {
+        document.getElementById('id_profile_picture').click();
+      });
+    });
+
+    function previewImage(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById('profile_picture_preview').src = e.target.result;
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+</script>
+
+{% include 'home/mobile_menu.html' %}
+
+<div class="modal fade theme-modal" id="editFarm" tabindex="-1" aria-labelledby="editFarmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editFarmLabel">Edit Farm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-xxl-12 text-center mb-4">
+                            <div style="position: relative;">
+                                {% if farm.profile_picture and farm.profile_picture.url %}
+    <img src="{{ farm.profile_picture.url }}" alt="Farm Picture" id="profile_picture_preview" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+{% else %}
+    <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Farm Picture" id="profile_picture_preview" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+{% endif %}
+
+                                <i class="fa fa-pencil" id="change_picture_icon" style="position: absolute; bottom: 0; right: 0; background-color: rgba(0,0,0,0.5); color: white; padding: 5px; cursor: pointer;"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xxl-12">
+                            <div class="form-floating theme-form-floating" style="display: none;">
+                                <label for="{{ form.profile_picture.auto_id }}">Change Farm Picture</label>
+                                {{ form.profile_picture|add_class:"form-control" }}
+                            </div>
+                        </div>
+                        <div class="col-xxl-6">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.name|add_class:"form-control" }}
+                                <label for="{{ form.name.auto_id }}">Farm Name</label>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-12">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.description|add_class:"form-control" }}
+                                <label for="{{ form.description.auto_id }}">Description</label>
+                            </div>
+                        </div>
+                        <div class="col-xxl-12">
+                            <div class="form-floating theme-form-floating">
+                                {{ form.location|add_class:"form-control" }}
+                                <label for="{{ form.location.auto_id }}">Location</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

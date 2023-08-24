@@ -4,15 +4,13 @@ from django.db import models
 
 class Farm(models.Model):
     name = models.CharField(max_length=100)
+    profile_picture = models.ImageField(upload_to='farms_pics/', default='media/farms_pics/DairyFarm01.jpg')
     admin = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name='owned_farms')
     description = models.TextField(blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.name
-
-
-
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, mobile, password=None, **extra_fields):
@@ -120,8 +118,6 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.mobile
-
-
 
 class SalaryComponent(models.Model):
     DURATION_CHOICES = (

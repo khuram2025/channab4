@@ -9,7 +9,8 @@ from django.contrib.auth.decorators import login_required
 
 
 from farm_finances.models import Expense, ExpenseCategory
-from .forms import  FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm, ResetPasswordForm, SalaryTransactionForm
+from .models import Farm
+from .forms import  FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm, ResetPasswordForm, SalaryTransactionForm, FarmUpdateForm
 from django.shortcuts import render, redirect, get_object_or_404
 
 class SignupView(CreateView):
@@ -564,8 +565,36 @@ def salary_transaction_delete(request, pk):
 
     return redirect('accounts:salary_transaction_list')
 
+def farm_view(request):
+    if not request.user.is_authenticated:
+        return redirect('accounts:login')  # Redirect to login page if the user is not authenticated
 
+    farm = get_object_or_404(Farm, admin=request.user)  # Get the farm that is associated with the logged-in user
+    farm_members = []
+    if request.user.role == 'admin':
+        farm_members = CustomUser.objects.filter(farm=request.user.farm)
 
+    context = {
+        'farm': farm,
+        'farm_members': farm_members
+    }
+    return render(request, 'accounts/farm_detail.html', context)
+
+def edit_farm(request, farm_id):
+    farm = get_object_or_404(Farm, pk=farm_id)
+    
+    if request.user != farm.admin:
+        return HttpResponseForbidden("You don't have permission to edit this farm")
+
+    if request.method == "POST":
+        form = FarmUpdateForm(request.POST, request.FILES, instance=farm)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:farm_detail')  # Redirect to farm detail page
+    else:
+        form = FarmUpdateForm(instance=farm)
+
+    return render(request, 'accounts/edit_farm.html', {'form': form})
 
 def logout_view(request):
     logout(request)
