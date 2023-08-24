@@ -164,11 +164,18 @@
                         </div>
                         <div class="tab-pane fade" id="salary" role="tabpanel" aria-labelledby="salary-tab">
                           <div class="col-sm-12" style="padding-top: 15px;">
-                            <div class="title-header option-title">
-                              <h3>Salary Information</h3>
-                              <!-- Add/Edit Allowance Button -->
-                              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#allowanceModal">Add/Edit Allowance</button>
+                            <div class="list-container">
+                              <span>Salery Info</span>
+                              <!-- Adjusted button -->
+                              <a href="#" class="add-animal-link" data-bs-toggle="modal" data-bs-target="#allowanceModal">
+                                <div>
+                                  <div class="add-animal-button">
+                                    <span>Add/Edit Allowance</span>
+                                  </div>
+                                </div>
+                              </a>
                             </div>
+
                             <table class="table table-striped">
                               <thead>
                                 <tr>
@@ -261,22 +268,22 @@
                           <div class="col-sm-12" style="padding-top: 15px;">
                             <div class="list-container">
                               {% if salary_transaction.pk %}
-<a href="{% url 'accounts:salary_transaction_update_member' member_id=member.pk pk=salary_transaction.pk %}" class="add-animal-link">
-    <div>
-        <div class="add-animal-button">
-            <span>Update Salary Amount</span>
-        </div>
-    </div>
-</a>
-{% else %}
-<a href="{% url 'accounts:salary_transaction_update_member' member_id=member.pk pk=0 %}" class="add-animal-link">
-    <div>
-        <div class="add-animal-button">
-            <span>Add Salary Amount</span>
-        </div>
-    </div>
-</a>
-{% endif %}
+                              <a href="{% url 'accounts:salary_transaction_update_member' member_id=member.pk pk=salary_transaction.pk %}" class="add-animal-link">
+                                <div>
+                                  <div class="add-animal-button">
+                                    <span>Update Salary Amount</span>
+                                  </div>
+                                </div>
+                              </a>
+                              {% else %}
+                              <a href="{% url 'accounts:salary_transaction_update_member' member_id=member.pk pk=0 %}" class="add-animal-link">
+                                <div>
+                                  <div class="add-animal-button">
+                                    <span>Add Salary Amount</span>
+                                  </div>
+                                </div>
+                              </a>
+                              {% endif %}
 
 
                               <div class="list-subcontainer">
@@ -300,7 +307,7 @@
 
                               </div>
                             </div>
-                            
+
                             <div class="table-responsive transactions-table">
                               <table class="table table-striped">
                                 <thead>
