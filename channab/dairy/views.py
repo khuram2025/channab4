@@ -93,7 +93,11 @@ def animal_list(request):
     
     animal_types = dict(Animal.TYPE_CHOICES)
     
-    
+    categories = AnimalCategory.objects.filter(farm=farm)
+    selected_category_slug = request.GET.get('categorySelect')
+    if selected_category_slug:
+        animals = animals.filter(category__slug=selected_category_slug)
+
     animals_by_type = {}
     counts_by_type = {}  
     paginators_by_type = {}
@@ -101,33 +105,38 @@ def animal_list(request):
 
     selected_type = request.GET.get('type', 'all')  # get the type parameter from the URL
     selected_age_range = request.GET.get('age_range', 'all')  # get the age range parameter from the URL
-
     # filter the animals based on the selected type
     if selected_type != 'all':
         animals = animals.filter(animal_type=selected_type)
-
     now = date.today()
-    three_months_ago = now - timedelta(days=90)  # approximately 3 months
-    six_months_ago = now - timedelta(days=180)  # approximately 6 months
-    one_year_ago = now - timedelta(days=365)  # 1 year
-    one_and_half_years_ago = now - timedelta(days=547)  # 1.5 years
+    
 
-    selected_age_range = request.GET.get('age_range', 'all')
+    min_age = request.GET.get('minAge')
+    max_age = request.GET.get('maxAge')
+    animal_type = request.GET.get('animalTypeSelect')
+    animal_status = request.GET.get('animalStatusSelect')
+    is_male = 'maleCheckbox' in request.GET
+    is_female = 'femaleCheckbox' in request.GET
+    # Filter by min and max age
+    if min_age:
+        max_age_date = now - timedelta(days=int(min_age)*30)
+        animals = animals.filter(dob__lte=max_age_date)
+    if max_age:
+        min_age_date = now - timedelta(days=int(max_age)*30)
+        animals = animals.filter(dob__gte=min_age_date)
 
-    if selected_age_range != 'all':
-        # filter by age range as before
-        if selected_age_range == '0-3M':
-            animals = animals.filter(dob__gte=three_months_ago)
-        elif selected_age_range == '3M-6M':
-            animals = animals.filter(dob__gte=six_months_ago, dob__lt=three_months_ago)
-        elif selected_age_range == '6M-1Y':
-            animals = animals.filter(dob__gte=one_year_ago, dob__lt=six_months_ago)
-        elif selected_age_range == '1Y-1.5Y':
-            animals = animals.filter(dob__gte=one_and_half_years_ago, dob__lt=one_year_ago)
-        else:  # '1.5Y+'
-            animals = animals.filter(dob__lt=one_and_half_years_ago)
-
-
+    
+    # Filter by animal type
+    if animal_type and animal_type != 'all':
+        animals = animals.filter(animal_type=animal_type)
+    # Filter by animal status
+    if animal_status and animal_status != 'all':
+        animals = animals.filter(status=animal_status)
+    # Filter by gender
+    if is_male and not is_female:
+        animals = animals.filter(sex='male')
+    elif is_female and not is_male:
+        animals = animals.filter(sex='female')
     # Add paginator and page object for 'all' animals
     paginator_all = Paginator(animals, 10)
     page_number_all = request.GET.get('page')
@@ -148,6 +157,7 @@ def animal_list(request):
         'page_objs_by_type': page_objs_by_type,
         'selected_type': selected_type,
         'selected_age_range': selected_age_range,
+        'categories': categories
     })
 
 
