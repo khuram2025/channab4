@@ -3,3 +3,7 @@ channab/manage.py
 channab/channab/settings/prod.py
 channab/channab/settings/prod.py
 prod.py
+channab/accounts/__pycache__/forms.cpython-310.pyc
+channab/accounts/__pycache__/forms.cpython-310.pyc
+channab/dairy/__pycache__/views.cpython-310.pyc
+

@@ -25,6 +25,7 @@
 
               <i class="fas fa-filter filter-icon"></i>
               <form method="get" class="time-filter-form d-flex align-items-center" id="filterForm">
+                <input type="hidden" name="active_tab" value="milk" />
                 <select name="time_filter" id="filter" class="filter-select" onchange="document.getElementById('filterForm').submit();">
                   <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
                   <option value="last_day" {% if time_filter == 'last_day' %}selected{% endif %}>Today</option>

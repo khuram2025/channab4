@@ -250,18 +250,16 @@ def animal_detail(request, pk):
    
 
     # Calculate total milk for each record as the sum of the three time fields
-    milk_records = milk_records.annotate(total_milk=F('first_time')+F('second_time')+F('third_time'))
+    milk_records = milk_records.annotate(computed_total_milk=F('first_time')+F('second_time')+F('third_time'))
+
 
     # Then aggregate over these calculated total_milk values for all records
-    total_milk = milk_records.aggregate(total_milk_sum=Sum('total_milk'))['total_milk_sum']
+    total_milk = milk_records.aggregate(total_milk_sum=Sum('computed_total_milk'))['total_milk_sum']
     logger.debug(f'Animal father: {animal.father}')
-
-
-    milk_records = MilkRecord.objects.filter(animal=animal)
-
-   
-
-    return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 'total_first_time': total_first_time,'total_second_time': total_second_time,'total_third_time': total_third_time,'total_milk': total_milk,'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order,})
+    active_tab = request.GET.get('active_tab', 'overview')
+    return render(request, 'dairy/animal_detail.html', {'animal': animal, 'milk_records': milk_records, 
+                                                        'active_tab': active_tab,
+                                                        'total_first_time': total_first_time,'total_second_time': total_second_time,'total_third_time': total_third_time,'total_milk': total_milk,'weights': weights, 'prev_weights': prev_weights, 'sort_by': sort_by, 'sort_order': sort_order,})
 
 
 @login_required
