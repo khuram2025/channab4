@@ -30,7 +30,7 @@
                   <div class="title-header option-title">
                       <h5>All Salaries</h5>
                       <div class="d-flex align-items-center">
-                          <a class="btn btn-solid me-3" href="{% url 'accounts:salary_transaction_create' %}">Add Salery</a>
+                          
                           <form method="get" class="time-filter-form d-flex align-items-center">
                               <select name="time_filter" id="time_filter" class="form-select me-2">
                                           <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
@@ -63,7 +63,7 @@
                             <th>
                               <a href="?sort_by=category__name&sort_order={% if sort_by == 'category__name' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Category {% if sort_by == 'category__name' %} {% if sort_order == 'asc' %}▲{% else %}▼{% endif %} {% endif %} </a>
                             </th>
-                            <th>Option</th>
+                           
                           </tr>
                         </thead>
 
@@ -74,21 +74,7 @@
                             <td>{{ salary_transaction.farm_member }}</td>
                             <td>{{ salary_transaction.amount_paid }}</td>
                             <td>{{ salary_transaction.component }}</td>
-                            <td>
-                              <ul>
-                                <li>
-                                  <a href="{% url 'accounts:salary_transaction_update' pk=salary_transaction.id %}">
-                                    <i class="ri-pencil-line"></i>
-                                </a>
-                                </li>
-                                <li>
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#deleteSalaryTransactionModal" data-salary-transaction-id="{{ salary_transaction.pk }}">
-                                    <i class="ri-delete-bin-line"></i>
-                                </a>
-                                </li>
-                                </li>
-                              </ul>
-                            </td>
+                            
                           </tr>
                           {% endfor %}
                         </tbody>

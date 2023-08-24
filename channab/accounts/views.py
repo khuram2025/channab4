@@ -550,22 +550,22 @@ def salary_transaction_delete(request, pk):
     transaction = SalaryTransaction.objects.get(pk=pk)
     transaction_pk = transaction.pk
 
-    try:
-        expense = Expense.objects.get(salary_transaction=transaction)
-        expense_pk = expense.pk
-        print(f"Related expense found for transaction id {transaction_pk}: Expense id {expense_pk}")
-    except Expense.DoesNotExist:
+    expenses = Expense.objects.filter(salary_transaction=transaction)
+    
+    if expenses.exists():
+        for expense in expenses:
+            expense_pk = expense.pk
+            print(f"Related expense found for transaction id {transaction_pk}: Expense id {expense_pk}")
+            expense.delete()
+            print(f"Deleting related expense with id {expense_pk}")
+    else:
         print(f"No related expense found for transaction id {transaction_pk}")
-        expense_pk = None
 
     transaction.delete()
     print(f"Deleting salary transaction with id {transaction_pk}")
 
-    if expense_pk is not None:
-        expense.delete()
-        print(f"Deleting related expense with id {expense_pk}")
-
     return redirect('accounts:salary_transaction_list')
+
 
 
 
