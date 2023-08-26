@@ -91,7 +91,13 @@ git pull origin mobile-app
 ~/channab/channab4/channab$ git pull origin mobile-app
 
 cd ~/channab/channab4/channab
+git pull origin July2023
 git pull origin Web
+
+
+git stash
+git clean -f
+
 
 sudo systemctl restart gunicorn
 sudo systemctl restart nginx
