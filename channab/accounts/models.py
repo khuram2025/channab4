@@ -1,9 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import RegexValidator
 from django.db import models
-from django.conf import settings
-from django.dispatch import receiver
-from django.db.models.signals import post_save
 
 class Farm(models.Model):
     name = models.CharField(max_length=100)
@@ -96,9 +93,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         member.farm = self.farm
         member.save()
 
-    def is_employee(self):
-        return hasattr(self, 'employee')
-
     def __str__(self):
         return f"{self.first_name} {self.last_name}" if self.first_name and self.last_name else self.mobile
 
@@ -151,20 +145,3 @@ class SalaryTransaction(models.Model):
 
     def __str__(self):
         return f"{self.farm_member} - {self.component.name} - {self.amount_paid} ({self.transaction_date})"
-
-class Employee(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
-    full_name = models.CharField(max_length=200)
-    mobile = models.CharField(max_length=15, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='employee_pics/', blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
-    role = models.CharField(max_length=50, default='Labour')
-
-    def __str__(self):
-        return self.full_name
-    
-# Signal to create an Employee whenever a CustomUser is created
-@receiver(post_save, sender=CustomUser)
-def create_employee_for_new_user(sender, instance, created, **kwargs):
-    if created:
-        Employee.objects.create(user=instance, full_name=instance.first_name + ' ' + instance.last_name)

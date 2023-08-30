@@ -9,8 +9,8 @@ from django.contrib.auth.decorators import login_required
 
 
 from farm_finances.models import Expense, ExpenseCategory
-from .models import Employee, Farm
-from .forms import  EmployeeForm, FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm, ResetPasswordForm, SalaryTransactionForm, FarmUpdateForm
+from .models import Farm
+from .forms import  FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm, ResetPasswordForm, SalaryTransactionForm, FarmUpdateForm
 from django.shortcuts import render, redirect, get_object_or_404
 
 class SignupView(CreateView):
@@ -575,31 +575,6 @@ def edit_farm(request, farm_id):
         form = FarmUpdateForm(instance=farm)
 
     return render(request, 'accounts/edit_farm.html', {'form': form})
-
-
-def add_employee(request):
-    if request.method == 'POST':
-        form = EmployeeForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('some-view-name')  # redirect to a desired URL
-    else:
-        form = EmployeeForm()
-    return render(request, 'path/to/template.html', {'form': form})
-
-def list_employee(request):
-    employees = Employee.objects.all()
-    return render(request, 'list_employee.html', {'employees': employees})
-
-def delete_employee(request, emp_id):
-    employee = Employee.objects.get(id=emp_id)
-    if request.method == 'POST':
-        employee.delete()
-        return redirect('list_employee')
-    return render(request, 'confirm_delete.html', {'object': employee})
-
-
-
 
 def logout_view(request):
     logout(request)
