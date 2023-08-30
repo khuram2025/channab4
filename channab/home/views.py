@@ -1,16 +1,16 @@
 # views.py
 from django.shortcuts import render
-from dairy.models import Animal
+from dairy.models import Animal, MilkRecord
 from farm_finances.models import Income, Expense, IncomeCategory, ExpenseCategory
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
 from datetime import timedelta, date
 from django.utils import timezone
-
+from django.db.models import Sum, F, Case, When
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from django.db.models import DecimalField
 
 
 @login_required
@@ -42,6 +42,26 @@ def home_view(request):
     
     male_animals = Animal.objects.filter(farm=farm, sex='male')
     female_animals = Animal.objects.filter(farm=farm, sex='female')
+   
+    # Filter by animals belonging to the user's farm
+    today_milk_records = MilkRecord.objects.filter(
+        animal__farm=farm,
+        date=timezone.now().date()
+    )
+
+    # Annotate each record with its total_milk
+    today_milk_records = today_milk_records.annotate(
+    milk_total=(
+        Case(When(first_time__isnull=True, then=0), default=F('first_time'), output_field=DecimalField()) +
+        Case(When(second_time__isnull=True, then=0), default=F('second_time'), output_field=DecimalField()) +
+        Case(When(third_time__isnull=True, then=0), default=F('third_time'), output_field=DecimalField())
+        )
+    )
+    total_milk_today = today_milk_records.aggregate(total_milk=Sum('milk_total'))['total_milk'] or 0
+
+
+
+
 
 
     summary = []
@@ -80,6 +100,7 @@ def home_view(request):
         'male_animals': male_animals,
         'female_animals': female_animals,
         'animals': animals,
+        'total_milk_today': total_milk_today,
     }
 
     return render(request, 'home/index.html', context)

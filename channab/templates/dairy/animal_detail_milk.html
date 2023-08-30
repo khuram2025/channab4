@@ -21,10 +21,10 @@
             <h6>3rd {{ total_third_time }}</h6>
             <h6>Tot {{ total_milk }}</h6>
             <div class="list-subcontainer">
-
-
               <i class="fas fa-filter filter-icon"></i>
               <form method="get" class="time-filter-form d-flex align-items-center" id="filterForm">
+                <input type="hidden" name="active_tab" value="milk" />
+                
                 <select name="time_filter" id="filter" class="filter-select" onchange="document.getElementById('filterForm').submit();">
                   <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
                   <option value="last_day" {% if time_filter == 'last_day' %}selected{% endif %}>Today</option>
@@ -32,16 +32,18 @@
                   <option value="one_month" {% if time_filter == 'one_month' %}selected{% endif %}>30 days</option>
                   <option value="four_months" {% if time_filter == 'four_months' %}selected{% endif %}>4 Months</option>
                   <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>1 Year</option>
-           
+                  onchange = "document.getElementById('filterForm').submit();
                 </select>
-
+              
               </form>
 
             </div>
           </div>
       </tr>
     </thead>
+    
     <tbody>
+
       {% for milk_record in milk_records %}
       <tr data-toggle="collapse" data-target="#demo{{forloop.counter}}" class="accordion-toggle d-sm-none">
         <td><i class="fas fa-plus-circle"></i></td>

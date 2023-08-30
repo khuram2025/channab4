@@ -19,45 +19,25 @@ class SignupView(CreateView):
     template_name = 'accounts/signup.html'
 
     def form_valid(self, form):
-        print("Form is valid")
-
         user = form.save(commit=False)
-
         if self.request.user.is_authenticated and hasattr(self.request.user, 'farm') and self.request.user.role == 'admin':
             user.role = 'read_only'
             user.farm = self.request.user.farm
-            print("User has a farm and is admin")
         else:
             user.role = 'admin'
-            print("User role set to admin")
-
         user.save()
-        print("User role:", user.role)
-        print("User farm:", user.farm)
-
         if user.role == 'admin' and user.farm is None:
             self.create_farm_for_user(user, form)
         else:
             print("Farm creation condition not met")
-
         self.object = user
-        print("User created:", self.object)
         return HttpResponseRedirect(self.get_success_url())
-
     def create_farm_for_user(self, user, form):
-        print("Creating farm for user")
         farm_name = form.cleaned_data.get("farm_name")
-        print("Submitted farm name:", farm_name)
-
         if not farm_name:
             farm_name = f"{user.first_name}'s Farm"
-        print("Final farm name:", farm_name)
         user.create_farm_and_save(farm_name=farm_name)
-        print("User farm after creation:", user.farm)
-
     def form_invalid(self, form):
-        print("Form is invalid")
-        print(form.errors)
         return super().form_invalid(form)
 
 

@@ -48,11 +48,11 @@
         <div class="row">
           <div class="col-12">
             <div class="scrolling-wrapper-flexbox">
-              <a class="nav-link active" data-target="#overview" href="#overview">Overview</a>
-              <a class="nav-link" data-target="#weight" href="#weight">Weight</a>
-              <a class="nav-link" data-target="#family" href="#family">Family</a>
-              <a class="nav-link" data-target="#milk" href="#milk">Milk</a>
-              <a class="nav-link" data-target="#ghar" href="#ghar">Health</a>
+              <a class="nav-link {% if active_tab == 'overview' %}active{% endif %}" data-target="#overview" href="#overview">Overview</a>
+              <a class="nav-link {% if active_tab == 'weight' %}active{% endif %}" data-target="#weight" href="#weight">Weight</a>
+              <a class="nav-link {% if active_tab == 'family' %}active{% endif %}" data-target="#family" href="#family">Family</a>
+              <a class="nav-link {% if active_tab == 'milk' %}active{% endif %}" data-target="#milk" href="#milk">Milk</a>
+              <a class="nav-link {% if active_tab == 'ghar' %}active{% endif %}" data-target="#ghar" href="#ghar">Health</a>
             </div>
 
             <div class="tab-content">
@@ -274,6 +274,38 @@
     $('a[data-bs-target="#deleteRelationModal"]').on("click", function () {
       var relationId = $(this).data("relation-id");
       $("#relation-id").val(relationId);
+    });
+    $(document).ready(function () {
+      // Check if there's a stored tab
+      if (localStorage.getItem("activeTab")) {
+        var activeTab = localStorage.getItem("activeTab");
+        $('.nav-link[href="' + activeTab + '"]').tab("show");
+
+        // Here's the new code: Set the active content div
+        $(".tab-pane").removeClass("active");
+        $(activeTab).addClass("active");
+      }
+
+      // Event listener for tab clicks
+      $(".nav-link").on("click", function (e) {
+        e.preventDefault();
+        localStorage.setItem("activeTab", $(this).attr("href"));
+
+        // Remove active class from all tabs and tab content
+        $(".nav-link").removeClass("active");
+        $(".tab-pane").removeClass("active");
+
+        // Add active class to clicked tab and tab content
+        $(this).addClass("active");
+        $($(this).attr("href")).addClass("active");
+      });
+
+      // Event listener for filter form submission
+      $("#filterForm").on("submit", function () {
+        localStorage.setItem("activeTab", $(this).find("input[name=active_tab]").val());
+      });
+
+      // Rest of your code...
     });
   </script>
 
