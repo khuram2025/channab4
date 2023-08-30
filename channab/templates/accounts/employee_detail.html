@@ -1,0 +1,94 @@
+{% extends 'main/base.html' %} {% load dairy_extras %} {% load static %} {% block content %}
+
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {% include 'home/backend_header.html' %}
+  <!-- Page Header Ends-->
+  <!-- mobile fix menu start -->
+  {% include 'home/mobile_menu.html' %}
+  <!-- mobile fix menu end -->
+
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {% include 'home/backend_sidebar.html' %}
+    <!-- Page Sidebar Ends-->
+
+    <!-- Page Body Start -->
+    <div class="page-body">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card card-table">
+              <div class="card-body">
+                <div class="title-header option-title d-sm-flex d-block">
+                  <h5>Employee Details</h5>
+                  <div class="right-options">
+                    <ul>
+                      <li>
+                        <!-- Replace with the URL for adding a new employee if needed -->
+                        <a class="btn btn-solid" href="#">Edit Employee</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div>
+                  <!-- Employee Details Section -->
+                  <div style="width: 100%; max-width: 880px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+                    <a href="#" style="width: 150px; height: 150px; display: block">
+                      {% if employee.profile_picture %}
+                      <img src="{{ employee.profile_picture.url }}" class="img-fluid lazyload" alt="Employee Picture" />
+                      {% else %}
+                      <img src="{% static 'path/to/default/image.jpg' %}" class="img-fluid blur-up lazyload" alt="Default Employee Picture" />
+                      {% endif %}
+                    </a>
+
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
+                      <h4 style="margin: 0">{{ employee.full_name }}</h4>
+                      <p style="margin: 0">Mobile: {{ employee.mobile }}</p>
+                      <p style="margin: 0">Address: {{ employee.address }}</p>
+                      <p style="margin: 0">Role: {{ employee.role }}</p>
+                    </div>
+                  </div>
+
+                  <!-- Salary Transactions and other details can be added here similar to the original template. -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Container-fluid Ends-->
+
+      <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+          <div class="row">
+            <div class="col-md-12 footer-copyright text-center">
+              <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
+
+{% endblock %} {% block extra_js %}
+<script>
+  $(document).ready(function () {
+    // JavaScript codes specific to this page
+  });
+</script>
+{% endblock %}

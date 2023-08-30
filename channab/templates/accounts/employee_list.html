@@ -1,0 +1,96 @@
+{% extends 'main/base.html' %} {% load dairy_extras %} {% load static %} {% block content %}
+
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {% include 'home/backend_header.html' %}
+  <!-- Page Header Ends-->
+  <!-- mobile fix menu start -->
+  {% include 'home/mobile_menu.html' %}
+  <!-- mobile fix menu end -->
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {% include 'home/backend_sidebar.html' %}
+    <!-- Page Sidebar Ends-->
+    <!-- Page Body Start -->
+    <div class="page-body">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card card-table">
+              <div class="card-body">
+                <div class="title-header option-title d-sm-flex d-block">
+                  <h5>Employees</h5>
+                  <div class="right-options">
+                    <ul>
+                      <li>
+                        <a class="btn btn-solid" href="{% url 'accounts:add_employee'%}">Add Employee</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div>
+                  {% for employee in employees %}
+                  <div style="width: 100%; max-width: 880px; height: 150px; display: flex; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+                    <a href="{% url 'accounts:employee_detail' employee.pk %}" style="width: 150px; height: 150px; display: block">
+                      {% if employee.profile_picture %}
+                      <img src="{{ employee.profile_picture.url }}" id="img-1" data-zoom-image="{{ employee.profile_picture.url }}" class="img-fluid image_zoom_cls-0 lazyload" alt="Profile Picture" />
+                      {% else %}
+                      <img src="{% static 'path/to/default/image.jpg' %}" id="img-1" data-zoom-image="{% static 'path/to/default/image.jpg' %}" class="img-fluid image_zoom_cls-0 blur-up lazyload" alt="Default Profile Picture" />
+                      {% endif %}
+                    </a>
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
+                      <div style="display: flex; justify-content: space-between; align-items: center">
+                        <a href="{% url 'accounts:employee_detail' employee.pk %}" style="color: inherit; text-decoration: none">
+                          <h4 style="margin: 0">{{ employee.full_name }}</h4>
+                        </a>
+                        <div>
+                          <!-- Edit and Delete buttons or icons can go here -->
+                        </div>
+                      </div>
+                      <p style="margin: 0">Mobile: <a href="{% url 'accounts:employee_detail' employee.pk %}">{{ employee.mobile }}</a></p>
+                      <p style="margin: 0">Role: {{ employee.role }}</p>
+                      <!-- Additional employee details can be added here if needed -->
+                    </div>
+                  </div>
+                  {% empty %}
+                  <div style="width: 100%; max-width: 880px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
+                    <div style="padding: 10px; text-align: center">No employees found.</div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Container-fluid Ends-->
+      <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+          <div class="row">
+            <div class="col-md-12 footer-copyright text-center">
+              <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
+{% endblock %} {% block extra_js %}
+<script>
+  $(document).ready(function () {
+    // ...
+  });
+</script>
+{% endblock %}

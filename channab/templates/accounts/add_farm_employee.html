@@ -1,0 +1,42 @@
+{% extends "home/base.html" %} {% block content %} {% load static %} {% load widget_tweaks %}
+
+<div class="container mt-5">
+  <h2 class="mb-4">Add Employee</h2>
+  <form method="post" class="mb-3" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row g-4">
+      <div class="col-xxl-12">
+        <div class="form-floating theme-form-floating">
+          {{ form.full_name|add_class:"form-control" }}
+          <label for="{{ form.full_name.auto_id }}">Full Name</label>
+        </div>
+      </div>
+      <div class="col-xxl-12">
+        <div class="form-floating theme-form-floating">
+          {{ form.mobile|add_class:"form-control" }}
+          <label for="{{ form.mobile.auto_id }}">Mobile Number (Optional)</label>
+        </div>
+      </div>
+      <div class="col-xxl-12">
+        <div class="form-floating theme-form-floating">
+          {{ form.profile_picture|add_class:"form-control" }}
+          <label for="{{ form.profile_picture.auto_id }}">Profile Image (Optional)</label>
+        </div>
+      </div>
+      <div class="col-xxl-12">
+        <div class="form-floating theme-form-floating">
+          {{ form.address|add_class:"form-control" }}
+          <label for="{{ form.address.auto_id }}">Address (Optional)</label>
+        </div>
+      </div>
+      <div class="col-xxl-12">
+        <div class="form-floating theme-form-floating">
+          {{ form.role|add_class:"form-control" }}
+          <label for="{{ form.role.auto_id }}">Role</label>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light mt-3">Add Employee</button>
+  </form>
+</div>
+{% endblock %}

@@ -9,8 +9,8 @@ from django.contrib.auth.decorators import login_required
 
 
 from farm_finances.models import Expense, ExpenseCategory
-from .models import Farm
-from .forms import  FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm, ResetPasswordForm, SalaryTransactionForm, FarmUpdateForm
+from .models import Employee, Farm
+from .forms import  EmployeeForm, FarmMemberCreationForm, MobileAuthenticationForm, CustomUserCreationForm, ProfileUpdateForm, ResetPasswordForm, SalaryTransactionForm, FarmUpdateForm
 from django.shortcuts import render, redirect, get_object_or_404
 
 class SignupView(CreateView):
@@ -580,3 +580,59 @@ def logout_view(request):
     logout(request)
     return redirect(reverse('home:home'))
 
+def add_employee(request):
+    if request.method == 'POST':
+        form = EmployeeForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('some-view-name')  # redirect to a desired URL
+    else:
+        form = EmployeeForm()
+    return render(request, 'accounts/add_farm_employee.html', {'form': form})
+
+@login_required
+def employee_list(request):
+    if request.user.role != 'admin':
+        return redirect('home:home')
+
+    employees = Employee.objects.all()
+
+    context = {
+        'employees': employees,
+    }
+
+    return render(request, 'accounts/employee_list.html', context)
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Employee, SalaryTransaction
+
+
+@login_required
+def employee_detail(request, employee_id):
+    employee = get_object_or_404(Employee, pk=employee_id)
+    salary_transactions = SalaryTransaction.objects.filter(employee=employee)
+    salary_status = calculate_salary_status(employee)
+    
+    # List of keys you want to exclude
+    excluded_keys = ["total_salary_received", "expected_salary_till_now", "remaining_salary"]
+    
+    if request.method == 'POST':
+        form = SalaryComponentForm(request.POST)
+        if form.is_valid():
+            salary_component = form.save(commit=False)
+            salary_component.employee = employee
+            salary_component.save()
+            return redirect('accounts:employee_detail', employee_id=employee_id)
+    else:
+        form = SalaryComponentForm()
+
+    return render(request, 'accounts/employee_detail.html', {
+        'employee': employee, 
+        'form': form, 
+        'salary_transactions': salary_transactions, 
+        'salary_status': salary_status,
+        'excluded_keys': excluded_keys
+    })

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from .models import CustomUser, SalaryTransaction
+from .models import CustomUser, Employee, SalaryTransaction
 from django.contrib.auth.models import User
 
 class MobileAuthenticationForm(AuthenticationForm):
@@ -142,3 +142,9 @@ class FarmUpdateForm(forms.ModelForm):
         model = Farm
         fields = ['name', 'description', 'location', 'profile_picture']
 
+
+
+class EmployeeForm(forms.ModelForm):
+    class Meta:
+        model = Employee
+        fields = ['full_name', 'mobile', 'profile_picture', 'address', 'role']

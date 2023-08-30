@@ -9,11 +9,16 @@ urlpatterns = [
     path('edit-profile/', views.edit_profile, name='edit_profile'),
 
     path('create_farm_member/', views.create_farm_member, name='create_farm_member'),
+    path('add_employee/', views.add_employee, name='add_employee'),
     path('edit_member/<int:pk>/', views.edit_member, name='edit_member'),
     path('member/<int:member_id>/', views.member_detail, name='member_detail'),
     path('reset_password/<int:pk>/', views.reset_password, name='reset_password'),
     path('delete_member/<int:pk>/', views.delete_member, name='delete_member'),
     path('farm_member_list/', views.farm_member_list, name='farm_member_list'),
+
+    path('employee_list/', views.employee_list, name='employee_list'),
+    path('employee/<int:employee_id>/', views.employee_detail, name='employee_detail'),
+
 
     path('farm/', views.farm_view, name='farm_detail'),
     path('edit_farm/<int:farm_id>/', views.edit_farm, name='edit_farm'),
