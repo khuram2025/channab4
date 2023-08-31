@@ -1,46 +1,32 @@
-{% extends "home/base.html" %}
-
-{% block content %}
-{% load static %}
-{% load widget_tweaks %}
+{% extends "home/base.html" %} {% block content %} {% load static %} {% load widget_tweaks %}
 
 <div class="container mt-5">
-    <h2 class="mb-4">Create Farm Member</h2>
-    <form method="post" class="mb-3">
-        {% csrf_token %}
-        <div class="row g-4">
-            <div class="col-xxl-6">
-                <div class="form-floating theme-form-floating">
-                    {{ form.first_name|add_class:"form-control" }}
-                    <label for="{{ form.first_name.auto_id }}">First Name</label>
-                </div>
-            </div>
-            <div class="col-xxl-6">
-                <div class="form-floating theme-form-floating">
-                    {{ form.last_name|add_class:"form-control" }}
-                    <label for="{{ form.last_name.auto_id }}">Last Name</label>
-                </div>
-            </div>
-            <div class="col-xxl-12">
-                <div class="form-floating theme-form-floating">
-                    {{ form.mobile|add_class:"form-control" }}
-                    <label for="{{ form.mobile.auto_id }}">Mobile Number</label>
-                </div>
-            </div>
-            <div class="col-xxl-6">
-                <div class="form-floating theme-form-floating">
-                    {{ form.password1|add_class:"form-control" }}
-                    <label for="{{ form.password1.auto_id }}">Password</label>
-                </div>
-            </div>
-            <div class="col-xxl-6">
-                <div class="form-floating theme-form-floating">
-                    {{ form.password2|add_class:"form-control" }}
-                    <label for="{{ form.password2.auto_id }}">Confirm Password</label>
-                </div>
-            </div>
+  <h2 class="mb-4">Create Farm Member</h2>
+  <form method="post" class="mb-3">
+    {% csrf_token %}
+    <div class="row g-4">
+      <div class="col-xxl-6">
+        <div class="form-floating theme-form-floating">
+          {{ form.member_name|add_class:"form-control" }}
+          <label for="{{ form.member_name.auto_id }}">Member Name</label>
         </div>
-        <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light mt-3">Create Farm Member</button>
-    </form>
+      </div>
+      <div class="col-xxl-6">
+        <div class="form-floating theme-form-floating">
+          {{ form.location|add_class:"form-control" }}
+          <label for="{{ form.location.auto_id }}">Location</label>
+        </div>
+      </div>
+      <div class="col-xxl-6">
+        <div class="form-floating theme-form-floating">
+          {{ form.join_date|add_class:"form-control" }}
+          <label for="{{ form.join_date.auto_id }}">Join Date</label>
+        </div>
+      </div>
+      <!-- The role field is hidden, so we won't display a label for it. -->
+      <div class="col-xxl-6 d-none">{{ form.role|add_class:"form-control" }}</div>
+    </div>
+    <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light mt-3">Create Farm Member</button>
+  </form>
 </div>
 {% endblock %}

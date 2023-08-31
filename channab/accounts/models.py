@@ -33,12 +33,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = (
         ('admin', 'Admin'),
         ('read_only', 'Read Only'),
+        ('labour', 'Labour'),
     )
     mobile_validator = RegexValidator(
         regex=r'^\+?1?\d{9,15}$',
         message="Mobile number must be entered in the format: '+999999999'. Up to 15 digits allowed."
     )
-    mobile = models.CharField(validators=[mobile_validator], max_length=17, unique=True)
+    mobile = models.CharField(validators=[mobile_validator], max_length=17, unique=True, blank=True, null=True)
+
     email = models.EmailField(blank=True, null=True)
     first_name = models.CharField(max_length=30, blank=True, null=True)
     last_name = models.CharField(max_length=30, blank=True, null=True)
@@ -98,7 +100,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return hasattr(self, 'employee')
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}" if self.first_name and self.last_name else self.mobile
+        return f"{self.first_name or ''} {self.last_name or ''}".strip() or self.mobile or 'Unknown User'
+
 
 
 class Profile(models.Model):
@@ -121,7 +124,8 @@ class Profile(models.Model):
         self.user.save()
 
     def __str__(self):
-        return self.user.mobile
+        return f"{self.first_name or ''} {self.last_name or ''}".strip() or self.mobile or 'Unknown User'
+
 
 class SalaryComponent(models.Model):
     DURATION_CHOICES = (
@@ -150,18 +154,3 @@ class SalaryTransaction(models.Model):
     def __str__(self):
         return f"{self.farm_member} - {self.component.name} - {self.amount_paid} ({self.transaction_date})"
 
-class Employee(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
-    full_name = models.CharField(max_length=200)
-    mobile = models.CharField(max_length=15, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='employee_pics/', blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
-    role = models.CharField(max_length=50, default='Labour')
-
-    def __str__(self):
-        return self.full_name
-
-@receiver(post_save, sender=CustomUser)
-def create_employee_for_new_user(sender, instance, created, **kwargs):
-    if created:
-        Employee.objects.create(user=instance, full_name=instance.first_name + ' ' + instance.last_name)
