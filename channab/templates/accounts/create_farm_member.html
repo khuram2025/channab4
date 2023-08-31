@@ -24,7 +24,15 @@
         </div>
       </div>
       <!-- The role field is hidden, so we won't display a label for it. -->
-      <div class="col-xxl-6 d-none">{{ form.role|add_class:"form-control" }}</div>
+      <div class="col-xxl-6 d-none">
+        <div class="form-floating theme-form-floating">{{ form.role|add_class:"form-control" }}</div>
+      </div>
+      <div class="col-xxl-6">
+        <div class="form-floating theme-form-floating">
+          {{ form.mobile|add_class:"form-control" }}
+          <label for="{{ form.mobile.auto_id }}">Mobile Number</label>
+        </div>
+      </div>
     </div>
     <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light mt-3">Create Farm Member</button>
   </form>

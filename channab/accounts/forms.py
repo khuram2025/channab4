@@ -83,7 +83,8 @@ class FarmMemberCreationForm(forms.ModelForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Confirm Password", widget=forms.PasswordInput)
     farm_name = forms.CharField(label="Farm Name", required=False)
-    mobile = forms.CharField(label='Mobile Number')
+    mobile = forms.CharField(max_length=17, required=False)
+
 
     # Additional fields for Farm Member creation
     member_name = forms.CharField(label="Member Name", required=False)
@@ -98,6 +99,12 @@ class FarmMemberCreationForm(forms.ModelForm):
         labels = {
             'mobile': 'Mobile Number',
         }
+    join_date = forms.DateField(
+        label="Join Date", 
+        required=False, 
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
+    )
+
 
     def __init__(self, *args, **kwargs):
         # Extract the custom 'signup' argument and remove it from kwargs
@@ -112,8 +119,8 @@ class FarmMemberCreationForm(forms.ModelForm):
             del self.fields['join_date']
             del self.fields['role']
         else:
-            self.fields['mobile'].required = False
-            del self.fields['mobile']
+            # self.fields['mobile'].required = False
+            # del self.fields['mobile']
             del self.fields['password1']
             del self.fields['password2']
             del self.fields['farm_name']
