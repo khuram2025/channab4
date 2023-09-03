@@ -3,8 +3,8 @@ from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser, Profile, Farm, SalaryComponent, SalaryTransaction
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ('mobile', 'email', 'first_name', 'last_name', 'role', 'farm', 'is_staff', 'is_active',)
-    list_filter = ('is_staff', 'is_active', 'role',)
+    list_display = ('mobile', 'email', 'first_name', 'last_name', 'role', 'farm', 'is_staff', 'is_active', 'last_login')
+    list_filter = ('is_staff', 'is_active', 'role','last_login')
     fieldsets = (
         (None, {'fields': ('mobile', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
