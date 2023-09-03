@@ -145,12 +145,16 @@ class FarmMemberCreationForm(forms.ModelForm):
 
     def clean_mobile(self):
         mobile = self.cleaned_data.get("mobile")
-        if mobile and CustomUser.objects.filter(mobile=mobile).exists():
-            raise forms.ValidationError("A user with this mobile number already exists.")
-        # If signup, ensure mobile is provided
-        if self.is_signup and not mobile:
+        if mobile:  # Only perform the check if a mobile number is provided
+            if CustomUser.objects.filter(mobile=mobile).exists():
+                raise forms.ValidationError("A user with this mobile number already exists.")
+        elif self.is_signup:  # No mobile number is provided and it's a signup form
             raise forms.ValidationError("Mobile number is required for signup.")
+        else:
+            mobile = None  # Ensure empty strings are not saved to the database
         return mobile
+
+
 
 
 class ResetPasswordForm(forms.Form):

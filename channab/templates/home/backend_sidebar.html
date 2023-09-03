@@ -109,7 +109,7 @@
             <ul class="sidebar-submenu">
               {% if user.is_authenticated and user.role == 'admin' %}
               <li>
-                <a href="{% url 'accounts:farm_member_list' %}">Farm Members</a>
+                <a href="{% url 'accounts:farm_member_list' %}">Employees</a>
               </li>
               <li>
                 <a href="{% url 'accounts:salary_transaction_list' %}">Salery List</a>

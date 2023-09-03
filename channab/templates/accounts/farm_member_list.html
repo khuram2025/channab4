@@ -26,11 +26,11 @@ Here is the adjusted template according to your request: {% extends 'main/base.h
             <div class="card card-table">
               <div class="card-body">
                 <div class="title-header option-title d-sm-flex d-block">
-                  <h5>Farm Members</h5>
+                  <h5>Farm Employees</h5>
                   <div class="right-options">
                     <ul>
                       <li>
-                        <a class="btn btn-solid" href="{% url 'accounts:create_farm_member'%}">Add Farm Member</a>
+                        <a class="btn btn-solid" href="{% url 'accounts:create_farm_member'%}">New Employee</a>
                       </li>
                     </ul>
                   </div>
@@ -62,7 +62,7 @@ Here is the adjusted template according to your request: {% extends 'main/base.h
                   </div>
                   {% empty %}
                   <div style="width: 100%; max-width: 880px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; background-color: white">
-                    <div style="padding: 10px; text-align: center">No farm members found.</div>
+                    <div style="padding: 10px; text-align: center">No Employee Found Please add Employee.</div>
                   </div>
                   {% endfor %}
                 </div>

@@ -1,14 +1,14 @@
 {% extends "home/base.html" %} {% block content %} {% load static %} {% load widget_tweaks %}
 
 <div class="container mt-5">
-  <h2 class="mb-4">Create Farm Member</h2>
+  <h2 class="mb-4">Add Employee</h2>
   <form method="post" class="mb-3">
     {% csrf_token %}
     <div class="row g-4">
       <div class="col-xxl-6">
         <div class="form-floating theme-form-floating">
           {{ form.member_name|add_class:"form-control" }}
-          <label for="{{ form.member_name.auto_id }}">Member Name</label>
+          <label for="{{ form.member_name.auto_id }}">Employee Name</label>
         </div>
       </div>
       <div class="col-xxl-6">
@@ -30,11 +30,15 @@
       <div class="col-xxl-6">
         <div class="form-floating theme-form-floating">
           {{ form.mobile|add_class:"form-control" }}
-          <label for="{{ form.mobile.auto_id }}">Mobile Number</label>
+          <label for="{{ form.mobile.auto_id }}">Mobile(Optional)</label>
         </div>
       </div>
     </div>
-    <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light mt-3">Create Farm Member</button>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Add Employee</button>
+      <a href="{% url 'accounts:farm_member_list' %}" class="btn btn-animation btn-md fw-bold">Close</a>
+    </div>
   </form>
 </div>
 {% endblock %}
