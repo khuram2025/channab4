@@ -218,7 +218,7 @@ def delete_member(request, pk):
     if request.method == 'POST':
         member.delete()
         # Redirect to the member list page or any other page after successful deletion
-        return redirect('accounts:user_profile')
+        return redirect('accounts:farm_member_list')
 
     context = {
         'member': member

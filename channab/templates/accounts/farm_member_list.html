@@ -42,7 +42,7 @@ Here is the adjusted template according to your request: {% extends 'main/base.h
                       {% if member.profile.profile_picture %}
                       <img src="{{ member.profile.profile_picture.url }}" id="img-1" data-zoom-image="{{ member.profile.profile_picture.url }}" class="img-fluid image_zoom_cls-0 lazyload" alt="Profile Picture" />
                       {% else %}
-                      <img src="{% static 'path/to/default/image.jpg' %}" id="img-1" data-zoom-image="{% static 'path/to/default/image.jpg' %}" class="img-fluid image_zoom_cls-0 blur-up lazyload" alt="Default Profile Picture" />
+                      <img src="{% static 'profile_pictures/DairyFarm02.jpg' %}" id="img-1" data-zoom-image="{% static 'profile_pictures/DairyFarm02.jpg' %}" class="img-fluid image_zoom_cls-0 blur-up lazyload" alt="Default Profile Picture" />
                       {% endif %}
                     </a>
                     <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px">
@@ -50,12 +50,14 @@ Here is the adjusted template according to your request: {% extends 'main/base.h
                         <a href="{% url 'accounts:member_detail' member.pk %}" style="color: inherit; text-decoration: none">
                           <h4 style="margin: 0">{{ member.first_name }} {{ member.last_name }}</h4>
                         </a>
-                        <div>
-                          <!-- Edit and Delete buttons or icons can go here -->
+
+                        <div style="display: flex">
+                          <a class="dropdown-item" href="{% url 'accounts:edit_member' member.pk %}" style="display: flex; align-items: center"><i class="fa fa-pencil" style="color: #4caf50"></i></a>
+                          <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteMemberModal" data-member-id="{{ member.pk }}" style="display: flex; align-items: center"><i class="fa fa-trash" style="color: #f44336"></i></button>
                         </div>
                       </div>
                       <p style="margin: 0">Mobile: <a href="{% url 'accounts:member_detail' member.pk %}">{{ member.mobile }}</a></p>
-                      <p style="margin: 0">Email: {{ member.email }}</p>
+                      <p style="margin: 0">Joining Date: {{ member.profile.joining_date|date:"F d, Y"|default:"Not Available" }}</p>
                       <p style="margin: 0">Role: {{ member.get_role_display }}</p>
                       <!-- Additional member details can be added here if needed -->
                     </div>
@@ -71,6 +73,26 @@ Here is the adjusted template according to your request: {% extends 'main/base.h
           </div>
         </div>
       </div>
+      <!-- Modal Start -->
+      <div class="modal fade" id="deleteMemberModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteMemberModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-body">
+              <h5 class="modal-title" id="deleteMemberModalLabel">Delete Member</h5>
+              <p>Are you sure you want to delete this member?</p>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <div class="button-box">
+                <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                <form id="delete-member-form" method="post" action="#">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn--yes btn-primary">Yes, delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Container-fluid Ends-->
       <div class="container-fluid">
         <!-- footer start-->
@@ -90,8 +112,12 @@ Here is the adjusted template according to your request: {% extends 'main/base.h
 <!-- page-wrapper End-->
 {% endblock %} {% block extra_js %}
 <script>
-  $(document).ready(function () {
-    // ...
+  $("#deleteMemberModal").on("show.bs.modal", function (event) {
+    var button = $(event.relatedTarget);
+    var memberId = button.data("member-id");
+    var url = "{% url 'accounts:delete_member' 0 %}".replace("0", memberId);
+    url = url.endsWith("/") ? url : url + "/"; // Ensure the URL ends with a slash
+    $("#delete-member-form").attr("action", url);
   });
 </script>
 {% endblock %}
