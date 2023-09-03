@@ -24,6 +24,7 @@ cd  ~/channab/channab4/channab/
 python3 manage.py runserver 0.0.0.0:8000 --settings=channab.settings.prod
 python3 manage.py makemigrations --settings=channab.settings.prod
 
+
 http://3.216.27.95:8000/
 
 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
