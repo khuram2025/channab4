@@ -828,13 +828,7 @@ def animal_weight_delete(request, pk):
     return redirect('dairy:animal_weight_list')
 
 
-from django.views import generic
-from .models import Breeding
-from .forms import BreedingForm
-from django.contrib.auth.mixins import LoginRequiredMixin
 
-@login_required
-def breeding_create(request):
     if request.method == 'POST':
         form = BreedingForm(request.POST)
         form.fields['bull'].queryset = Animal.objects.filter(sex='male')

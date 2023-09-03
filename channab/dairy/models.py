@@ -1,5 +1,6 @@
 from datetime import timedelta
 from django.db import models
+from datetime import datetime
 
 from django.utils.text import slugify
 from django.utils import timezone
@@ -192,17 +193,70 @@ class AnimalWeight(models.Model):
     def __str__(self):
         return f'{self.animal.tag} - {self.weight_kg} kg on {self.date}'
 
+
+
+
 class Breeding(models.Model):
-    BREEDING_METHODS = [
-        ('NATURAL', 'Natural'),
-        ('AI', 'Artificial Insemination'),
+    female_animal = models.ForeignKey(
+        Animal,
+        on_delete=models.CASCADE,
+        related_name='breeding_events',
+        limit_choices_to={'sex': 'female'},
+        null=True
+    )
+    
+    date_of_insemination = models.DateField(default=datetime.today)
+    
+    BREEDING_METHOD_CHOICES = [
+        ('natural', 'Natural'),
+        ('artificial', 'Artificial')
     ]
-    animal = models.ForeignKey(Animal, on_delete=models.CASCADE, limit_choices_to={'sex': 'F'})
-    breeding_date = models.DateField(default=timezone.now)
-    method = models.CharField(max_length=200, choices=BREEDING_METHODS)
-    bull = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, blank=True, related_name='+', limit_choices_to={'sex': 'M'})
-    ai_dose_name = models.CharField(max_length=200, null=True, blank=True)
-    doctor_name = models.CharField(max_length=200, null=True, blank=True)
-    comments = models.TextField(null=True, blank=True)
-    lactation_number = models.IntegerField(null=True, blank=True)  
-    attempt_number = models.IntegerField(null=True, blank=True) 
+    breeding_method = models.CharField(max_length=10, choices=BREEDING_METHOD_CHOICES)
+    
+    bull = models.ForeignKey(
+        Animal,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='natural_breeding_events',
+        limit_choices_to={'sex': 'male', 'animal_type': 'breeder'}
+    )
+    
+    semen_tag = models.CharField(max_length=100, blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
+    
+    lactation_number = models.PositiveIntegerField(blank=True, null=True)
+    
+    attempt = models.PositiveIntegerField(default=1)
+
+    def save(self, *args, **kwargs):
+        # If this is not a new object
+        if self.pk:
+            prev_breeding = Breeding.objects.filter(female_animal=self.female_animal).order_by('-date_of_insemination').first()
+            
+            if prev_breeding:
+                if prev_breeding.lactation_number:
+                    self.lactation_number = prev_breeding.lactation_number + 1
+                if prev_breeding.attempt:
+                    self.attempt = prev_breeding.attempt + 1
+        
+        super(Breeding, self).save(*args, **kwargs)
+    
+    def clean(self):
+        # Check if the correct method-related field is filled
+        if self.breeding_method == 'natural' and not self.bull:
+            raise ValidationError('A bull must be selected for natural breeding.')
+        if self.breeding_method == 'artificial' and not self.semen_tag:
+            raise ValidationError('A semen tag number must be provided for artificial breeding.')
+
+        # Ensure that non-related fields are empty
+        if self.breeding_method == 'natural' and self.semen_tag:
+            raise ValidationError('Semen tag number must be empty for natural breeding.')
+        if self.breeding_method == 'artificial' and self.bull:
+            raise ValidationError('Bull must not be selected for artificial breeding.')
+
+    class Meta:
+        # Ensure that one animal doesn't have multiple breeding records on the same day
+        constraints = [
+            models.UniqueConstraint(fields=['female_animal', 'date_of_insemination'], name='unique_animal_insemination_date')
+        ]

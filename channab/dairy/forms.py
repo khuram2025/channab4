@@ -50,36 +50,3 @@ class AnimalWeightForm(forms.ModelForm):
 
 from django import forms
 from .models import Breeding
-
-class BreedingForm(forms.ModelForm):
-    class Meta:
-        model = Breeding
-        fields = ['animal', 'breeding_date', 'method', 'bull', 'ai_dose_name', 'doctor_name', 'comments', 'lactation_number', 'attempt_number']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['bull'].queryset = Animal.objects.filter(sex='male')
-        self.fields['animal'].queryset = Animal.objects.filter(sex='female')
-        self.fields['bull'].widget.attrs.update({'class': 'natural'})
-        self.fields['ai_dose_name'].widget.attrs.update({'class': 'ai'})
-        self.fields['doctor_name'].widget.attrs.update({'class': 'ai'})
-    
-    def save(self, commit=True):
-        print("Saving form")
-        instance = super().save(commit=False)
-        if commit:
-            instance.save()
-            print("Form saved successfully")
-        return instance
-
-    def clean(self):
-        cleaned_data = super().clean()
-        method = cleaned_data.get('method')
-        bull = cleaned_data.get('bull')
-        ai_dose_name = cleaned_data.get('ai_dose_name')
-        doctor_name = cleaned_data.get('doctor_name')
-
-        if method == 'NATURAL' and not bull:
-            self.add_error('bull', 'Bull is required for natural breeding')
-        elif method == 'AI' and (not ai_dose_name or not doctor_name):
-            self.add_error(None, 'AI Dose Name and Doctor Name are required for artificial insemination')

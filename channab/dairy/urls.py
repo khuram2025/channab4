@@ -49,6 +49,6 @@ urlpatterns = [
     path('animal_weights/<int:pk>/edit/', views.animal_weight_edit, name='animal_weight_edit'),
     path('animal_weights/<int:pk>/delete/', views.animal_weight_delete, name='animal_weight_delete'),
 
-    path('breeding/new/', views.breeding_create, name='breeding-new'),
+   
 
 ]
