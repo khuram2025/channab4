@@ -3,7 +3,13 @@ from django.contrib import admin
 from .models import Animal, AnimalCategory, MilkRecord
 
 class AnimalAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('tag', 'farm', 'get_farm_admin')
+    list_filter = ('farm', 'farm__admin')
+    
+    def get_farm_admin(self, obj):
+        return obj.farm.admin
+    get_farm_admin.short_description = 'Farm Admin'
+
 
 class AnimalCategoryAdmin(admin.ModelAdmin):
     pass
