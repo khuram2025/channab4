@@ -167,7 +167,7 @@ def animal_create(request):
     edit_mode = False
     if request.method == 'POST':
         print("Form submitted")  # Add this line
-        form = AnimalForm(request.POST, request.FILES)
+        form = AnimalForm(request.POST, request.FILES, farm=farm)
         if form.is_valid():
             animal = form.save(commit=False)
             animal.farm = farm
@@ -176,8 +176,9 @@ def animal_create(request):
         else:
             print(form.errors)  # Add this line to print form errors
     else:
-        form = AnimalForm()
+        form = AnimalForm(farm=farm)
     return render(request, 'dairy/animal_form.html', {'form': form, 'edit_mode': edit_mode})
+
 
 
 

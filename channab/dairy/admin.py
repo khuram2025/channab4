@@ -12,7 +12,7 @@ class AnimalAdmin(admin.ModelAdmin):
 
 
 class AnimalCategoryAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('title', 'farm')
 
 admin.site.register(Animal, AnimalAdmin)
 admin.site.register(MilkRecord)

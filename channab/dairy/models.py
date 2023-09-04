@@ -16,16 +16,19 @@ class AnimalCategory(models.Model):
     title = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True)
     image = models.ImageField(upload_to='animal_categories/', blank=True, null=True)
- 
-    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='animal_categories')
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='animal_categories', blank=True, null=True)
+    is_site_level = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
+        if self.is_site_level:
+            self.farm = None
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
+
 
 class Animal(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='animals')

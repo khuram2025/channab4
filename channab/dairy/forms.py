@@ -13,6 +13,16 @@ class AnimalForm(forms.ModelForm):
     class Meta:
         model = Animal
         fields = ['tag', 'image', 'dob', 'purchase_cost', 'status', 'sex', 'category', 'animal_type']
+
+    def __init__(self, *args, **kwargs):
+        farm = kwargs.pop('farm', None)
+        super(AnimalForm, self).__init__(*args, **kwargs)
+        if farm:
+            # Get categories that belong to this farm or are site-level categories
+            self.fields['category'].queryset = AnimalCategory.objects.filter(Q(farm=farm) | Q(is_site_level=True))
+
+
+
     
     
 
