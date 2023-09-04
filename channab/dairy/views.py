@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse, reverse_lazy
-from .models import AnimalCategory, Animal, Breeding
-from .forms import AnimalCategoryForm, AnimalForm, AnimalWeightForm, MilkRecordForm
+from .models import AnimalCategory, Animal, Breeding, Customer
+from .forms import AnimalCategoryForm, AnimalForm, AnimalWeightForm, CustomerForm, MilkRecordForm
 from accounts.models import Farm
 from .models import MilkRecord, Animal, AnimalWeight
 from django.db.models import F
@@ -828,6 +828,42 @@ def animal_weight_delete(request, pk):
     weight.delete()
     return redirect('dairy:animal_weight_list')
 
+
+
+
+@login_required
+def customer_new(request, pk=None):
+    edit_mode = False
+    customer = None
+    if pk:
+        customer = get_object_or_404(Customer, pk=pk)
+        edit_mode = True
+
+    if request.method == "POST":
+        form = CustomerForm(request.POST, instance=customer)
+        if form.is_valid():
+            form.save()
+            return redirect('dairy:customer_list')  # 'dairy' should be replaced with your actual app's name
+    else:
+        form = CustomerForm(instance=customer)
+
+    return render(request, 'dairy/customer/customer_edit.html', {'form': form, 'edit_mode': edit_mode, 'customer': customer})
+
+@login_required
+def customer_list(request):
+    customers = Customer.objects.all()  # Assuming all customers are global, adjust if needed
+    return render(request, 'dairy/customer/customer_list.html', {'customers': customers})
+
+@login_required
+def customer_detail(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    return render(request, 'dairy/customer_detail.html', {'customer': customer})
+
+@login_required
+def customer_delete(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    customer.delete()
+    return redirect('dairy:customer_list')  # 'dairy' should be replaced with your actual app's name
 
 
     if request.method == 'POST':

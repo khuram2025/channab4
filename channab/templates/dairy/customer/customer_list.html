@@ -1,0 +1,120 @@
+{% extends 'main/base.html' %} {% block content %} {% load static %} {% load dairy_extras %}
+
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {% include 'home/backend_header.html' %}
+  <!-- Page Header Ends-->
+
+  <!-- mobile fix menu start -->
+  {% include 'home/mobile_menu.html' %}
+  <!-- mobile fix menu end -->
+
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {% include 'home/backend_sidebar.html' %}
+    <!-- Page Sidebar Ends-->
+
+    <!-- Page Body Start -->
+    <div class="page-body">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="list-container">
+              <a href="{% url 'dairy:customer_create' %}" class="add-customer-link">
+                <div>
+                  <div class="add-customer-button">
+                    <span>Add Customer</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for customer in customers %}
+                  <tr>
+                    <td>{{ customer.name }}</td>
+                    <td>{{ customer.contact }}</td>
+                    <td>{{ customer.address }}</td>
+                    <td>
+                      <a href="#"><i class="fas fa-pencil-alt"></i> Edit</a>
+                      <a href="#" data-toggle="modal" data-target="#deleteCustomerModal" data-url="{% url 'dairy:customer_delete' customer.pk %}"><i class="fas fa-trash-alt"></i> Delete</a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+          <div class="row">
+            <div class="col-md-12 footer-copyright text-center">
+              <p class="mb-0">Copyright 2023 © Fastkart theme by pixelstrap</p>
+            </div>
+          </div>
+        </footer>
+        <!-- footer end-->
+      </div>
+    </div>
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+
+<!-- Delete Customer Modal -->
+<div class="modal fade" id="deleteCustomerModal" tabindex="-1" role="dialog" aria-labelledby="deleteCustomerModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteCustomerModalLabel">Delete Customer</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete the customer?</p>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-dismiss="modal">No</button>
+          <a id="confirm-delete-button" class="btn btn--yes btn-primary">Yes, delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Delete Customer Modal -->
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+<script>
+  $("#deleteCustomerModal").on("show.bs.modal", function (event) {
+    var button = $(event.relatedTarget); // Button that triggered the modal
+    var deleteUrl = button.data("url"); // Extract url from data-url attribute
+    var modal = $(this);
+    modal.find("#confirm-delete-button").attr("href", deleteUrl);
+  });
+</script>
+{%endblock%} {% endblock %}

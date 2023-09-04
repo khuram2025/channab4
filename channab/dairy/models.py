@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import date, timedelta
 from django.db import models
 from datetime import datetime
 
@@ -263,3 +263,39 @@ class Breeding(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['female_animal', 'date_of_insemination'], name='unique_animal_insemination_date')
         ]
+
+class Customer(models.Model):
+    name = models.CharField(max_length=255)
+    mobile_number = models.CharField(max_length=15, blank=True, null=True)  # Making it optional
+    created_date = models.DateField(default=date.today, editable=True)
+    # Any other relevant details about the customer
+
+    def __str__(self):
+        return self.name
+
+
+class MilkSale(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    date = models.DateField(default=timezone.now)
+    first_sale = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    second_sale = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    third_sale = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    price_per_liter = models.DecimalField(max_digits=5, decimal_places=2)
+    total_price = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    milk_record = models.ForeignKey(MilkRecord, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        total_liters = (self.first_sale or 0) + (self.second_sale or 0) + (self.third_sale or 0)
+        self.total_price = total_liters * self.price_per_liter
+        super().save(*args, **kwargs)
+
+    @property
+    def total_liters_sold(self):
+        return (self.first_sale or 0) + (self.second_sale or 0) + (self.third_sale or 0)
+
+    @property
+    def is_valid_sale(self):
+        return self.total_liters_sold <= self.milk_record.total_milk
+
+    def __str__(self):
+        return f"{self.total_liters_sold} liters to {self.customer.name} on {self.date}"

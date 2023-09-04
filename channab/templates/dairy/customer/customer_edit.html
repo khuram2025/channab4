@@ -1,0 +1,105 @@
+{% extends "home/base.html" %} 
+{% load static %} 
+{% load widget_tweaks %} 
+
+{% block content %}
+<html lang="en">
+
+<head>
+    <!-- Add any extra CSS or JavaScript imports here -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var editCustomerModal = new bootstrap.Modal(document.getElementById('editCustomer'), {});
+            editCustomerModal.show();
+        });
+
+        $(document).ready(function () {
+            $("#{{ form.date_joined.auto_id }}").datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "1900:2100"
+            });
+
+            $("#close-button").on("click", function () {
+                window.location.href = "{% url 'dairy:customer_list' %}";
+            });
+        });
+    </script>
+</head>
+
+<body>
+    {% include 'home/mobile_menu.html' %}
+    <div class="modal fade theme-modal" id="editCustomer" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel2">{% if edit_mode %}Edit{% else %}Add{% endif %} Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data" action="{% if edit_mode %}{% url 'dairy:customer_edit' customer.pk %}{% else %}{% url 'dairy:customer_create' %}{% endif %}">
+                        {% csrf_token %}
+                        <div class="row g-4">
+                            <div class="col-xxl-4">
+                                <div class="form-floating theme-form-floating">
+                                    {{ form.name|add_class:"form-control" }}
+                                    <label for="{{ form.name.auto_id }}">Name</label>
+                                </div>
+                            </div>
+                            <div class="col-xxl-4">
+                                <div class="form-floating theme-form-floating">
+                                    {{ form.mobile_number|add_class:"form-control" }}
+                                    <label for="{{ form.mobile_number.auto_id }}">Mobile Number</label>
+                                </div>
+                            </div>
+                            <div class="col-xxl-4">
+                    <div class="form-floating theme-form-floating">
+                        {{ form.created_date|add_class:"form-control" }}
+                        <label for="{{ form.created_date.auto_id }}">Created Date</label>
+                    </div>
+                </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="close-button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light">Save changes</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Edit Customer End -->
+
+</body>
+
+</html>
+{% endblock %} 
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var editCustomerModal = new bootstrap.Modal(document.getElementById('editCustomer'), {});
+        editCustomerModal.show();
+    });
+
+    $(document).ready(function () {
+        $("#{{ form.date_joined.auto_id }}").datepicker({
+            dateFormat: 'yy-mm-dd',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1900:2100"
+        });
+
+        $("#close-button").on("click", function () {
+            window.location.href = "{% url 'dairy:customer_list' %}";
+        });
+    });
+</script>
+
+{% endblock %}

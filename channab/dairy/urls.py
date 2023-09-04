@@ -49,6 +49,10 @@ urlpatterns = [
     path('animal_weights/<int:pk>/edit/', views.animal_weight_edit, name='animal_weight_edit'),
     path('animal_weights/<int:pk>/delete/', views.animal_weight_delete, name='animal_weight_delete'),
 
-   
 
+    path('customers/', views.customer_list, name='customer_list'),
+    path('customers/create/', views.customer_new, name='customer_create'),
+    # path('customers/<int:pk>/', views.customer_detail, name='customer_detail'),
+    # path('customers/<int:pk>/edit/', views.customer_edit, name='customer_edit'),
+    path('customers/<int:pk>/delete/', views.customer_delete, name='customer_delete'),
 ]

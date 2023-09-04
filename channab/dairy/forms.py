@@ -1,5 +1,5 @@
 from django import forms
-from .models import AnimalCategory, Animal
+from .models import AnimalCategory, Animal, Customer
 from django.db.models import Q
 
 
@@ -60,3 +60,17 @@ class AnimalWeightForm(forms.ModelForm):
 
 from django import forms
 from .models import Breeding
+
+from django import forms
+from .models import Customer
+
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['name', 'mobile_number', 'created_date']
+
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optional'}),
+            'created_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
