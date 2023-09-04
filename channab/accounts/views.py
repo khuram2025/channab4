@@ -395,9 +395,17 @@ def delete_salary_component(request, member_id, component_id):
 
 
 
+@login_required
 def salary_transaction_list(request):
-    transactions = SalaryTransaction.objects.all()
+    # Get the user's farm
+    farm = request.user.farm
+
+    # Filter the transactions by the user's farm using the farm_member relationship
+    transactions = SalaryTransaction.objects.filter(farm_member__farm=farm)
+
     return render(request, 'accounts/salary_transaction_list.html', {'salary_transactions': transactions})
+
+
 
 
 from django.http import JsonResponse

@@ -115,7 +115,7 @@ from .forms import ExpenseForm, IncomeForm
 def create_income(request):
     farm = request.user.farm
     if request.method == "POST":
-        form = IncomeForm(request.POST, request.FILES)
+        form = IncomeForm(request.POST, request.FILES, farm=farm)
         if form.is_valid():
             income = form.save(commit=False)
             income.user = request.user
@@ -123,22 +123,24 @@ def create_income(request):
             income.save()
             return redirect('farm_finances:income_list')
     else:
-        form = IncomeForm()
+        form = IncomeForm(farm=farm)
         today_str = date.today().strftime('%Y-%m-%d')
     return render(request, 'farm_finances/create_income.html', {'form': form, 'today': today_str})
+
 
 @login_required
 def update_income(request, income_id):
     income = get_object_or_404(Income, id=income_id, user=request.user)
     if request.method == "POST":
-        form = IncomeForm(request.POST, request.FILES, instance=income)
+        form = IncomeForm(request.POST, request.FILES, instance=income, farm=request.user.farm)
         if form.is_valid():
             form.save()
             return redirect('farm_finances:income_list')
     else:
-        form = IncomeForm(instance=income)
+        form = IncomeForm(instance=income, farm=request.user.farm)
     today_str = date.today().strftime('%Y-%m-%d')
     return render(request, 'farm_finances/update_income.html', {'form': form, 'income': income, 'today': today_str})
+
 
 
 
@@ -193,7 +195,7 @@ def income_list(request):
 def create_expense(request):
     farm = request.user.farm
     if request.method == "POST":
-        form = ExpenseForm(request.POST, request.FILES)
+        form = ExpenseForm(request.POST, request.FILES, farm=farm)
         if form.is_valid():
             expense = form.save(commit=False)
             expense.user = request.user
@@ -201,9 +203,10 @@ def create_expense(request):
             expense.save()
             return redirect('farm_finances:expense_list')
     else:
-        form = ExpenseForm()
+        form = ExpenseForm(farm=farm)
     today_str = date.today().strftime('%Y-%m-%d')
     return render(request, 'farm_finances/create_expense.html', {'form': form, 'today': today_str})
+
 
 
 from django.shortcuts import render
@@ -212,13 +215,14 @@ from .models import Expense
 @login_required
 def update_expense(request, expense_id):
     expense = get_object_or_404(Expense, id=expense_id, user=request.user)
+    farm = expense.farm  # get the farm from the expense instance
     if request.method == "POST":
-        form = ExpenseForm(request.POST, request.FILES, instance=expense)
+        form = ExpenseForm(request.POST, request.FILES, instance=expense, farm=farm)
         if form.is_valid():
             form.save()
             return redirect('farm_finances:expense_list')
     else:
-        form = ExpenseForm(instance=expense)
+        form = ExpenseForm(instance=expense, farm=farm)
     today_str = date.today().strftime('%Y-%m-%d')
     return render(request, 'farm_finances/update_expense.html', {'form': form, 'expense': expense, 'today': today_str})
 

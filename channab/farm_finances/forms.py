@@ -23,6 +23,12 @@ class IncomeForm(forms.ModelForm):
             'date': DateInput(attrs={'class': 'form-control date-input', 'type': 'date'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        farm = kwargs.pop('farm', None)
+        super(IncomeForm, self).__init__(*args, **kwargs)
+        if farm:
+            self.fields['category'].queryset = IncomeCategory.objects.filter(farm=farm)
+
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = Expense
@@ -30,3 +36,9 @@ class ExpenseForm(forms.ModelForm):
         widgets = {
             'date': DateInput(attrs={'class': 'form-control date-input', 'type': 'date'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        farm = kwargs.pop('farm', None)
+        super(ExpenseForm, self).__init__(*args, **kwargs)
+        if farm:
+            self.fields['category'].queryset = ExpenseCategory.objects.filter(farm=farm)
