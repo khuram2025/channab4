@@ -430,51 +430,31 @@ def salary_transaction_update(request, pk=None):
     if request.method == 'POST':
         form = SalaryTransactionForm(request.POST, instance=transaction, farm=farm)
         if form.is_valid():
-            if transaction is not None:
-                print("Updating existing transaction")
-                # Update the existing transaction
-                transaction.transaction_date = form.cleaned_data['transaction_date']
-                transaction.farm_member = form.cleaned_data['farm_member']
-                transaction.component = form.cleaned_data['component']
-                transaction.amount_paid = form.cleaned_data['amount_paid']
-                transaction.save()
-            else:
-                print("Creating new transaction")
-                # Create a new transaction
-                transaction = form.save()
-
+            transaction = form.save()  
+            
             # Create or retrieve the salary expense category for the farm
             salary_category, created = ExpenseCategory.objects.get_or_create(farm=farm, name='Salary')
 
-            if transaction is not None and hasattr(transaction, 'expense'):
-                # Update the related expense instance
-                print("Updating existing expense")
-                expense = transaction.expense
-                expense.date = transaction.transaction_date
-                expense.description = f'Salary for {transaction.farm_member} - {transaction.component.name}'
-                expense.amount = transaction.amount_paid
-            else:
-                # Create a new expense instance with the salary transaction data
-                print("Creating new expense")
-                expense = Expense(
-                    user=request.user,
-                    farm=farm,
-                    date=transaction.transaction_date,
-                    description=f'Salary for {transaction.farm_member} - {transaction.component.name}',
-                    amount=transaction.amount_paid,
-                    category=salary_category,
-                    salary_transaction=transaction
-                )
+            # Try to get the associated expense
+            try:
+                expense = Expense.objects.get(salary_transaction=transaction)
+            except Expense.DoesNotExist:
+                # If not found, create a new expense instance
+                expense = Expense(user=request.user, farm=farm)
+
+            # Update the expense instance with the salary transaction data
+            expense.date = transaction.transaction_date
+            expense.description = f'Salary for {transaction.farm_member} - {transaction.component.name}'
+            expense.amount = transaction.amount_paid
+            expense.category = salary_category
+            expense.salary_transaction = transaction
 
             # Save the expense instance
             expense.save()
-            print(f"Expense object saved with id {expense.pk} and linked to salary transaction id {transaction.pk}")
-
-            # Verify if the relationship is set correctly
-            test_expense = Expense.objects.get(pk=expense.pk)
-            print(f"Retrieved expense object with id {test_expense.pk}, linked to salary transaction id {test_expense.salary_transaction.pk}")
 
             return redirect('accounts:salary_transaction_list')
+
+
     else:
         form = SalaryTransactionForm(instance=transaction, farm=farm)
     context = {
