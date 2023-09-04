@@ -70,10 +70,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     def save(self, *args, **kwargs):
-        is_new = not self.pk
         super().save(*args, **kwargs)
-        if is_new and self.role == 'admin' and self.farm is None:
-            self.create_farm_and_save()
+
+
+   
 
     def create_farm_and_save(self, farm_name=None):
         if not farm_name:
@@ -81,6 +81,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         farm = Farm.objects.create(name=farm_name, admin=self)
         self.farm = farm
         super().save()
+
     
     def total_salary(self):
         total = 0
