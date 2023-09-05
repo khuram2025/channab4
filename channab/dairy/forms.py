@@ -1,5 +1,5 @@
 from django import forms
-from .models import AnimalCategory, Animal, Customer
+from .models import AnimalCategory, Animal, Customer, MilkSale
 from django.db.models import Q
 
 
@@ -73,4 +73,28 @@ class CustomerForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optional'}),
             'created_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
+
+class MilkSaleForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        # Pop the user from the keyword arguments
+        self.user = kwargs.pop('user', None)
+        super(MilkSaleForm, self).__init__(*args, **kwargs)
+        
+        # Filter the queryset of the customer field
+        if self.user:
+            self.fields['customer'].queryset = Customer.objects.filter(farm=self.user.farm)
+
+    class Meta:
+        model = MilkSale
+        fields = ['customer', 'date', 'first_sale', 'second_sale', 'third_sale', 'price_per_liter']
+
+        widgets = {
+            'customer': forms.Select(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'first_sale': forms.NumberInput(attrs={'class': 'form-control'}),
+            'second_sale': forms.NumberInput(attrs={'class': 'form-control'}),
+            'third_sale': forms.NumberInput(attrs={'class': 'form-control'}),
+            'price_per_liter': forms.NumberInput(attrs={'class': 'form-control'}),
         }

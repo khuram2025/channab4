@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse, reverse_lazy
-from .models import AnimalCategory, Animal, Breeding, Customer
-from .forms import AnimalCategoryForm, AnimalForm, AnimalWeightForm, CustomerForm, MilkRecordForm
+from .models import AnimalCategory, Animal, Breeding, Customer, MilkSale
+from .forms import AnimalCategoryForm, AnimalForm, AnimalWeightForm, CustomerForm, MilkRecordForm, MilkSaleForm
 from accounts.models import Farm
 from .models import MilkRecord, Animal, AnimalWeight
 from django.db.models import F
@@ -12,10 +12,11 @@ from django.db.models import Subquery, OuterRef
 from django.utils import timezone
 from django.db.models import Sum
 from datetime import timedelta
-from django.db.models import F, Q
-from django.http import JsonResponse
+from django.db.models import F, Q, Value, DecimalField
+from django.http import HttpResponseForbidden, JsonResponse
 from django.core import serializers
 from django.core.exceptions import ValidationError
+from django.db.models.functions import Coalesce
 
 @login_required
 def search(request):
@@ -842,8 +843,10 @@ def customer_new(request, pk=None):
     if request.method == "POST":
         form = CustomerForm(request.POST, instance=customer)
         if form.is_valid():
-            form.save()
-            return redirect('dairy:customer_list')  # 'dairy' should be replaced with your actual app's name
+            customer = form.save(commit=False)  # Don't save to the database yet
+            customer.farm = request.user.farm  # Associate customer with the logged-in user's farm
+            customer.save()  # Now save to the database
+            return redirect('dairy:customer_list')
     else:
         form = CustomerForm(instance=customer)
 
@@ -851,7 +854,15 @@ def customer_new(request, pk=None):
 
 @login_required
 def customer_list(request):
-    customers = Customer.objects.all()  # Assuming all customers are global, adjust if needed
+    customers = Customer.objects.filter(farm=request.user.farm).annotate(
+        total_milk=Sum(
+            Coalesce(F('milksale__first_sale'), Value(0)) + 
+            Coalesce(F('milksale__second_sale'), Value(0)) + 
+            Coalesce(F('milksale__third_sale'), Value(0)),
+            output_field=DecimalField()
+        ),
+        total_amount=Sum('milksale__total_price')
+    )
     return render(request, 'dairy/customer/customer_list.html', {'customers': customers})
 
 @login_required
@@ -864,6 +875,68 @@ def customer_delete(request, pk):
     customer = get_object_or_404(Customer, pk=pk)
     customer.delete()
     return redirect('dairy:customer_list')  # 'dairy' should be replaced with your actual app's name
+
+@login_required
+def milk_sale_create(request):
+    # Ensure the user has an associated farm
+    if not hasattr(request.user, 'farm'):
+        messages.error(request, 'User does not have an associated farm.')
+        return redirect('your_redirect_location')  # Change 'your_redirect_location' to where you want to redirect in this case
+
+    if request.method == "POST":
+        form = MilkSaleForm(request.POST, user=request.user)  # Adjusting the form to consider the user's farm
+        if form.is_valid():
+            milk_sale = form.save(commit=False)
+            milk_sale.farm = request.user.farm
+            milk_sale.save()
+            return redirect('dairy:milk_sale_list')
+    else:
+        form = MilkSaleForm(user=request.user)  # Adjusting the form to consider the user's farm
+    context = {
+        'form': form
+    }
+    return render(request, 'dairy/milk_records/milk_sale_form.html', context)
+
+
+@login_required
+def milk_sale_list(request):
+    # Only fetch sales related to the logged-in user's farm
+    sales = MilkSale.objects.filter(farm=request.user.farm)
+    context = {
+        'sales': sales
+    }
+    return render(request, 'dairy/milk_records/milk_sale_list.html', context)
+
+@login_required
+def milk_sale_edit(request, sale_id):
+    milk_sale = get_object_or_404(MilkSale, id=sale_id)
+
+    # Ensure the logged-in user has permission to edit this MilkSale (assuming by farm ownership)
+    if milk_sale.farm != request.user.farm:
+        return HttpResponseForbidden("You don't have permission to edit this MilkSale.")
+
+    if request.method == "POST":
+        form = MilkSaleForm(request.POST, instance=milk_sale, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('dairy:milk_sale_list')
+    else:
+        form = MilkSaleForm(instance=milk_sale, user=request.user)
+
+    context = {
+        'form': form,
+        'milk_sale': milk_sale
+    }
+    return render(request, 'dairy/milk_records/milk_sale_form.html', context)
+
+@login_required
+def milk_sale_delete(request, sale_id):
+    milk_sale = get_object_or_404(MilkSale, id=sale_id)
+    milk_sale.delete()
+    return redirect('dairy:milk_sale_list')
+
+
+
 
 
     if request.method == 'POST':

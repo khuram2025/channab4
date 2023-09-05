@@ -55,4 +55,12 @@ urlpatterns = [
     # path('customers/<int:pk>/', views.customer_detail, name='customer_detail'),
     # path('customers/<int:pk>/edit/', views.customer_edit, name='customer_edit'),
     path('customers/<int:pk>/delete/', views.customer_delete, name='customer_delete'),
+
+
+
+    path('milk_sale/', views.milk_sale_list, name='milk_sale_list'),
+    path('milk_sale/new/', views.milk_sale_create, name='milk_sale_create'),
+    path('milk_sale/edit/<int:pk>/', views.milk_sale_edit, name='milk_sale_edit'),
+    path('milk_sale/<int:sale_id>/delete/', views.milk_sale_delete, name='milk_sale_delete'),
+
 ]

@@ -268,6 +268,7 @@ class Customer(models.Model):
     name = models.CharField(max_length=255)
     mobile_number = models.CharField(max_length=15, blank=True, null=True)  # Making it optional
     created_date = models.DateField(default=date.today, editable=True)
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, blank=True, null=True)
     # Any other relevant details about the customer
 
     def __str__(self):
@@ -282,12 +283,15 @@ class MilkSale(models.Model):
     third_sale = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     price_per_liter = models.DecimalField(max_digits=5, decimal_places=2)
     total_price = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
-    milk_record = models.ForeignKey(MilkRecord, on_delete=models.CASCADE)
-
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, blank=True, null=True)
+   
     def save(self, *args, **kwargs):
         total_liters = (self.first_sale or 0) + (self.second_sale or 0) + (self.third_sale or 0)
-        self.total_price = total_liters * self.price_per_liter
+        # Only update total_price if it's not provided
+        if self.total_price is None:
+            self.total_price = total_liters * self.price_per_liter
         super().save(*args, **kwargs)
+
 
     @property
     def total_liters_sold(self):
