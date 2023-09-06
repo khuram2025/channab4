@@ -1685,3 +1685,14 @@ a.active {
   width: 100%;
   margin: 0;
 }
+
+.select2-results__option {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  clear: both;
+  font-weight: normal;
+  line-height: 1.42857143;
+  color: #333;
+  white-space: nowrap;
+}

@@ -7,7 +7,7 @@
     <head>
         <!-- Add any extra CSS or JavaScript imports here -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
         <script>
@@ -86,7 +86,18 @@
                 </div>
             </div>
         </div>
-        <!-- Edit Animal Weight Record End -->
+        {% block extra_js %}
+        <script>
+           $('#{{ form.animal.auto_id }}').select2({
+    placeholder: "Search for an animal tag...",
+    allowClear: true,
+    dropdownParent: $('#editWeight')
+});
+
+        </script>
+        {% endblock %}
+
+
     </body>
 
 </html>
