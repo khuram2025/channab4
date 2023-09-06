@@ -92,12 +92,21 @@ git pull origin mobile-app
 ~/channab/channab4/channab$ git pull origin mobile-app
 
 cd ~/channab/channab4/channab
-git pull origin July2023
+git pull origin Sep2023
 git pull origin Web
+
+
 
 
 git stash
 git clean -f
+
+
+source ~/channab/channabenv/bin/activate
+cd  ~/channab/channab4/channab/
+
+python3 manage.py runserver 0.0.0.0:8000 --settings=channab.settings.prod
+python3 manage.py makemigrations --settings=channab.settings.prod
 
 
 sudo systemctl restart gunicorn
