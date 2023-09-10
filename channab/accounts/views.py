@@ -607,6 +607,10 @@ def logout_view(request):
     logout(request)
     return redirect(reverse('home:home'))
 
+class LogoutView(APIView):
+    def post(self, request):
+        logout(request)
+        return Response({"detail": "Logout successful"}, status=status.HTTP_200_OK)
 
 
 
