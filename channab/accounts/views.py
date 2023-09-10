@@ -49,6 +49,12 @@ class SignupView(CreateView):
 def login_view(request):
     if request.method == 'POST':
         form = MobileAuthenticationForm(request, data=request.POST)
+
+        # Print the entered mobile number and password
+        print("Mobile Number (Username):", request.POST.get('username'))
+
+        print("Password:", request.POST.get('password'))
+
         if form.is_valid():
             user = form.get_user()
             login(request, user)
@@ -66,16 +72,25 @@ def login_view(request):
         form = MobileAuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})
 
+
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 
+from django.contrib.auth import authenticate
+
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
-        mobile_number = request.data.get("mobile_number")
+        mobile_number = request.data.get("username")
+
         password = request.data.get("password")
+        
+        # Print the received mobile_number and password
+        print("Received Mobile Number (Username):", mobile_number)
+        print("Received Password:", password)
+        
         user = authenticate(request, username=mobile_number, password=password)
         if user is not None:
             # login successful
@@ -83,6 +98,7 @@ class LoginView(APIView):
             return Response({"token": token.key}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Wrong Credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 
 
