@@ -105,17 +105,18 @@ def home_view(request):
 
     return render(request, 'home/index.html', context)
 
-class HomeAPIView(APIView):
+from rest_framework.permissions import IsAuthenticated
+
+class HomeDataAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         farm = request.user.farm
+
         total_income = Income.objects.filter(farm=farm).aggregate(Sum('amount'))['amount__sum'] or 0
         total_expense = Expense.objects.filter(farm=farm).aggregate(Sum('amount'))['amount__sum'] or 0
-        net_income = total_income - total_expense
-
+        status = total_income - total_expense
         
-
         now = timezone.now()
         default_time_range = now - timedelta(days=30)  # Default: last 30 days
         time_ranges = {
@@ -125,21 +126,11 @@ class HomeAPIView(APIView):
             "this_year": now.replace(month=1, day=1),
         }
 
-        # Get time filter from the request
         time_filter = request.GET.get('time_filter', 'last_30_days')
         selected_time_range = time_ranges.get(time_filter, default_time_range)
 
-        income_categories = IncomeCategory.objects.filter(farm=farm)
-        expense_categories = ExpenseCategory.objects.filter(farm=farm)
-        sex = request.GET.get('sex', 'male')  # default to 'male' if no parameter is provided
-        animals = Animal.objects.filter(farm=farm, sex=sex)
-        
-        male_animals = Animal.objects.filter(farm=farm, sex='male')
-        female_animals = Animal.objects.filter(farm=farm, sex='female')
-
-
         summary = []
-        for category in income_categories:
+        for category in IncomeCategory.objects.filter(farm=farm):
             total_amount = Income.objects.filter(
                 farm=farm,
                 category=category,
@@ -147,12 +138,12 @@ class HomeAPIView(APIView):
             ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0
 
             summary.append({
-                "category": category.name,
+                "category": category.name,  # Assuming you have a name field in your model
                 "total_amount": total_amount,
             })
 
         expense_summary = []
-        for category in expense_categories:
+        for category in ExpenseCategory.objects.filter(farm=farm):
             total_amount = Expense.objects.filter(
                 farm=farm,
                 category=category,
@@ -160,21 +151,44 @@ class HomeAPIView(APIView):
             ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0
 
             expense_summary.append({
-                "category": category.name,
+                "category": category.name,  # Assuming you have a name field in your model
                 "total_amount": total_amount,
             })
+
+        male_animals = Animal.objects.filter(farm=farm, sex='male')
+        female_animals = Animal.objects.filter(farm=farm, sex='female')
+        
+        # For API purposes, it's more useful to send the count than actual queryset data for males and females
+        male_count = male_animals.count()
+        female_count = female_animals.count()
+        
+        animals = Animal.objects.filter(farm=farm)
+        animals_serializer = AnimalSerializer(animals, many=True)
+
+        today_milk_records = MilkRecord.objects.filter(
+            animal__farm=farm,
+            date=timezone.now().date()
+        )
+        today_milk_records = today_milk_records.annotate(
+            milk_total=(
+                Case(When(first_time__isnull=True, then=0), default=F('first_time'), output_field=DecimalField()) +
+                Case(When(second_time__isnull=True, then=0), default=F('second_time'), output_field=DecimalField()) +
+                Case(When(third_time__isnull=True, then=0), default=F('third_time'), output_field=DecimalField())
+            )
+        )
+        total_milk_today = today_milk_records.aggregate(total_milk=Sum('milk_total'))['total_milk'] or 0
 
         data = {
             'total_income': total_income,
             'total_expense': total_expense,
-            'net_income': net_income,
-            "summary": summary,
-            "time_filter": time_filter,
-            "expense_summary": expense_summary,
-            'male_animals': list(male_animals.values()),  # Django ORM values() will return QuerySet as dictionary
-            'female_animals': list(female_animals.values()),
-            'animals': list(animals.values()),
+            'status': status,
+            'summary': summary,
+            'time_filter': time_filter,
+            'expense_summary': expense_summary,
+            'male_animals': male_count,
+            'female_animals': female_count,
+            'animals': animals_serializer.data,
+            'total_milk_today': total_milk_today,
         }
 
-        return Response(data, status=status.HTTP_200_OK)
-    
+        return Response(data)

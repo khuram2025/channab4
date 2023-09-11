@@ -1,13 +1,32 @@
 from rest_framework import serializers
-from dairy.models import Animal
-from farm_finances.models import Income, Expense, IncomeCategory, ExpenseCategory
+from .models import Income, Expense, IncomeCategory, ExpenseCategory, Animal, MilkRecord
+
+class IncomeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Income
+        fields = '__all__'
+
+class ExpenseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Expense
+        fields = '__all__'
+
+class IncomeCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IncomeCategory
+        fields = '__all__'
+
+class ExpenseCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExpenseCategory
+        fields = '__all__'
 
 class AnimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Animal
-        fields = ['id', 'name', 'age', 'sex']  # add more fields here if needed
+        fields = '__all__'
 
-class CategorySummarySerializer(serializers.Serializer):
-    category = serializers.CharField()
-    total_amount = serializers.FloatField()
-    
+class MilkRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MilkRecord
+        fields = '__all__'

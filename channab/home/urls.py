@@ -5,6 +5,6 @@ app_name = 'home'
 
 urlpatterns = [
     path('', views.home_view, name='home'),
-    path('api/', views.HomeAPIView.as_view(), name='api_home'),
+    path('api/', views.HomeDataAPIView.as_view(), name='api_home'),
     
 ]
