@@ -1,0 +1,117 @@
+{% extends 'main/base.html' %} {% load static %} {% block content %}
+
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  {% include 'home/backend_header.html' %}
+  <!-- Page Header Ends-->
+
+  <!-- mobile fix menu start -->
+  {% include 'home/mobile_menu.html' %}
+  <!-- mobile fix menu end -->
+
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    {% include 'home/backend_sidebar.html' %}
+    <!-- Page Sidebar Ends-->
+
+    <!-- Page Body Start -->
+    <div class="page-body">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card card-table">
+              <div class="card-body">
+                <div class="title-header option-title d-sm-flex d-block">
+                  <h5>Customer Details: {{ customer.name }}</h5>
+                </div>
+
+                <!-- Tabs navigation -->
+                <ul class="nav nav-tabs" id="customerTabs" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" id="status-tab" data-toggle="tab" href="#status" role="tab">Status</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="milk-record-tab" data-toggle="tab" href="#milk-record" role="tab">Milk Record</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment" role="tab">Payment</a>
+                  </li>
+                </ul>
+
+                <!-- Tabs content -->
+                <div class="tab-content">
+                  <div class="tab-pane fade show active" id="status" role="tabpanel">
+                    <!-- Add content related to status here -->
+                    Customer status details...
+                  </div>
+                  <div class="tab-pane fade" id="milk-record" role="tabpanel">
+                    <!-- Add content related to milk records here -->
+                    <div class="table-responsive">
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>First Sale (Liters)</th>
+                            <th>Second Sale (Liters)</th>
+                            <th>Third Sale (Liters)</th>
+                            <th>Price Per Liter</th>
+                            <th>Total Price</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for sale in milk_sales %}
+                          <tr>
+                            <td>{{ sale.date }}</td>
+                            <td>{{ sale.first_sale }}</td>
+                            <td>{{ sale.second_sale }}</td>
+                            <td>{{ sale.third_sale }}</td>
+                            <td>{{ sale.price_per_liter }}</td>
+                            <td>{{ sale.total_price }}</td>
+                          </tr>
+                          {% empty %}
+                          <tr>
+                            <td colspan="6" class="text-center">No milk records found for this customer.</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="payment" role="tabpanel">
+                    <!-- Add content related to payments here -->
+                    Customer payment details...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Container-fluid Ends-->
+      <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+          <div class="row">
+            <div class="col-md-12 footer-copyright text-center">
+              <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- Page Body End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
+
+{% endblock %}

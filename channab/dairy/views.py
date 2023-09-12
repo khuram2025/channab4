@@ -868,7 +868,9 @@ def customer_list(request):
 @login_required
 def customer_detail(request, pk):
     customer = get_object_or_404(Customer, pk=pk)
-    return render(request, 'dairy/customer_detail.html', {'customer': customer})
+    milk_sales = MilkSale.objects.filter(customer=customer).order_by('-date')  # Fetch MilkSale records for the customer and order by date (most recent first)
+    return render(request, 'dairy/customer/customer_detail.html', {'customer': customer, 'milk_sales': milk_sales})
+
 
 @login_required
 def customer_delete(request, pk):
