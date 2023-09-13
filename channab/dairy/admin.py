@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from .models import Animal, AnimalCategory, Customer, MilkRecord, MilkSale
+from .models import Animal, AnimalCategory, Customer, MilkPayment, MilkRecord, MilkSale
 
 class AnimalAdmin(admin.ModelAdmin):
     list_display = ('tag', 'farm', 'get_farm_admin')
@@ -18,5 +18,6 @@ admin.site.register(Animal, AnimalAdmin)
 admin.site.register(MilkRecord)
 admin.site.register(Customer)
 admin.site.register(MilkSale)
+admin.site.register(MilkPayment)
 
 admin.site.register(AnimalCategory, AnimalCategoryAdmin)

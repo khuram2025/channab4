@@ -110,12 +110,12 @@ class MilkPaymentForm(forms.ModelForm):
             
     class Meta:
         model = MilkPayment
-        fields = ['customer', 'date', 'total_milk_payment', 'received_payment', 'note']
+        fields = ['customer', 'date', 'received_payment', 'note']
         
         widgets = {
             'customer': forms.Select(attrs={'class': 'form-control'}),
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'total_milk_payment': forms.NumberInput(attrs={'class': 'form-control'}),
+            
             'received_payment': forms.NumberInput(attrs={'class': 'form-control'}),
             'note': forms.Textarea(attrs={'class': 'form-control'}),
         }

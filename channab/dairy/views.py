@@ -877,27 +877,33 @@ def customer_detail(request, pk):
 
     # Check if time_filter is provided in the request
     time_filter = request.GET.get('time_filter', 'this_month')
-    if time_filter == "last_day":
-        milk_payments = milk_payments.filter(date=datetime.now().date())
+ 
     if time_filter == "last_day":
         milk_sales = milk_sales.filter(date=datetime.now().date())
+        milk_payments = milk_payments.filter(date=datetime.now().date())
     elif time_filter == "yesterday":
         milk_sales = milk_sales.filter(date=datetime.now().date() - timedelta(days=1))
+        milk_payments = milk_payments.filter(date=datetime.now().date() - timedelta(days=1))
     elif time_filter == "last_7_days":
         milk_sales = milk_sales.filter(date__gte=datetime.now().date() - timedelta(days=7))
+        milk_payments = milk_payments.filter(date__gte=datetime.now().date() - timedelta(days=7))
     elif time_filter == "this_month":
         month_start = datetime.now().replace(day=1).date()
         milk_sales = milk_sales.filter(date__gte=month_start)
+        milk_payments = milk_payments.filter(date__gte=month_start)
     elif time_filter == "last_month":
         last_month_end = datetime.now().replace(day=1) - timedelta(days=1)
         last_month_start = last_month_end.replace(day=1)
         milk_sales = milk_sales.filter(date__range=(last_month_start, last_month_end))
+        milk_payments = milk_payments.filter(date__range=(last_month_start, last_month_end))
     elif time_filter == "four_months":
         four_months_start = datetime.now().date() - timedelta(days=120)
         milk_sales = milk_sales.filter(date__gte=four_months_start)
+        milk_payments = milk_payments.filter(date__gte=four_months_start)
     elif time_filter == "one_year":
         one_year_start = datetime.now().date() - timedelta(days=365)
         milk_sales = milk_sales.filter(date__gte=one_year_start)
+        milk_payments = milk_payments.filter(date__gte=one_year_start)
     totals = milk_sales.aggregate(
         total_first=Sum('first_sale') or 0,
         total_second=Sum('second_sale') or 0,
@@ -905,9 +911,22 @@ def customer_detail(request, pk):
         total_price=Sum('total_price')
     )
     totals['total_liters'] = (totals['total_first'] or 0) + (totals['total_second'] or 0) + (totals['total_third'] or 0)
+
+    total_milk_sale = customer.total_sales_amount()
+    total_paid = milk_payments.aggregate(total_paid=Sum('received_payment'))['total_paid'] or 0
+    remaining_amount = total_milk_sale - total_paid
+
+
   
 
-    return render(request, 'dairy/customer/customer_detail.html', {'customer': customer, 'milk_sales': milk_sales, 'milk_payments': milk_payments, 'time_filter': time_filter, 'totals': totals})
+    return render(request, 'dairy/customer/customer_detail.html', {'customer': customer, 'milk_sales': milk_sales, 
+                                                                   'milk_payments': milk_payments,
+                                                                    'time_filter': time_filter,
+                                                                      'totals': totals,
+                                                                      'total_milk_sale': total_milk_sale,
+    'total_paid': total_paid,
+    'remaining_amount': remaining_amount
+                                                                      })
 
 
 

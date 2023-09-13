@@ -263,6 +263,7 @@ class Breeding(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['female_animal', 'date_of_insemination'], name='unique_animal_insemination_date')
         ]
+from django.db.models import Sum
 
 class Customer(models.Model):
     name = models.CharField(max_length=255)
@@ -270,6 +271,10 @@ class Customer(models.Model):
     created_date = models.DateField(default=date.today, editable=True)
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, blank=True, null=True)
     # Any other relevant details about the customer
+
+    def total_sales_amount(self):
+        total_sales = MilkSale.objects.filter(customer=self).aggregate(total=Sum('total_price'))['total']
+        return total_sales or 0
 
     def __str__(self):
         return self.name
@@ -305,8 +310,6 @@ class MilkSale(models.Model):
     def __str__(self):
         return f"{self.total_liters_sold} liters to {self.customer.name} on {self.date}"
 
-
-
 class MilkPayment(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     date = models.DateField(default=timezone.now)
@@ -316,9 +319,24 @@ class MilkPayment(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, blank=True, null=True)
     note = models.TextField(blank=True, null=True)  # Optional: For any additional info or comments
 
+    def calculate_remaining(self):
+        return self.total_milk_payment - self.received_payment
+
     def save(self, *args, **kwargs):
+        if not self.total_milk_payment:
+            # Calculate balance from total sales for the customer
+            self.total_milk_payment = self.customer.total_sales_amount()
+            
+            # Consider previous payments
+            previous_payments = MilkPayment.objects.filter(customer=self.customer, date__lt=self.date)
+            for payment in previous_payments:
+                self.total_milk_payment -= payment.received_payment
+
+            # Now consider the remaining amounts from previous payments
+            self.total_milk_payment += previous_payments.aggregate(total_remaining=Sum('remaining_payment'))['total_remaining'] or 0
+            
         # Calculate remaining payment
-        self.remaining_payment = self.total_milk_payment - self.received_payment
+        self.remaining_payment = self.calculate_remaining()
         super().save(*args, **kwargs)
 
     def __str__(self):
