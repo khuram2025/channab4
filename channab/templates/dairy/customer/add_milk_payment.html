@@ -1,6 +1,6 @@
 {% extends "home/base.html" %} {% load static %} {% load widget_tweaks %} {% block content %}
 <div class="container mt-5">
-  <h2 class="mb-4">{% if form.instance.pk %}Edit{% else %}Add{% endif %} Milk Sale</h2>
+  <h2 class="mb-4">{% if form.instance.pk %} Edit Milk Payment {% else %} Add Milk Payment {% endif %}</h2>
 
   <form method="post">
     {% csrf_token %} {% for field in form %}
@@ -14,7 +14,14 @@
 
     <div class="mt-4">
       <button type="submit" class="btn btn-primary">Save</button>
+      {% if customer_pk %}
       <a href="{% url 'dairy:customer_detail' customer_pk %}" class="btn btn-secondary">Cancel</a>
+      {% else %}
+      <!-- You can provide a default URL if customer_pk is not available -->
+      <a href="#" class="btn btn-secondary">Cancel</a>
+      {% endif %}
+
+      <!-- Adjust the URL name if it's different -->
     </div>
   </form>
 </div>

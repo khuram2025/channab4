@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse, reverse_lazy
-from .models import AnimalCategory, Animal, Breeding, Customer, MilkSale
-from .forms import AnimalCategoryForm, AnimalForm, AnimalWeightForm, CustomerForm, MilkRecordForm, MilkSaleForm
+from .models import AnimalCategory, Animal, Breeding, Customer, MilkPayment, MilkSale
+from .forms import AnimalCategoryForm, AnimalForm, AnimalWeightForm, CustomerForm, MilkPaymentForm, MilkRecordForm, MilkSaleForm
 from accounts.models import Farm
 from .models import MilkRecord, Animal, AnimalWeight
 from django.db.models import F
@@ -865,11 +865,50 @@ def customer_list(request):
     )
     return render(request, 'dairy/customer/customer_list.html', {'customers': customers})
 
+from datetime import timedelta, datetime
+
 @login_required
 def customer_detail(request, pk):
     customer = get_object_or_404(Customer, pk=pk)
-    milk_sales = MilkSale.objects.filter(customer=customer).order_by('-date')  # Fetch MilkSale records for the customer and order by date (most recent first)
-    return render(request, 'dairy/customer/customer_detail.html', {'customer': customer, 'milk_sales': milk_sales})
+
+    # Default filtering is all milk sales
+    milk_sales = MilkSale.objects.filter(customer=customer).order_by('-date')
+    milk_payments = MilkPayment.objects.filter(customer=customer).order_by('-date')
+
+    # Check if time_filter is provided in the request
+    time_filter = request.GET.get('time_filter', 'this_month')
+    if time_filter == "last_day":
+        milk_payments = milk_payments.filter(date=datetime.now().date())
+    if time_filter == "last_day":
+        milk_sales = milk_sales.filter(date=datetime.now().date())
+    elif time_filter == "yesterday":
+        milk_sales = milk_sales.filter(date=datetime.now().date() - timedelta(days=1))
+    elif time_filter == "last_7_days":
+        milk_sales = milk_sales.filter(date__gte=datetime.now().date() - timedelta(days=7))
+    elif time_filter == "this_month":
+        month_start = datetime.now().replace(day=1).date()
+        milk_sales = milk_sales.filter(date__gte=month_start)
+    elif time_filter == "last_month":
+        last_month_end = datetime.now().replace(day=1) - timedelta(days=1)
+        last_month_start = last_month_end.replace(day=1)
+        milk_sales = milk_sales.filter(date__range=(last_month_start, last_month_end))
+    elif time_filter == "four_months":
+        four_months_start = datetime.now().date() - timedelta(days=120)
+        milk_sales = milk_sales.filter(date__gte=four_months_start)
+    elif time_filter == "one_year":
+        one_year_start = datetime.now().date() - timedelta(days=365)
+        milk_sales = milk_sales.filter(date__gte=one_year_start)
+    totals = milk_sales.aggregate(
+        total_first=Sum('first_sale') or 0,
+        total_second=Sum('second_sale') or 0,
+        total_third=Sum('third_sale') or 0,
+        total_price=Sum('total_price')
+    )
+    totals['total_liters'] = (totals['total_first'] or 0) + (totals['total_second'] or 0) + (totals['total_third'] or 0)
+  
+
+    return render(request, 'dairy/customer/customer_detail.html', {'customer': customer, 'milk_sales': milk_sales, 'milk_payments': milk_payments, 'time_filter': time_filter, 'totals': totals})
+
 
 
 @login_required
@@ -938,26 +977,36 @@ def milk_sale_delete(request, sale_id):
     return redirect('dairy:milk_sale_list')
 
 
+@login_required
+def add_milk_payment(request):
+    customer_pk = None  # Initialize with None
 
+    # Ensure the user has an associated farm
+    if not hasattr(request.user, 'farm'):
+        messages.error(request, 'User does not have an associated farm.')
+        return redirect('your_redirect_location')  # Change 'your_redirect_location' to where you want to redirect in this case
 
-
-    if request.method == 'POST':
-        form = BreedingForm(request.POST)
-        form.fields['bull'].queryset = Animal.objects.filter(sex='male')
-        form.fields['animal'].queryset = Animal.objects.filter(sex='female')
-        print("POST data: ", request.POST)
+    if request.method == "POST":
+        form = MilkPaymentForm(request.POST, user=request.user)
         if form.is_valid():
-            print("Form is valid")
-            breeding_record = form.save(commit=False)
-            breeding_record.farm = request.user.farm
-            print("Breeding record instance: ", breeding_record)
-            breeding_record.save()
-            return redirect('breeding_list')  # Replace with the actual url to the breeding list page
-        else:
-            print("Form is not valid")
-            print("Form errors: ", form.errors)
+            milk_payment = form.save(commit=False)
+            milk_payment.farm = request.user.farm  # Set the farm on the milk payment
+            milk_payment.save()
+            customer_pk = milk_payment.customer.pk
+            messages.success(request, 'Payment added successfully!')
+            return redirect('dairy:customer_detail', pk=customer_pk)
     else:
-        form = BreedingForm()
-        form.fields['bull'].queryset = Animal.objects.filter(sex='male')
-        form.fields['animal'].queryset = Animal.objects.filter(sex='female')
-    return render(request, 'dairy/breeding_form.html', {'form': form})
+        form = MilkPaymentForm(user=request.user)  # Pass the user to the form
+
+    # If we're dealing with an existing milk payment, get the customer's pk from there
+    if form.instance.pk and hasattr(form.instance, 'customer'):
+        customer_pk = form.instance.customer.pk
+
+    context = {
+        'form': form,
+        'customer_pk': customer_pk or None
+    }
+    return render(request, 'dairy/customer/add_milk_payment.html', context)
+
+
+

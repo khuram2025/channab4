@@ -56,6 +56,8 @@ urlpatterns = [
     # path('customers/<int:pk>/edit/', views.customer_edit, name='customer_edit'),
     path('customers/<int:pk>/delete/', views.customer_delete, name='customer_delete'),
 
+    path('add-milk-payment/', views.add_milk_payment, name='add_milk_payment'),
+
 
 
     path('milk_sale/', views.milk_sale_list, name='milk_sale_list'),

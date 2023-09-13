@@ -1,5 +1,5 @@
 from django import forms
-from .models import AnimalCategory, Animal, Customer, MilkSale
+from .models import AnimalCategory, Animal, Customer, MilkPayment, MilkSale
 from django.db.models import Q
 
 
@@ -97,4 +97,25 @@ class MilkSaleForm(forms.ModelForm):
             'second_sale': forms.NumberInput(attrs={'class': 'form-control'}),
             'third_sale': forms.NumberInput(attrs={'class': 'form-control'}),
             'price_per_liter': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+class MilkPaymentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        # Pop the user from the keyword arguments
+        self.user = kwargs.pop('user', None)
+        super(MilkPaymentForm, self).__init__(*args, **kwargs)  # Corrected this line
+        
+        # Filter the queryset of the customer field
+        if self.user:
+            self.fields['customer'].queryset = Customer.objects.filter(farm=self.user.farm)
+            
+    class Meta:
+        model = MilkPayment
+        fields = ['customer', 'date', 'total_milk_payment', 'received_payment', 'note']
+        
+        widgets = {
+            'customer': forms.Select(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'total_milk_payment': forms.NumberInput(attrs={'class': 'form-control'}),
+            'received_payment': forms.NumberInput(attrs={'class': 'form-control'}),
+            'note': forms.Textarea(attrs={'class': 'form-control'}),
         }

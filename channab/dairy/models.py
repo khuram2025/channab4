@@ -281,16 +281,17 @@ class MilkSale(models.Model):
     first_sale = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     second_sale = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     third_sale = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    price_per_liter = models.DecimalField(max_digits=5, decimal_places=2)
+    price_per_liter = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     total_price = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, blank=True, null=True)
    
     def save(self, *args, **kwargs):
         total_liters = (self.first_sale or 0) + (self.second_sale or 0) + (self.third_sale or 0)
-        # Only update total_price if it's not provided
-        if self.total_price is None:
+        # Only update total_price if it's not provided and price_per_liter is not None
+        if self.total_price is None and self.price_per_liter is not None:
             self.total_price = total_liters * self.price_per_liter
         super().save(*args, **kwargs)
+
 
 
     @property
@@ -303,3 +304,22 @@ class MilkSale(models.Model):
 
     def __str__(self):
         return f"{self.total_liters_sold} liters to {self.customer.name} on {self.date}"
+
+
+
+class MilkPayment(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    date = models.DateField(default=timezone.now)
+    total_milk_payment = models.DecimalField(max_digits=7, decimal_places=2)
+    received_payment = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    remaining_payment = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, blank=True, null=True)
+    note = models.TextField(blank=True, null=True)  # Optional: For any additional info or comments
+
+    def save(self, *args, **kwargs):
+        # Calculate remaining payment
+        self.remaining_payment = self.total_milk_payment - self.received_payment
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Payment of {self.received_payment} by {self.customer.name} on {self.date}"

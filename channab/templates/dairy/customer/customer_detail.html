@@ -30,65 +30,162 @@
             <div class="card card-table">
               <div class="card-body">
                 <div class="title-header option-title d-sm-flex d-block">
-                  <h5>Customer Details: {{ customer.name }}</h5>
+                  <h5>{{ customer.name }}</h5>
                 </div>
 
                 <!-- Tabs navigation -->
-                <ul class="nav nav-tabs" id="customerTabs" role="tablist">
-                  <li class="nav-item">
-                    <a class="nav-link active" id="status-tab" data-toggle="tab" href="#status" role="tab">Status</a>
+                <ul class="nav nav-tabs custom-nav" id="customerTabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button" role="tab" aria-controls="status" aria-selected="true">Status</button>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" id="milk-record-tab" data-toggle="tab" href="#milk-record" role="tab">Milk Record</a>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="milk-record-tab" data-bs-toggle="tab" data-bs-target="#milk-record" type="button" role="tab" aria-controls="milk-record" aria-selected="false">Milk Record</button>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment" role="tab">Payment</a>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab" aria-controls="payment" aria-selected="false">Payment</button>
                   </li>
                 </ul>
 
                 <!-- Tabs content -->
-                <div class="tab-content">
-                  <div class="tab-pane fade show active" id="status" role="tabpanel">
+                <div class="tab-content" id="myTabContent">
+                  <div class="tab-pane fade show active" id="status" role="tabpanel" aria-labelledby="status-tab">
                     <!-- Add content related to status here -->
-                    Customer status details...
+                    Customer status details will be displayed here.
                   </div>
                   <div class="tab-pane fade" id="milk-record" role="tabpanel">
                     <!-- Add content related to milk records here -->
-                    <div class="table-responsive">
-                      <table class="table table-bordered">
-                        <thead>
-                          <tr>
-                            <th>Date</th>
-                            <th>First Sale (Liters)</th>
-                            <th>Second Sale (Liters)</th>
-                            <th>Third Sale (Liters)</th>
-                            <th>Price Per Liter</th>
-                            <th>Total Price</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for sale in milk_sales %}
-                          <tr>
-                            <td>{{ sale.date }}</td>
-                            <td>{{ sale.first_sale }}</td>
-                            <td>{{ sale.second_sale }}</td>
-                            <td>{{ sale.third_sale }}</td>
-                            <td>{{ sale.price_per_liter }}</td>
-                            <td>{{ sale.total_price }}</td>
-                          </tr>
-                          {% empty %}
-                          <tr>
-                            <td colspan="6" class="text-center">No milk records found for this customer.</td>
-                          </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
+
+                    <!-- Start of Filter Form -->
+                    <div class="list-container">
+                      {% if salary_transaction.pk %}
+                      <a href="{#" class="add-animal-link">
+                              <div>
+                                  <div class="add-animal-button">
+                                      <span>Update Milk Record</span>
+                                  </div>
+                              </div>
+                          </a>
+                          {% else %}
+                          <a href="#" class="add-animal-link">
+                              <div>
+                                  <div class="add-animal-button">
+                                      <span>Add Milk Record</span>
+                                  </div>
+                              </div>
+                          </a>
+                          {% endif %}
+                          <div class="list-subcontainer">
+                              <i class="fas fa-filter filter-icon"></i>
+                              <form method="get" class="time-filter-form d-flex align-items-center" id="milkFilterForm">
+                                  <select name="time_filter" id="milkFilter" class="filter-select" onchange="document.getElementById('milkFilterForm').submit();">
+                                      <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
+                                      <option value="last_day" {% if time_filter == 'last_day' %}selected{% endif %}>Today</option>
+                                      <option value="yesterday" {% if time_filter == 'yesterday' %}selected{% endif %}>Yesterday</option>
+                                      <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
+                                      <option value="this_month" {% if time_filter == 'this_month' %}selected{% endif %}>This Month</option>
+                                      <option value="last_month" {% if time_filter == 'last_month' %}selected{% endif %}>Last Month</option>
+                                      <option value="four_months" {% if time_filter == 'four_months' %}selected{% endif %}>4 Months</option>
+                                      <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>1 Year</option>
+                                  </select>
+                              </form>
+                          </div>
+                      </div>
+                      <!-- End of Filter Form -->
+                      
+                      <div class="scrollable-table">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>1st({{ totals.total_first }})</th>
+                                    <th>2nd({{ totals.total_second }})</th>
+                                    <th>3rd({{ totals.total_third }})</th>
+                                    <th>Total({{ totals.total_liters }})</th>
+                                    <th>Price/ltr</th>
+                                    <th>Total Price({{ totals.total_price }})</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sale in milk_sales %}
+                                <tr>
+                                    <td>{{ sale.date }}</td>
+                                    <td>{{ sale.first_sale }}</td>
+                                    <td>{{ sale.second_sale }}</td>
+                                    <td>{{ sale.third_sale }}</td>
+                                    <td>{{ sale.total_liters_sold }}</td>
+                                    <td>{{ sale.price_per_liter }}</td>
+                                    <td>{{ sale.total_price }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
+
                   </div>
-                  <div class="tab-pane fade" id="payment" role="tabpanel">
-                    <!-- Add content related to payments here -->
-                    Customer payment details...
-                  </div>
+
+                  <div class="tab-pane fade" id="payment" role="tabpanel" aria-labelledby="payment-tab">
+    <!-- Start of Filter Form -->
+    <div class="list-container">
+        {% if salary_transaction.pk %}
+        <a href="#" class="add-animal-link">
+            <div>
+                <div class="add-animal-button">
+                    <span>Update Milk Payment</span>
+                </div>
+            </div>
+        </a>
+        {% else %}
+        <a href="{% url 'dairy:add_milk_payment' %}" class="add-animal-link">
+            <div>
+                <div class="add-animal-button">
+                    <span>Add Milk Payment</span>
+                </div>
+            </div>
+        </a>
+        {% endif %}
+        <div class="list-subcontainer">
+            <i class="fas fa-filter filter-icon"></i>
+            <form method="get" class="time-filter-form d-flex align-items-center" id="paymentFilterForm">
+                <select name="time_filter" id="paymentFilter" class="filter-select" onchange="document.getElementById('paymentFilterForm').submit();">
+                    <option value="all" {% if time_filter == 'all' %}selected{% endif %}>All</option>
+                    <option value="last_day" {% if time_filter == 'last_day' %}selected{% endif %}>Today</option>
+                    <option value="yesterday" {% if time_filter == 'yesterday' %}selected{% endif %}>Yesterday</option>
+                    <option value="last_7_days" {% if time_filter == 'last_7_days' %}selected{% endif %}>Last 7 days</option>
+                    <option value="this_month" {% if time_filter == 'this_month' %}selected{% endif %}>This Month</option>
+                    <option value="last_month" {% if time_filter == 'last_month' %}selected{% endif %}>Last Month</option>
+                    <option value="four_months" {% if time_filter == 'four_months' %}selected{% endif %}>4 Months</option>
+                    <option value="one_year" {% if time_filter == 'one_year' %}selected{% endif %}>1 Year</option>
+                </select>
+            </form>
+        </div>
+    </div>
+    <!-- End of Filter Form -->
+
+    <!-- Milk Payment Table -->
+<div class="scrollable-table">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Total Milk Payment</th>
+                <th>Received Payment</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in milk_payments %}
+            <tr>
+                <td>{{ payment.date }}</td>
+                <td>{{ payment.total_milk_payment }}</td>
+                <td>{{ payment.received_payment }}</td>
+                <td>{{ payment.note }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+
                 </div>
               </div>
             </div>
@@ -102,7 +199,7 @@
         <footer class="footer">
           <div class="row">
             <div class="col-md-12 footer-copyright text-center">
-              <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+              <p class="mb-0">Copyright 2022 © Channab Pakistan</p>
             </div>
           </div>
         </footer>
