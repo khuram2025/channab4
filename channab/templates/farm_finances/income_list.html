@@ -25,7 +25,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="list-container">
-            <h2 class="list-header">Animal List</h2>
+            <h2 class="list-header">Income List</h2>
             <div class="list-subcontainer">
               <a href="{% url 'farm_finances:create_income' %}" class="add-animal-link">
                 <div>
@@ -79,20 +79,24 @@
 
 
                     <td>
-                      <ul>
-                        <li>
-                          <a href="{% url 'farm_finances:update_income' income_id=income.id %}">
-                            <i class="ri-pencil-line"></i>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#" data-bs-toggle="modal" data-bs-target="#deleteIncomeModal" data-income-id="{{ income.pk }}">
-                            <i class="ri-delete-bin-line"></i>
-                          </a>
-                        </li>
-                        </li>
-                      </ul>
-                    </td>
+    {% if income.category.name != "Milk Sale" %}
+    <ul>
+        <li>
+            <a href="{% url 'farm_finances:update_income' income_id=income.id %}">
+                <i class="ri-pencil-line"></i>
+            </a>
+        </li>
+        <li>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#deleteIncomeModal" data-income-id="{{ income.pk }}">
+                <i class="ri-delete-bin-line"></i>
+            </a>
+        </li>
+    </ul>
+    {% else %}
+    
+    {% endif %}
+</td>
+
                   </tr>
                   {% endfor %}
                 </tbody>

@@ -5,6 +5,7 @@ from datetime import date
 from django.conf import settings
 
 from accounts.models import SalaryTransaction
+from dairy.models import MilkPayment
 
 
 class IncomeCategory(models.Model):
@@ -28,6 +29,7 @@ class Income(models.Model):
     description = models.TextField(blank=True, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(IncomeCategory, on_delete=models.CASCADE)
+    milk_payment = models.ForeignKey(MilkPayment, on_delete=models.SET_NULL, null=True, blank=True)
     image = models.ImageField(upload_to='invoices/', blank=True, null=True)
 
 

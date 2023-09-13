@@ -80,13 +80,21 @@ def update_expense_category(request, expense_category_id):
 @login_required
 def delete_income_category(request, pk):
     income_category = get_object_or_404(IncomeCategory, pk=pk, farm=request.user.farm)
+    
+    if income_category.name == 'Milk Sale':
+        # Prevent deleting Milk Sale category
+        return redirect('farm_finances:income_categories')
+    
     income_category.delete()
     return redirect('farm_finances:income_categories')
+
 
 
 @login_required
 def delete_expense_category(request, pk):
     expense_category = get_object_or_404(ExpenseCategory, pk=pk, farm=request.user.farm)
+    if expense_category.name == 'Salary':
+        return redirect('farm_finances:expense_categories')
     expense_category.delete()
     return redirect('farm_finances:expense_categories')
 

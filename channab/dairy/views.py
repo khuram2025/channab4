@@ -17,6 +17,7 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.db.models.functions import Coalesce
+from farm_finances.models import IncomeCategory, Income
 
 @login_required
 def search(request):
@@ -995,37 +996,105 @@ def milk_sale_delete(request, sale_id):
     milk_sale.delete()
     return redirect('dairy:milk_sale_list')
 
-
 @login_required
 def add_milk_payment(request):
-    customer_pk = None  # Initialize with None
-
+    
     # Ensure the user has an associated farm
     if not hasattr(request.user, 'farm'):
         messages.error(request, 'User does not have an associated farm.')
-        return redirect('your_redirect_location')  # Change 'your_redirect_location' to where you want to redirect in this case
+        return redirect('your_redirect_location')
 
     if request.method == "POST":
         form = MilkPaymentForm(request.POST, user=request.user)
         if form.is_valid():
             milk_payment = form.save(commit=False)
-            milk_payment.farm = request.user.farm  # Set the farm on the milk payment
+            milk_payment.farm = request.user.farm
             milk_payment.save()
-            customer_pk = milk_payment.customer.pk
-            messages.success(request, 'Payment added successfully!')
-            return redirect('dairy:customer_detail', pk=customer_pk)
-    else:
-        form = MilkPaymentForm(user=request.user)  # Pass the user to the form
 
-    # If we're dealing with an existing milk payment, get the customer's pk from there
-    if form.instance.pk and hasattr(form.instance, 'customer'):
-        customer_pk = form.instance.customer.pk
+            # Create or retrieve the 'Milk Sale' income category for the farm
+            milk_sale_category, created = IncomeCategory.objects.get_or_create(farm=request.user.farm, name='Milk Sale')
+
+            # As we're adding a new milk payment, there shouldn't be an associated income entry already. 
+            # Hence, we create a new income instance directly.
+            income = Income(user=request.user, farm=request.user.farm)
+            income.date = milk_payment.date
+            income.description = f'Milk payment from {milk_payment.customer.name}'
+            income.amount = milk_payment.received_payment
+            income.category = milk_sale_category
+            income.milk_payment = milk_payment
+            income.save()
+
+            messages.success(request, 'Milk payment added successfully!')
+            return redirect('dairy:customer_detail', pk=milk_payment.customer.pk)
+    else:
+        form = MilkPaymentForm(user=request.user)
 
     context = {
-        'form': form,
-        'customer_pk': customer_pk or None
+        'form': form
     }
     return render(request, 'dairy/customer/add_milk_payment.html', context)
 
 
+@login_required
+def update_milk_payment(request, milk_payment_id):
+    farm = request.user.farm
 
+    try:
+        milk_payment = MilkPayment.objects.get(pk=milk_payment_id)
+        edit_mode = True
+    except MilkPayment.DoesNotExist:
+        return HttpResponseNotFound("MilkPayment not found")
+
+    if request.method == 'POST':
+        form = MilkPaymentForm(request.POST, instance=milk_payment, user=request.user)
+        if form.is_valid():
+            milk_payment = form.save(commit=False)
+            milk_payment.farm = request.user.farm
+            milk_payment.save()
+
+            # Code for auto-creating Income entry (same as in add_milk_payment view)
+            milk_sale_category, created = IncomeCategory.objects.get_or_create(farm=request.user.farm, name='Milk Sale')
+            try:
+                income = Income.objects.get(milk_payment=milk_payment)
+            except Income.DoesNotExist:
+                income = Income(user=request.user, farm=request.user.farm)
+
+            income.date = milk_payment.date
+            income.description = f'Milk payment from {milk_payment.customer.name}'
+            income.amount = milk_payment.received_payment
+            income.category = milk_sale_category
+            income.milk_payment = milk_payment
+            income.save()
+
+            messages.success(request, 'Milk Payment updated successfully!')
+            return redirect('dairy:customer_detail', pk=milk_payment.customer.pk)
+    else:
+        form = MilkPaymentForm(instance=milk_payment, user=request.user)
+
+    context = {
+        'form': form,
+        'edit_mode': edit_mode,
+        'milk_payment': milk_payment
+    }
+    return render(request, 'dairy/customer/add_milk_payment.html', context)
+
+@login_required
+def delete_milk_payment(request, pk):
+    milk_payment = MilkPayment.objects.get(pk=pk)
+    milk_payment_pk = milk_payment.pk
+
+    incomes = Income.objects.filter(milk_payment=milk_payment)
+    
+    if incomes.exists():
+        for income in incomes:
+            income_pk = income.pk
+            print(f"Related income found for milk payment id {milk_payment_pk}: Income id {income_pk}")
+            income.delete()
+            print(f"Deleting related income with id {income_pk}")
+    else:
+        print(f"No related income found for milk payment id {milk_payment_pk}")
+
+    milk_payment.delete()
+    print(f"Deleting milk payment with id {milk_payment_pk}")
+
+    return redirect('dairy:customer_detail', pk=milk_payment.customer.pk)
