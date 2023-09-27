@@ -13,6 +13,10 @@ from rest_framework import status
 from django.db.models import DecimalField
 
 
+
+def main_view(request):
+    return render(request, 'home/about-us.html')
+
 @login_required
 def home_view(request):
     farm = request.user.farm
