@@ -313,9 +313,9 @@ class MilkSale(models.Model):
 class MilkPayment(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     date = models.DateField(default=timezone.now)
-    total_milk_payment = models.DecimalField(max_digits=7, decimal_places=2)
-    received_payment = models.DecimalField(max_digits=7, decimal_places=2, default=0)
-    remaining_payment = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    total_milk_payment = models.DecimalField(max_digits=17, decimal_places=2)
+    received_payment = models.DecimalField(max_digits=17, decimal_places=2, default=0)
+    remaining_payment = models.DecimalField(max_digits=17, decimal_places=2, blank=True, null=True)
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, blank=True, null=True)
     note = models.TextField(blank=True, null=True)  # Optional: For any additional info or comments
 
