@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Income, Expense, IncomeCategory, ExpenseCategory, Animal, MilkRecord
+from dairy.models import Animal, MilkRecord
+from farm_finances.models import Income, Expense, IncomeCategory,ExpenseCategory
+
 
 class IncomeSerializer(serializers.ModelSerializer):
     class Meta:

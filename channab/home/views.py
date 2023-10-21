@@ -11,6 +11,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.db.models import DecimalField
+from rest_framework.authentication import TokenAuthentication
+from .serializers import AnimalSerializer
+
+
 
 
 
@@ -115,6 +119,25 @@ class HomeDataAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        if request.user.is_authenticated:
+            print("User is authenticated.")
+            print(f"Authenticated User: {request.user.mobile}")
+
+        else:
+            print("User is not authenticated.")
+            return Response({"error": "User not authenticated"}, status=401)
+        
+        # Check the token
+        token_auth = TokenAuthentication()
+        try:
+            token = token_auth.authenticate(request)
+            if token:
+                print("Token is valid.")
+            else:
+                print("Token is not valid.")
+        except:
+            print("Error during token authentication.")
+        print(f"Authenticated User: {request.user.mobile}")
         farm = request.user.farm
 
         total_income = Income.objects.filter(farm=farm).aggregate(Sum('amount'))['amount__sum'] or 0
