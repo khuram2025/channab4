@@ -14,3 +14,4 @@ Web/Desktop View
     2nd Column Animal Title along with Action Icon Delete & Edit , And Content form OverView Tab)
 3rd row Tabs(Animal, Family, Kissan, Ghar, Weight) 
 4th row Content for each tab on press 
+as
