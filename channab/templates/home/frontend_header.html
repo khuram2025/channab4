@@ -1,0 +1,89 @@
+{% load static %}
+<header class="pb-md-4 pb-0">
+  <div class="top-nav top-header sticky-header">
+    <div class="container-fluid-lg">
+      <div class="row">
+        <div class="col-12">
+          <div class="navbar-top d-flex justify-content-between align-items-center">
+            <!-- Logo for Desktop -->
+            <a href="index.html" class="web-logo nav-logo d-none d-xl-inline">
+              <img src="{% static 'be/assets/images/logo/1.png' %}" class="img-fluid blur-up lazyload" alt="" />
+            </a>
+
+            <!-- Toggler for Mobile -->
+            <button class="navbar-toggler d-xl-none d-inline navbar-menu-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#primaryMenu">
+              <span class="navbar-toggler-icon">
+                <i class="fa-solid fa-bars"></i>
+              </span>
+            </button>
+
+            <!-- Logo for Mobile -->
+            <a href="index.html" class="web-logo nav-logo d-xl-none mx-auto">
+              <img src="{% static 'be/assets/images/logo/1.png' %}" class="img-fluid blur-up lazyload" alt="" />
+            </a>
+
+            <!-- Middle Box for Desktop -->
+            <div class="middle-box d-none d-xl-flex justify-content-center">
+              <a href="services.html" class="service-price-link">
+                <h3 style="padding-right: 25px">Services</h3>
+              </a>
+              <a href="prices.html" class="service-price-link">
+                <h3 style="padding-right: 25px">Prices</h3>
+              </a>
+            </div>
+
+            <!-- Rightside Box -->
+            <div class="rightside-box">
+              <div class="search-full">
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i data-feather="search" class="font-light"></i>
+                  </span>
+                  <input type="text" class="form-control search-type" placeholder="Search here.." />
+                  <span class="input-group-text close-search">
+                    <i data-feather="x" class="font-light"></i>
+                  </span>
+                </div>
+              </div>
+              <ul class="right-side-menu">
+                <li class="right-side">
+                  <div class="delivery-login-box">
+                    <div class="delivery-icon">
+                      <div class="search-box">
+                        <i data-feather="search"></i>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="right-side">
+                  <div class="delivery-login-box">
+                    <a href="{% url 'accounts:signup' %}" class="signup-box" style="border: 1px solid green; padding: 5px 10px; border-radius: 5px; font-weight: bold; color: green">Signup</a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="primaryMenu" aria-labelledby="primaryMenuLabel">
+    <div class="offcanvas-header">
+      <h5 id="primaryMenuLabel">Menu</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="d-flex flex-column align-items-start">
+        <a href="services.html" class="d-flex align-items-center mb-3" style="text-decoration: none; color: inherit; font-size: 1.2rem">
+          <i class="fa-solid fa-gear me-2" style="margin-right: 0.5rem"></i>
+          <span>Services</span>
+        </a>
+        <a href="prices.html" class="d-flex align-items-center mb-3" style="text-decoration: none; color: inherit; font-size: 1.2rem">
+          <i class="fa-solid fa-dollar-sign me-2" style="margin-right: 0.5rem"></i>
+          <span>Prices</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

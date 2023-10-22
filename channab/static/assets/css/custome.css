@@ -1688,6 +1688,12 @@ a.active {
 .scrollable-table {
   overflow-x: auto;
 }
+.header .navbar-top .middle-box a.service-price-link {
+  text-decoration: none !important;
+  color: inherit !important;
+  margin: 0 15px !important;
+  padding-right: 25px !important;
+}
 
 .select2-results__option {
   display: block;

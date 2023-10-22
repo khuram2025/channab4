@@ -26,6 +26,8 @@ now = timezone.now().astimezone(riyadh_timezone)
 
 def main_view(request):
     return render(request, 'home/about-us.html')
+def services(request):
+    return render(request, 'home/services.html')
 
 @login_required
 def home_view(request):

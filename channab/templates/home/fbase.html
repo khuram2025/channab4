@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Channab Dairy Farm Management System - The ultimate solution to manage all dairy farm-related activities seamlessly. Keep track of livestock, milk production, expenses, and more with ease." />
+    <meta name="keywords" content="dairy farm management, livestock management, milk production tracking, dairy farm software, Channab system, dairy farming tools, dairy expenses tracking" />
+    <meta name="author" content="Channab" />
+    <link rel="icon" href="{% static 'be/assets/images/favicon.png' %}" type="image/x-icon" />
+    <link rel="shortcut icon" href="{% static 'be/assets/images/favicon.png' %}" type="image/x-icon" />
+    <title>{% block title %}Channab: Comprehensive Dairy Farm Management Solution{% endblock %}</title>
+
+    <!-- Google font -->
+    {% block google_fonts %}
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet" />
+    {% endblock %}
+
+    <!-- Stylesheets -->
+    {% block stylesheets %}
+    <link id="rtl-link" rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/bootstrap.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/font-awesome.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/feather-icon.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/slick/slick.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/slick/slick-theme.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bulk-style.css' %}" />
+    <link id="color-link" rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}" />
+    {% endblock %}
+  </head>
+  <body>
+    {% block content %}
+    <!-- Content goes here -->
+    {% endblock %} {% block scripts %}
+    <!-- Latest Jquery -->
+    <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+
+    <!-- Jquery UI -->
+    <script src="{% static 'assets/js/jquery-ui.min.js' %}"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="{% static 'assets/js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap/bootstrap-notify.min.js' %}"></script>
+
+    <!-- Feather Icon JS -->
+    <script src="{% static 'assets/js/feather/feather.min.js' %}"></script>
+    <script src="{% static 'assets/js/feather/feather-icon.js' %}"></script>
+
+    <!-- Lazyload JS -->
+    <script src="{% static 'assets/js/lazysizes.min.js' %}"></script>
+
+    <!-- Slick JS -->
+    <script src="{% static 'assets/js/slick/slick.js' %}"></script>
+    <script src="{% static 'assets/js/slick/slick-animation.min.js' %}"></script>
+    <script src="{% static 'assets/js/slick/custom_slick.js' %}"></script>
+
+    <!-- Script JS -->
+    <script src="{% static 'assets/js/script.js' %}"></script>
+    {% endblock %}
+  </body>
+</html>
