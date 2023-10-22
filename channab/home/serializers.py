@@ -24,6 +24,10 @@ class ExpenseCategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AnimalSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        print(f"Image URL for animal {instance.tag}: {representation['image']}")
+        return representation
     class Meta:
         model = Animal
         fields = '__all__'

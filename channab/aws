@@ -107,6 +107,7 @@ cd  ~/channab/channab4/channab/
 
 python3 manage.py runserver 0.0.0.0:8000 --settings=channab.settings.prod
 python3 manage.py makemigrations --settings=channab.settings.prod
+python3 manage.py migrate --settings=channab.settings.prod
 
 
 sudo systemctl restart gunicorn
