@@ -14,6 +14,12 @@ from django.db.models import DecimalField
 from rest_framework.authentication import TokenAuthentication
 from .serializers import AnimalSerializer
 
+from django.utils import timezone
+import pytz
+
+riyadh_timezone = pytz.timezone('Asia/Riyadh')
+now = timezone.now().astimezone(riyadh_timezone)
+
 
 
 
@@ -119,6 +125,7 @@ class HomeDataAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        print("Received GET parameters:", request.GET) 
         if request.user.is_authenticated:
             print("User is authenticated.")
             print(f"Authenticated User: {request.user.mobile}")
@@ -149,38 +156,55 @@ class HomeDataAPIView(APIView):
         time_ranges = {
             "last_7_days": now - timedelta(days=7),
             "last_30_days": now - timedelta(days=30),
-            "this_month": now.replace(day=1),
-            "this_year": now.replace(month=1, day=1),
+            "this_month": now.replace(day=1, hour=0, minute=0, second=0, microsecond=0),
+            "this_year": now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
         }
 
+
         time_filter = request.GET.get('time_filter', 'last_30_days')
+        print("Received time filter:", time_filter)
         selected_time_range = time_ranges.get(time_filter, default_time_range)
+        print("Selected time range:", selected_time_range) 
+        
 
         summary = []
         for category in IncomeCategory.objects.filter(farm=farm):
-            total_amount = Income.objects.filter(
+            incomes = Income.objects.filter(
                 farm=farm,
                 category=category,
                 date__gte=selected_time_range
-            ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+            )
+            print("Filtered Incomes:", incomes.query)  # Print the SQL query of the filtered incomes
+            total_amount = incomes.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+            
+            print(f"Category: {category.name}")
+            print("Incomes Query:", incomes.query)
+            print("Total Amount:", total_amount)
+            print("-" * 50)
 
             summary.append({
                 "category": category.name,  # Assuming you have a name field in your model
                 "total_amount": total_amount,
             })
 
+        print("Income Summary:", summary)  # Print income summary
+
         expense_summary = []
         for category in ExpenseCategory.objects.filter(farm=farm):
-            total_amount = Expense.objects.filter(
+            expenses = Expense.objects.filter(
                 farm=farm,
                 category=category,
                 date__gte=selected_time_range
-            ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+            )
+            print("Filtered Expenses:", expenses.query)  # Print the SQL query of the filtered expenses
+            total_amount = expenses.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+            
 
             expense_summary.append({
                 "category": category.name,  # Assuming you have a name field in your model
                 "total_amount": total_amount,
             })
+        print("Expense Summary:", expense_summary) 
 
         male_animals = Animal.objects.filter(farm=farm, sex='male')
         female_animals = Animal.objects.filter(farm=farm, sex='female')
@@ -218,4 +242,10 @@ class HomeDataAPIView(APIView):
             'total_milk_today': total_milk_today,
         }
 
+        # print("API Response Data:", data)
+
         return Response(data)
+    
+
+
+
