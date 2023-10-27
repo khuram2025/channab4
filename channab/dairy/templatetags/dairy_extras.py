@@ -1,22 +1,46 @@
 from django import template
 from datetime import date
 from dairy.models import Animal
+from dateutil.relativedelta import relativedelta
+
 
 register = template.Library()
 
 @register.filter
 def animal_age(dob):
     today = date.today()
-    age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
-    months = (today.month - dob.month - (today.day < dob.day)) % 12
-    days = (today - dob.replace(year=today.year)).days
+    
+    # Calculate the difference in years
+    years = today.year - dob.year
+    
+    # Calculate the difference in months
+    months = today.month - dob.month
+    
+    # Calculate the difference in days
+    days = today.day - dob.day
+    
+    # Adjust if today's day is less than the birth day
+    if days < 0:
+        months -= 1
+        last_month = today.replace(month=today.month - 1, day=1)
+        days += (last_month + relativedelta(months=+1, days=-1)).day
+    
+    # Adjust if this month's difference is negative
+    if months < 0:
+        years -= 1
+        months += 12
+    
+    # Build the age string
+    age_parts = []
+    if years > 0:
+        age_parts.append(f"{years}Y")
+    if months > 0:
+        age_parts.append(f"{months}M")
+    if days > 0:
+        age_parts.append(f"{days}D")
+    
+    return ' '.join(age_parts)
 
-    if age > 0:
-        return f"{age}Y {months}M  {days}D"
-    elif months > 0:
-        return f"{months}M {days}D"
-    else:
-        return f"{days} Day{'s' if days > 1 else ''}"
     
 @register.filter(name='get_item')
 def get_item(dictionary, key):
