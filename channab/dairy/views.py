@@ -95,7 +95,8 @@ def animal_list(request):
     
     animal_types = dict(Animal.TYPE_CHOICES)
     
-    categories = AnimalCategory.objects.filter(farm=farm)
+    categories = AnimalCategory.objects.filter(Q(farm=farm) | Q(is_site_level=True))
+
     selected_category_slug = request.GET.get('categorySelect')
     if selected_category_slug:
         animals = animals.filter(category__slug=selected_category_slug)

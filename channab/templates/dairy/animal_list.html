@@ -146,11 +146,14 @@
               <div class="col-4">
                 <label for="categorySelect">Category:</label>
                 <select name="categorySelect" id="categorySelect" class="form-select">
-                  <option value="">All</option>
+                  <option value="" {% if not selected_category_slug %}selected{% endif %}>All</option>
                   {% for category in categories %}
-                  <option value="{{ category.slug }}">{{ category.title }}</option>
+                  <option value="{{ category.slug }}" {% if category.slug == selected_category_slug %}selected{% endif %}>
+                    {{ category.title }}
+                  </option>
                   {% endfor %}
                 </select>
+
               </div>
             </div>
             <div class="row">
