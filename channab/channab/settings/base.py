@@ -74,7 +74,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
-
+CORS_ORIGIN_WHITELIST = [
+     'http://farmapp.channab.com',  # Replace with your app's URL
+]
 CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'channab.urls'

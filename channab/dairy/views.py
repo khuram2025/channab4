@@ -7,6 +7,7 @@ from accounts.models import Farm
 from .models import MilkRecord, Animal, AnimalWeight
 from django.db.models import F
 from datetime import timedelta, date
+from django.http import JsonResponse
 from calendar import monthrange
 from django.db.models import Subquery, OuterRef
 from django.utils import timezone
@@ -152,16 +153,20 @@ def animal_list(request):
         page_number = request.GET.get('page')
         page_objs_by_type[animal_type] = paginators_by_type[animal_type].get_page(page_number)
     
-
-    return render(request, 'dairy/animal_list.html', {
-        'animals': animals, 
-        'animals_by_type': animals_by_type, 
-        'counts_by_type': counts_by_type, 
-        'page_objs_by_type': page_objs_by_type,
-        'selected_type': selected_type,
-        'selected_age_range': selected_age_range,
-        'categories': categories
-    })
+    if request.is_ajax():
+        # Convert animals queryset to list of dicts for JSON response
+        animals_data = list(animals.values('id', 'name', 'dob', 'latest_weight', 'animal_type'))
+        return JsonResponse({'animals': animals_data})
+    else:
+        return render(request, 'dairy/animal_list.html', {
+            'animals': animals, 
+            'animals_by_type': animals_by_type, 
+            'counts_by_type': counts_by_type, 
+            'page_objs_by_type': page_objs_by_type,
+            'selected_type': selected_type,
+            'selected_age_range': selected_age_range,
+            'categories': categories
+        })
 
 
 @login_required
