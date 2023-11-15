@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views_api import AnimalListView
+from .views_api import AnimalDetailView, AnimalListView
 from . import views
 
 app_name = 'dairy'
@@ -15,6 +15,7 @@ urlpatterns = [
     path('animals/', views.animal_list, name='animal_list'),
     path('api/animals/', AnimalListView.as_view(), name='api_animal_list'),
     path('animal/<int:pk>/', views.animal_detail, name='animal_detail'),
+    path('api/animals/<int:pk>/', AnimalDetailView.as_view(), name='api_animal-detail'),
  
 
     path('animals/create/', views.animal_create, name='animal_create'),

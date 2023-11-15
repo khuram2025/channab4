@@ -26,6 +26,8 @@ from farm_finances.models import IncomeCategory, Income
 from django.core.paginator import Paginator
 from django.conf import settings
 from urllib.parse import urljoin
+from .serializers import AnimalSerializer
+from rest_framework import status
 
 from django.db.models import Subquery, OuterRef
 
@@ -120,3 +122,12 @@ class AnimalListView(APIView):
 
         return Response({'animals': animals_data})
 
+class AnimalDetailView(APIView):
+    def get(self, request, pk):
+        farm = request.user.farm
+        try:
+            animal = Animal.objects.get(pk=pk, farm=farm)
+            serializer = AnimalSerializer(animal)
+            return Response(serializer.data)
+        except Animal.DoesNotExist:
+            return Response({"error": "Animal not found"}, status=status.HTTP_404_NOT_FOUND)
