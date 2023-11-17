@@ -15,7 +15,7 @@ from django.http import JsonResponse
 from calendar import monthrange
 from django.db.models import Subquery, OuterRef
 from django.utils import timezone
-from django.db.models import Sum
+from django.db.models import Sum, Avg
 from datetime import timedelta
 from django.db.models import F, Q, Value, DecimalField
 from django.http import HttpResponseForbidden, JsonResponse
@@ -26,8 +26,9 @@ from farm_finances.models import IncomeCategory, Income
 from django.core.paginator import Paginator
 from django.conf import settings
 from urllib.parse import urljoin
-from .serializers import AnimalSerializer
+from .serializers import AnimalSerializer, MilkRecordSerializer
 from rest_framework import status
+
 
 from django.db.models import Subquery, OuterRef
 
@@ -117,17 +118,94 @@ class AnimalListView(APIView):
                 'image_url': urljoin(settings.MEDIA_URL, animal.image.url) if animal.image else None
             }
             animals_data.append(animal_dict)
-        print("Animals data prepared for response:")
-        print(animals_data)
+        # print("Animals data prepared for response:")
+        # print(animals_data)
 
         return Response({'animals': animals_data})
 
 class AnimalDetailView(APIView):
-    def get(self, request, pk):
+   def get(self, request, pk):
+        print(f"Request received for animal with pk: {pk}")
         farm = request.user.farm
         try:
             animal = Animal.objects.get(pk=pk, farm=farm)
             serializer = AnimalSerializer(animal)
+
+            # Time filter handling
+            time_filter = request.GET.get('time_filter', 'this_month')
+            start_date, end_date = self.get_date_range(time_filter)
+            print(f"Time filter: {time_filter}, Start Date: {start_date}, End Date: {end_date}")
+
+            # Fetch milk records based on the time filter
+            milk_records = MilkRecord.objects.filter(animal=animal, date__range=(start_date, end_date))
+            milk_records = milk_records.annotate(total_milk_annotation=F('first_time') + F('second_time') + F('third_time'))
+
+            print(f"Milk Records QuerySet: {milk_records}")
+            if not milk_records.exists():
+                print("No milk records found for the given time filter.")
+
+            # Aggregations
+            totals = milk_records.aggregate(
+                total_first_time=Sum('first_time'),
+                total_second_time=Sum('second_time'),
+                total_third_time=Sum('third_time'),
+                total_milk=Sum('total_milk_annotation')  # Use the annotated field
+            )
+
+            days = (end_date - start_date).days + 1
+
+            # Calculate average milk per day
+            average_milk_per_day = 0
+            if totals['total_milk'] is not None and days > 0:
+                average_milk_per_day = totals['total_milk'] / days
+
+            # Serialize milk records and prepare response data
+            serialized_milk_records = MilkRecordSerializer(milk_records, many=True).data
+            response_data = serializer.data
+            response_data['milk_records'] = serialized_milk_records
+            response_data['totals'] = totals
+            response_data['average_milk_per_day'] = average_milk_per_day
+
+            print(f"Serialized data: {serializer.data}")
+            return Response(response_data)
+        except Animal.DoesNotExist:
+            return Response({"error": "Animal not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+   def get_date_range(self, time_filter):
+        today = timezone.now().date()
+        if time_filter == 'all':
+            start_date = Animal.objects.earliest('dob').dob
+            end_date = today
+        elif time_filter == 'today':
+            start_date = end_date = today
+        elif time_filter == 'last_7_days':
+            start_date = today - timedelta(days=6)
+            end_date = today
+        elif time_filter == 'last_30_days':
+            start_date = today - timedelta(days=29)
+            end_date = today
+        elif time_filter == 'last_1_year':
+            start_date = today - timedelta(days=364)
+            end_date = today
+        elif time_filter == 'this_month':
+            start_date = today.replace(day=1)
+            end_date = today
+        elif time_filter == 'custom':
+            start_date = request.GET.get('start_date', today.replace(day=1))
+            end_date = request.GET.get('end_date', today)
+        else:
+            start_date = today.replace(day=1)  # Default to this month
+            end_date = today
+        return start_date, end_date
+
+        
+     
+        farm = request.user.farm
+        try:
+            animal = Animal.objects.get(pk=pk, farm=farm)
+            serializer = AnimalSerializer(animal)
+            print(f"Serialized data: {serializer.data}")
             return Response(serializer.data)
         except Animal.DoesNotExist:
             return Response({"error": "Animal not found"}, status=status.HTTP_404_NOT_FOUND)
+        
