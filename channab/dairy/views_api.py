@@ -28,6 +28,7 @@ from django.conf import settings
 from urllib.parse import urljoin
 from .serializers import AnimalSerializer, MilkRecordSerializer
 from rest_framework import status
+from datetime import datetime
 
 
 from django.db.models import Subquery, OuterRef
@@ -124,7 +125,7 @@ class AnimalListView(APIView):
         return Response({'animals': animals_data})
 
 class AnimalDetailView(APIView):
-   def get(self, request, pk):
+    def get(self, request, pk):
         print(f"Request received for animal with pk: {pk}")
         farm = request.user.farm
         try:
@@ -133,7 +134,7 @@ class AnimalDetailView(APIView):
 
             # Time filter handling
             time_filter = request.GET.get('time_filter', 'this_month')
-            start_date, end_date = self.get_date_range(time_filter)
+            start_date, end_date = self.get_date_range(time_filter, request)  # Pass request here
             print(f"Time filter: {time_filter}, Start Date: {start_date}, End Date: {end_date}")
 
             # Fetch milk records based on the time filter
@@ -149,7 +150,7 @@ class AnimalDetailView(APIView):
                 total_first_time=Sum('first_time'),
                 total_second_time=Sum('second_time'),
                 total_third_time=Sum('third_time'),
-                total_milk=Sum('total_milk_annotation')  # Use the annotated field
+                total_milk=Sum('total_milk_annotation')
             )
 
             days = (end_date - start_date).days + 1
@@ -170,42 +171,50 @@ class AnimalDetailView(APIView):
             return Response(response_data)
         except Animal.DoesNotExist:
             return Response({"error": "Animal not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-   def get_date_range(self, time_filter):
-        today = timezone.now().date()
-        if time_filter == 'all':
-            start_date = Animal.objects.earliest('dob').dob
-            end_date = today
-        elif time_filter == 'today':
-            start_date = end_date = today
-        elif time_filter == 'last_7_days':
-            start_date = today - timedelta(days=6)
-            end_date = today
-        elif time_filter == 'last_30_days':
-            start_date = today - timedelta(days=29)
-            end_date = today
-        elif time_filter == 'last_1_year':
-            start_date = today - timedelta(days=364)
-            end_date = today
-        elif time_filter == 'this_month':
-            start_date = today.replace(day=1)
-            end_date = today
-        elif time_filter == 'custom':
-            start_date = request.GET.get('start_date', today.replace(day=1))
-            end_date = request.GET.get('end_date', today)
-        else:
-            start_date = today.replace(day=1)  # Default to this month
-            end_date = today
-        return start_date, end_date
 
+    # ... rest of your class code ...
+
+    def get_date_range(self, time_filter, request):
+            today = timezone.now().date()
+            if time_filter == 'all':
+                start_date = Animal.objects.earliest('dob').dob
+                end_date = today
+            elif time_filter == 'today':
+                start_date = end_date = today
+            elif time_filter == 'last_7_days':
+                start_date = today - timedelta(days=6)
+                end_date = today
+            elif time_filter == 'last_30_days':
+                start_date = today - timedelta(days=29)
+                end_date = today
+            elif time_filter == 'last_1_year':
+                start_date = today - timedelta(days=364)
+                end_date = today
+            elif time_filter == 'this_month':
+                start_date = today.replace(day=1)
+                end_date = today
+            elif time_filter == 'custom':
+                # Get the start and end dates from the request
+                start_date_str = request.GET.get('start_date', today.replace(day=1).isoformat())
+                end_date_str = request.GET.get('end_date', today.isoformat())
+
+                # Convert the string dates to datetime objects
+                start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            else:
+                start_date = today.replace(day=1)  # Default to this month
+                end_date = today
+            return start_date, end_date
+
+
+            
         
-     
-        farm = request.user.farm
-        try:
-            animal = Animal.objects.get(pk=pk, farm=farm)
-            serializer = AnimalSerializer(animal)
-            print(f"Serialized data: {serializer.data}")
-            return Response(serializer.data)
-        except Animal.DoesNotExist:
-            return Response({"error": "Animal not found"}, status=status.HTTP_404_NOT_FOUND)
+            farm = request.user.farm
+            try:
+                animal = Animal.objects.get(pk=pk, farm=farm)
+                serializer = AnimalSerializer(animal)
+                print(f"Serialized data: {serializer.data}")
+                return Response(serializer.data)
+            except Animal.DoesNotExist:
+                return Response({"error": "Animal not found"}, status=status.HTTP_404_NOT_FOUND)
         
