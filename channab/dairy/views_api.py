@@ -153,6 +153,7 @@ class AnimalDetailView(APIView):
                 total_milk=Sum('total_milk_annotation')
             )
 
+            # Calculate the number of days in the selected range
             days = (end_date - start_date).days + 1
 
             # Calculate average milk per day
@@ -194,11 +195,9 @@ class AnimalDetailView(APIView):
                 start_date = today.replace(day=1)
                 end_date = today
             elif time_filter == 'custom':
-                # Get the start and end dates from the request
                 start_date_str = request.GET.get('start_date', today.replace(day=1).isoformat())
                 end_date_str = request.GET.get('end_date', today.isoformat())
 
-                # Convert the string dates to datetime objects
                 start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
                 end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
             else:
