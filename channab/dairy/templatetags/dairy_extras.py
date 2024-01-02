@@ -22,8 +22,12 @@ def animal_age(dob):
     # Adjust if today's day is less than the birth day
     if days < 0:
         months -= 1
-        last_month = today.replace(month=today.month - 1, day=1)
+        if today.month == 1:
+            last_month = today.replace(year=today.year - 1, month=12, day=1)
+        else:
+            last_month = today.replace(month=today.month - 1, day=1)
         days += (last_month + relativedelta(months=+1, days=-1)).day
+
     
     # Adjust if this month's difference is negative
     if months < 0:
