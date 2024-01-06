@@ -54,6 +54,9 @@ urlpatterns = [
     path('animal_weights/<int:pk>/delete/', views.animal_weight_delete, name='animal_weight_delete'),
 
 
+
+
+
     path('customers/', views.customer_list, name='customer_list'),
     path('customers/create/', views.customer_new, name='customer_create'),
     path('customers/<int:pk>/', views.customer_detail, name='customer_detail'),
@@ -72,5 +75,8 @@ urlpatterns = [
     path('milk_sale/new/', views.milk_sale_create, name='milk_sale_create'),
     path('milk_sale/edit/<int:pk>/', views.milk_sale_edit, name='milk_sale_edit'),
     path('milk_sale/<int:sale_id>/delete/', views.milk_sale_delete, name='milk_sale_delete'),
+
+
+    path('api/animals/', AnimalListView.as_view(), name='animal-list-api'),
 
 ]

@@ -38,6 +38,7 @@ class AnimalListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
+        # print("Request headers:", request.headers)
         farm = request.user.farm
         animals = Animal.objects.filter(farm=farm).order_by('id')  # Add order_by here
         animals = animals.annotate(latest_weight=Subquery(
@@ -102,7 +103,19 @@ class AnimalListView(APIView):
             paginators_by_type[animal_type] = Paginator(animals_of_type, 14)
             page_number = request.GET.get('page')
             page_objs_by_type[animal_type] = paginators_by_type[animal_type].get_page(page_number)
-        
+
+        # Filter by animal type based on query parameter
+        animal_type_query = request.query_params.get('type')
+        print(f"Received animal type query: {animal_type_query}")
+
+        # Filter by animal type based on query parameter
+        if animal_type_query:
+            animals = animals.filter(animal_type__iexact=animal_type_query.lower())
+
+            print(f"Query type: '{animal_type_query}'")
+
+            # Log the filtered query results
+            print(f"Filtered animals count: {animals.count()}")
         
         animals_data = []
         for animal in animals:
@@ -121,8 +134,12 @@ class AnimalListView(APIView):
             animals_data.append(animal_dict)
         # print("Animals data prepared for response:")
         # print(animals_data)
+            
 
-        return Response({'animals': animals_data})
+        return Response({
+            'animals': animals_data,
+            'animal_types': animal_types
+                         })
 
 class AnimalDetailView(APIView):
     def get(self, request, pk):
