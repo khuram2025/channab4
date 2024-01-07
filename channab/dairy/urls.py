@@ -81,6 +81,7 @@ urlpatterns = [
 
     path('api/animals/', views_api.get_animals, name='get-animals'),
     path('api/animal_types/', views_api.get_animal_types, name='get_animal_types'),
+    path('api/milk_records/<int:animal_id>/', views_api.get_milk_records, name='get_milk_records'),
 
 
 ]

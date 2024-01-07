@@ -49,17 +49,18 @@ def get_animals(request):
 
         if animal_type_query:
             animals = Animal.objects.filter(farm=farm, animal_type__iexact=animal_type_query).order_by('id')
-            print(f"Filtering animals by type: {animal_type_query}, found {animals.count()} animals.")
+            # print(f"Filtering animals by type: {animal_type_query}, found {animals.count()} animals.")
         else:
             animals = Animal.objects.filter(farm=farm).order_by('id')
-            print(f"Fetching all animals, found {animals.count()} animals.")
+            # print(f"Fetching all animals, found {animals.count()} animals.")
 
         serializer = AnimalSerializer(animals, many=True)
-        print("Serialized data:", serializer.data)
+        # print("Serialized data:", serializer.data)
 
         return Response(serializer.data)
     except ObjectDoesNotExist:
         return Response({"error": "Farm not found for the user"}, status=404)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -75,11 +76,25 @@ def get_animal_types(request):
             .order_by('animal_type')
         )
 
-        print(f"Animal types and counts: {animal_types_with_count}")
+        # print(f"Animal types and counts: {animal_types_with_count}")
 
         return Response(animal_types_with_count)
     except ObjectDoesNotExist:
         return Response({"error": "Farm not found for the user"}, status=404)    
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_milk_records(request, animal_id):
+    try:
+        milk_records = MilkRecord.objects.filter(animal_id=animal_id).order_by('date')
+        serializer = MilkRecordSerializer(milk_records, many=True)
+        print("Serialized milk records:", serializer.data)
+    
+        return Response(serializer.data)
+    except MilkRecord.DoesNotExist:
+        return Response({"error": "Milk records not found for the specified animal"}, status=404)
+    
 
 class AnimalDetailView(APIView):
     def get(self, request, pk):
