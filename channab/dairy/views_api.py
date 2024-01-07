@@ -20,7 +20,7 @@ from datetime import timedelta
 from django.db.models import F, Q, Value, DecimalField
 from django.http import HttpResponseForbidden, JsonResponse
 from django.core import serializers
-from django.core.exceptions import ValidationError
+from django.utils.timezone import make_aware
 from django.db.models.functions import Coalesce
 from farm_finances.models import IncomeCategory, Income
 from django.db.models import Count
@@ -33,6 +33,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
+from datetime import datetime, timedelta
 
 
 
@@ -83,18 +84,42 @@ def get_animal_types(request):
         return Response({"error": "Farm not found for the user"}, status=404)    
 
 
+
+from datetime import datetime, timedelta
+from django.utils.timezone import make_aware
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_milk_records(request, animal_id):
+    filter_option = request.query_params.get('filter', 'This Month')
+    custom_start = request.query_params.get('custom_start')  # YYYY-MM-DD
+    custom_end = request.query_params.get('custom_end')  # YYYY-MM-DD
+    today = datetime.today()
+
+    # Default range (covers entire available data)
+    start_date = make_aware(datetime(2000, 1, 1))
+    end_date = make_aware(datetime(2099, 12, 31))
+
+    if filter_option == 'This Month':
+        start_date = make_aware(datetime(today.year, today.month, 1))
+        end_date = make_aware(datetime(today.year, today.month + 1, 1)) - timedelta(days=1)
+    elif filter_option == 'Last 7 Days':
+        end_date = make_aware(today)
+        start_date = end_date - timedelta(days=6)
+    elif filter_option == 'Last Year':
+        start_date = make_aware(datetime(today.year - 1, 1, 1))
+        end_date = make_aware(datetime(today.year, 1, 1)) - timedelta(days=1)
+    elif filter_option == 'Custom Range' and custom_start and custom_end:
+        start_date = make_aware(datetime.strptime(custom_start, '%Y-%m-%d'))
+        end_date = make_aware(datetime.strptime(custom_end, '%Y-%m-%d'))
+
     try:
-        milk_records = MilkRecord.objects.filter(animal_id=animal_id).order_by('date')
+        milk_records = MilkRecord.objects.filter(animal_id=animal_id, date__range=[start_date, end_date]).order_by('date')
         serializer = MilkRecordSerializer(milk_records, many=True)
-        print("Serialized milk records:", serializer.data)
-    
         return Response(serializer.data)
     except MilkRecord.DoesNotExist:
         return Response({"error": "Milk records not found for the specified animal"}, status=404)
-    
+
 
 class AnimalDetailView(APIView):
     def get(self, request, pk):
