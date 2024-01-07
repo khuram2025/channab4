@@ -1,7 +1,8 @@
 from django.urls import path
 
-from .views_api import AnimalDetailView, AnimalListView
+from .views_api import AnimalDetailView
 from . import views
+from . import views_api
 
 app_name = 'dairy'
 
@@ -13,7 +14,7 @@ urlpatterns = [
     path('animal-categories/<int:pk>/delete/', views.animal_category_delete, name='animal_category_delete'),
 
     path('animals/', views.animal_list, name='animal_list'),
-    path('api/animals/', AnimalListView.as_view(), name='api_animal_list'),
+   
     path('animal/<int:pk>/', views.animal_detail, name='animal_detail'),
     path('api/animals/<int:pk>/', AnimalDetailView.as_view(), name='api_animal-detail'),
  
@@ -77,6 +78,8 @@ urlpatterns = [
     path('milk_sale/<int:sale_id>/delete/', views.milk_sale_delete, name='milk_sale_delete'),
 
 
-    path('api/animals/', AnimalListView.as_view(), name='animal-list-api'),
+
+    path('api/animals/', views_api.get_animals, name='get-animals'),
+
 
 ]
