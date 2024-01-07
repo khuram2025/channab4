@@ -23,7 +23,7 @@ from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.db.models.functions import Coalesce
 from farm_finances.models import IncomeCategory, Income
-from django.core.paginator import Paginator
+from django.db.models import Count
 from django.conf import settings
 from urllib.parse import urljoin
 from .serializers import AnimalSerializer, MilkRecordSerializer
@@ -48,19 +48,38 @@ def get_animals(request):
         animal_type_query = request.query_params.get('type', None)
 
         if animal_type_query:
-            animals = Animal.objects.filter(farm=farm, animal_type=animal_type_query).order_by('id')
+            animals = Animal.objects.filter(farm=farm, animal_type__iexact=animal_type_query).order_by('id')
+            print(f"Filtering animals by type: {animal_type_query}, found {animals.count()} animals.")
         else:
             animals = Animal.objects.filter(farm=farm).order_by('id')
+            print(f"Fetching all animals, found {animals.count()} animals.")
 
         serializer = AnimalSerializer(animals, many=True)
-        
-        # Print the serialized data for debugging
         print("Serialized data:", serializer.data)
 
         return Response(serializer.data)
     except ObjectDoesNotExist:
         return Response({"error": "Farm not found for the user"}, status=404)
-    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_animal_types(request):
+    try:
+        farm = request.user.farm
+
+        # Getting the count of each animal type
+        animal_types_with_count = (
+            Animal.objects.filter(farm=farm)
+            .values('animal_type')
+            .annotate(count=Count('animal_type'))
+            .order_by('animal_type')
+        )
+
+        print(f"Animal types and counts: {animal_types_with_count}")
+
+        return Response(animal_types_with_count)
+    except ObjectDoesNotExist:
+        return Response({"error": "Farm not found for the user"}, status=404)    
 
 class AnimalDetailView(APIView):
     def get(self, request, pk):
