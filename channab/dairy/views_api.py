@@ -20,7 +20,7 @@ from datetime import timedelta
 from django.db.models import F, Q, Value, DecimalField
 from django.http import HttpResponseForbidden, JsonResponse
 from django.core import serializers
-from django.core.exceptions import ValidationError
+from django.utils.timezone import make_aware
 from django.db.models.functions import Coalesce
 from farm_finances.models import IncomeCategory, Income
 from django.db.models import Count
@@ -33,6 +33,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
+from datetime import datetime, timedelta
 
 
 
@@ -83,38 +84,42 @@ def get_animal_types(request):
         return Response({"error": "Farm not found for the user"}, status=404)    
 
 
+
+from datetime import datetime, timedelta
+from django.utils.timezone import make_aware
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_milk_records(request, animal_id):
-    # Get filter from request query parameters
-    date_filter = request.query_params.get('filter', None)
-    from_date = request.query_params.get('from', None)
-    to_date = request.query_params.get('to', None)
+    filter_option = request.query_params.get('filter', 'This Month')
+    custom_start = request.query_params.get('custom_start')  # YYYY-MM-DD
+    custom_end = request.query_params.get('custom_end')  # YYYY-MM-DD
+    today = datetime.today()
 
-    # Start with all records for the animal
-    milk_records_query = MilkRecord.objects.filter(animal_id=animal_id)
+    # Default range (covers entire available data)
+    start_date = make_aware(datetime(2000, 1, 1))
+    end_date = make_aware(datetime(2099, 12, 31))
 
-    # Apply custom date range filter if 'from' and 'to' dates are provided
-    if from_date and to_date:
-        from_date = datetime.strptime(from_date, '%Y-%m-%d').date()
-        to_date = datetime.strptime(to_date, '%Y-%m-%d').date()
-        milk_records_query = milk_records_query.filter(date__range=(from_date, to_date))
-    else:
-        # Apply other filters based on the filter provided
-        if date_filter == 'Last 7 Days':
-            milk_records_query = milk_records_query.filter(date__gte=datetime.now() - datetime.timedelta(days=7))
-        elif date_filter == 'This Month':
-            milk_records_query = milk_records_query.filter(date__month=datetime.now().month, date__year=datetime.now().year)
-        elif date_filter == 'This Year':
-            milk_records_query = milk_records_query.filter(date__year=datetime.now().year)
+    if filter_option == 'This Month':
+        start_date = make_aware(datetime(today.year, today.month, 1))
+        end_date = make_aware(datetime(today.year, today.month + 1, 1)) - timedelta(days=1)
+    elif filter_option == 'Last 7 Days':
+        end_date = make_aware(today)
+        start_date = end_date - timedelta(days=6)
+    elif filter_option == 'Last Year':
+        start_date = make_aware(datetime(today.year - 1, 1, 1))
+        end_date = make_aware(datetime(today.year, 1, 1)) - timedelta(days=1)
+    elif filter_option == 'Custom Range' and custom_start and custom_end:
+        start_date = make_aware(datetime.strptime(custom_start, '%Y-%m-%d'))
+        end_date = make_aware(datetime.strptime(custom_end, '%Y-%m-%d'))
 
-    milk_records = milk_records_query.order_by('date')
-    serializer = MilkRecordSerializer(milk_records, many=True)
+    try:
+        milk_records = MilkRecord.objects.filter(animal_id=animal_id, date__range=[start_date, end_date]).order_by('date')
+        serializer = MilkRecordSerializer(milk_records, many=True)
+        return Response(serializer.data)
+    except MilkRecord.DoesNotExist:
+        return Response({"error": "Milk records not found for the specified animal"}, status=404)
 
-    return Response(serializer.data)
-
-
-    
 
 class AnimalDetailView(APIView):
     def get(self, request, pk):
