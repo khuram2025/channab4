@@ -18,8 +18,7 @@ from django.utils import timezone
 from django.db.models import Sum, Avg
 from datetime import timedelta
 from django.db.models import F, Q, Value, DecimalField
-from django.http import HttpResponseForbidden, JsonResponse
-from django.core import serializers
+
 from django.utils.timezone import make_aware
 from django.db.models.functions import Coalesce
 from farm_finances.models import IncomeCategory, Income
@@ -34,12 +33,48 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from datetime import datetime, timedelta
-
-
-
+from django.http import JsonResponse
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from .models import MilkRecord
+from datetime import timedelta
+from django.core.paginator import Paginator
 from django.db.models import Subquery, OuterRef
+from .views import get_date_range
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def api_total_milk_list(request):
+    sort_by = request.GET.get('sort_by', 'date')
+    time_filter = request.GET.get('time_filter', 'today')
 
+    farm = request.user.farm
+    start_date, end_date = get_date_range(time_filter)
+
+    milk_records = (
+        MilkRecord.objects.filter(animal__farm=farm, date__range=[start_date, end_date])
+        .values('date')
+        .annotate(
+            total_milk=Sum(F('first_time') + F('second_time') + F('third_time'))
+        )
+        .order_by(sort_by)
+    )
+
+    # Serialize the milk records for the JSON response
+    milk_records_list = list(milk_records)
+
+    # Calculate totals
+    totals = calculate_totals(milk_records)
+
+    return JsonResponse({
+        'records': milk_records_list,
+        'totals': totals,
+        'time_filter': time_filter
+    })
+
+def calculate_totals(milk_records):
+   total_milk = milk_records.aggregate(total=Sum(F('first_time') + F('second_time') + F('third_time')))['total'] or 0
+   return total_milk
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -214,3 +249,6 @@ class AnimalDetailView(APIView):
             except Animal.DoesNotExist:
                 return Response({"error": "Animal not found"}, status=status.HTTP_404_NOT_FOUND)
         
+
+
+

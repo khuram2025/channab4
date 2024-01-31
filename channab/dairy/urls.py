@@ -68,6 +68,9 @@ urlpatterns = [
     path('update-milk-payment/<int:milk_payment_id>/', views.update_milk_payment, name='update_milk_payment'),
     path('delete-milk-payment/<int:pk>/', views.delete_milk_payment, name='delete_milk_payment'),
 
+    path('api/milk_records/', views_api.api_total_milk_list, name='api_total_milk_list'),
+
+
 
 
 
