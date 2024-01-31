@@ -83,37 +83,36 @@ def get_animal_types(request):
         return Response({"error": "Farm not found for the user"}, status=404)    
 
 
-from datetime import timedelta
-from django.utils import timezone
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_milk_records(request, animal_id):
-    # Get filter from request query parameters, default to 'This Month' if not provided
-    date_filter = request.query_params.get('filter', 'This Month')
+    # Get filter from request query parameters
+    date_filter = request.query_params.get('filter', None)
+    from_date = request.query_params.get('from', None)
+    to_date = request.query_params.get('to', None)
 
     # Start with all records for the animal
-    query = MilkRecord.objects.filter(animal_id=animal_id)
+    milk_records_query = MilkRecord.objects.filter(animal_id=animal_id)
 
-    # Now apply the date filter
-    if date_filter == 'Last 7 Days':
-        query = query.filter(date__gte=timezone.now() - timedelta(days=7))
-    elif date_filter == 'This Month':
-        today = timezone.now()
-        query = query.filter(date__month=today.month, date__year=today.year)
-    elif date_filter == 'This Year':
-        today = timezone.now()
-        query = query.filter(date__year=today.year)
-    # Add more filters as needed...
+    # Apply custom date range filter if 'from' and 'to' dates are provided
+    if from_date and to_date:
+        from_date = datetime.strptime(from_date, '%Y-%m-%d').date()
+        to_date = datetime.strptime(to_date, '%Y-%m-%d').date()
+        milk_records_query = milk_records_query.filter(date__range=(from_date, to_date))
+    else:
+        # Apply other filters based on the filter provided
+        if date_filter == 'Last 7 Days':
+            milk_records_query = milk_records_query.filter(date__gte=datetime.now() - datetime.timedelta(days=7))
+        elif date_filter == 'This Month':
+            milk_records_query = milk_records_query.filter(date__month=datetime.now().month, date__year=datetime.now().year)
+        elif date_filter == 'This Year':
+            milk_records_query = milk_records_query.filter(date__year=datetime.now().year)
 
-    try:
-        milk_records = query.order_by('date')
-        serializer = MilkRecordSerializer(milk_records, many=True)
-        print("Serialized milk records:", serializer.data)
+    milk_records = milk_records_query.order_by('date')
+    serializer = MilkRecordSerializer(milk_records, many=True)
 
-        return Response(serializer.data)
-    except MilkRecord.DoesNotExist:
-        return Response({"error": "Milk records not found for the specified animal"}, status=404)
+    return Response(serializer.data)
+
 
     
 
