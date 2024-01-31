@@ -41,6 +41,10 @@ from datetime import timedelta
 from django.core.paginator import Paginator
 from django.db.models import Subquery, OuterRef
 from .views import get_date_range
+from django.core.serializers.json import DjangoJSONEncoder
+
+from django.utils import timezone
+from datetime import timedelta
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -51,30 +55,111 @@ def api_total_milk_list(request):
     farm = request.user.farm
     start_date, end_date = get_date_range(time_filter)
 
+    # Get the previous period's date range
+    if time_filter in ['today', 'yesterday']:
+        prev_end_date = start_date - timedelta(days=1)
+        prev_start_date = prev_end_date
+    elif time_filter in ['this_month', 'last_month']:
+        prev_end_date = start_date - timedelta(days=1)
+        prev_start_date = prev_end_date.replace(day=1)
+    else:
+        prev_end_date = start_date - timedelta(days=1)
+        prev_start_date = start_date - (end_date - start_date + timedelta(days=1))
+
+    # Aggregate records by date
     milk_records = (
         MilkRecord.objects.filter(animal__farm=farm, date__range=[start_date, end_date])
         .values('date')
+        .annotate(
+            first_time_total=Sum('first_time'),
+            second_time_total=Sum('second_time'),
+            third_time_total=Sum('third_time'),
+        )
         .annotate(
             total_milk=Sum(F('first_time') + F('second_time') + F('third_time'))
         )
         .order_by(sort_by)
     )
 
-    # Serialize the milk records for the JSON response
-    milk_records_list = list(milk_records)
+    prev_milk_records = (
+        MilkRecord.objects.filter(animal__farm=farm, date__range=[prev_start_date, prev_end_date])
+        .values('date')
+        .annotate(
+            first_time_total=Sum('first_time'),
+            second_time_total=Sum('second_time'),
+            third_time_total=Sum('third_time'),
+        )
+        .annotate(
+            total_milk=Sum(F('first_time') + F('second_time') + F('third_time'))
+        )
+    )
 
-    # Calculate totals
-    totals = calculate_totals(milk_records)
+    # ...
 
+    current_records_list = list(milk_records)
+    current_records_list = [
+        {
+            'date': record['date'].isoformat(),
+            'first_time_total': record['first_time_total'],
+            'second_time_total': record['second_time_total'],
+            'third_time_total': record['third_time_total'],
+            'total_milk': record['total_milk'],
+            # ... include other fields as necessary ...
+        }
+        for record in milk_records
+    ]
+    current_totals = calculate_totals(milk_records)  # Changed from current_milk_records to milk_records
+    prev_totals = calculate_totals(prev_milk_records)
+
+    # Now process each current record to calculate the differences
+    for record in current_records_list:
+        date = record['date']
+        prev_record_totals = prev_totals.get(date)
+        if prev_record_totals:
+            # Calculate differences
+            record['first_time_diff'] = record['first_time_total'] - prev_record_totals['total_first_time']
+            record['second_time_diff'] = record['second_time_total'] - prev_record_totals['total_second_time']
+            record['third_time_diff'] = record['third_time_total'] - prev_record_totals['total_third_time']
+            record['total_diff'] = record['total_milk'] - prev_record_totals['total_milk']
+        else:
+            # No previous record, differences are the totals themselves
+            record['first_time_diff'] = record['first_time_total']
+            record['second_time_diff'] = record['second_time_total']
+            record['third_time_diff'] = record['third_time_total']
+            record['total_diff'] = record['total_milk']
+
+    print(f"Sending Total Milk to API  {current_records_list}")
+
+    for record in current_records_list:
+        # Manually sum the totals for each milking time to calculate total_milk
+        record['total_milk'] = (record.get('first_time_total', 0) or 0) + \
+                            (record.get('second_time_total', 0) or 0) + \
+                            (record.get('third_time_total', 0) or 0)
+
+
+
+   
     return JsonResponse({
-        'records': milk_records_list,
-        'totals': totals,
+        'records': current_records_list,
+        'current_totals': current_totals,
+        'prev_totals': prev_totals,
         'time_filter': time_filter
-    })
+    }, encoder=DjangoJSONEncoder)
 
 def calculate_totals(milk_records):
-   total_milk = milk_records.aggregate(total=Sum(F('first_time') + F('second_time') + F('third_time')))['total'] or 0
-   return total_milk
+    totals = {}
+    for record in milk_records:
+        # Ensure the date is converted to a string here
+        date_str = record['date'].isoformat() if isinstance(record['date'], date) else record['date']
+        totals[date_str] = {
+            'total_first_time': record['first_time_total'] or 0,
+            'total_second_time': record['second_time_total'] or 0,
+            'third_time_total': record['third_time_total'] or 0,
+            'total_milk': record['total_milk'] or 0,
+        }
+    return totals
+
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
