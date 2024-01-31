@@ -83,17 +83,38 @@ def get_animal_types(request):
         return Response({"error": "Farm not found for the user"}, status=404)    
 
 
+from datetime import timedelta
+from django.utils import timezone
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_milk_records(request, animal_id):
+    # Get filter from request query parameters, default to 'This Month' if not provided
+    date_filter = request.query_params.get('filter', 'This Month')
+
+    # Start with all records for the animal
+    query = MilkRecord.objects.filter(animal_id=animal_id)
+
+    # Now apply the date filter
+    if date_filter == 'Last 7 Days':
+        query = query.filter(date__gte=timezone.now() - timedelta(days=7))
+    elif date_filter == 'This Month':
+        today = timezone.now()
+        query = query.filter(date__month=today.month, date__year=today.year)
+    elif date_filter == 'This Year':
+        today = timezone.now()
+        query = query.filter(date__year=today.year)
+    # Add more filters as needed...
+
     try:
-        milk_records = MilkRecord.objects.filter(animal_id=animal_id).order_by('date')
+        milk_records = query.order_by('date')
         serializer = MilkRecordSerializer(milk_records, many=True)
         print("Serialized milk records:", serializer.data)
-    
+
         return Response(serializer.data)
     except MilkRecord.DoesNotExist:
         return Response({"error": "Milk records not found for the specified animal"}, status=404)
+
     
 
 class AnimalDetailView(APIView):
