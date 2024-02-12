@@ -49,102 +49,72 @@ from datetime import timedelta
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def api_total_milk_list(request):
-    sort_by = request.GET.get('sort_by', 'date')
-    time_filter = request.GET.get('time_filter', 'today')
+    # Determine the time filter from the request, defaulting to 'this_year'
+    time_filter = request.GET.get('filter', 'this_year')
+    today = timezone.now().date()
+    start_date, end_date = api_get_date_range(time_filter, today)
 
-    farm = request.user.farm
-    start_date, end_date = get_date_range(time_filter)
-
-    # Get the previous period's date range
-    if time_filter in ['today', 'yesterday']:
-        prev_end_date = start_date - timedelta(days=1)
-        prev_start_date = prev_end_date
-    elif time_filter in ['this_month', 'last_month']:
-        prev_end_date = start_date - timedelta(days=1)
-        prev_start_date = prev_end_date.replace(day=1)
-    else:
-        prev_end_date = start_date - timedelta(days=1)
-        prev_start_date = start_date - (end_date - start_date + timedelta(days=1))
-
-    # Aggregate records by date
+    
+    
     milk_records = (
-        MilkRecord.objects.filter(animal__farm=farm, date__range=[start_date, end_date])
-        .values('date')
+        MilkRecord.objects.filter(date__range=(start_date, end_date))
+        .values('date')  
         .annotate(
-            first_time_total=Sum('first_time'),
-            second_time_total=Sum('second_time'),
-            third_time_total=Sum('third_time'),
+            first_time_total=Coalesce(Sum('first_time', output_field=DecimalField()), 0, output_field=DecimalField()),
+            second_time_total=Coalesce(Sum('second_time', output_field=DecimalField()), 0, output_field=DecimalField()),
+            third_time_total=Coalesce(Sum('third_time', output_field=DecimalField()), 0, output_field=DecimalField()),
         )
-        .annotate(
-            total_milk=Sum(F('first_time') + F('second_time') + F('third_time'))
-        )
-        .order_by(sort_by)
+        .order_by('date')
     )
 
-    prev_milk_records = (
-        MilkRecord.objects.filter(animal__farm=farm, date__range=[prev_start_date, prev_end_date])
-        .values('date')
-        .annotate(
-            first_time_total=Sum('first_time'),
-            second_time_total=Sum('second_time'),
-            third_time_total=Sum('third_time'),
-        )
-        .annotate(
-            total_milk=Sum(F('first_time') + F('second_time') + F('third_time'))
-        )
-    )
+    records_list = []
+    for record in milk_records:
+        date_str = record['date'].strftime('%Y-%m-%d')
+        first_time_total = record['first_time_total']
+        second_time_total = record['second_time_total']
+        third_time_total = record['third_time_total']
+        total_milk = first_time_total + second_time_total + third_time_total
+        
+        # Printing each record with detailed milking times
+        print(f"Date: {date_str}, 1st Time: {first_time_total}, 2nd Time: {second_time_total}, 3rd Time: {third_time_total}, Total Milk: {total_milk}")
+        
+        records_list.append({
+            'date': date_str,
+            'first_time': first_time_total,
+            'second_time': second_time_total,
+            'third_time': third_time_total,
+            'total_milk': total_milk,
+        })
 
-    # ...
-
-    current_records_list = list(milk_records)
-    current_records_list = [
-        {
-            'date': record['date'].isoformat(),
-            'first_time_total': record['first_time_total'],
-            'second_time_total': record['second_time_total'],
-            'third_time_total': record['third_time_total'],
-            'total_milk': record['total_milk'],
-            # ... include other fields as necessary ...
-        }
-        for record in milk_records
-    ]
-    current_totals = calculate_totals(milk_records)  # Changed from current_milk_records to milk_records
-    prev_totals = calculate_totals(prev_milk_records)
-
-    # Now process each current record to calculate the differences
-    for record in current_records_list:
-        date = record['date']
-        prev_record_totals = prev_totals.get(date)
-        if prev_record_totals:
-            # Calculate differences
-            record['first_time_diff'] = record['first_time_total'] - prev_record_totals['total_first_time']
-            record['second_time_diff'] = record['second_time_total'] - prev_record_totals['total_second_time']
-            record['third_time_diff'] = record['third_time_total'] - prev_record_totals['total_third_time']
-            record['total_diff'] = record['total_milk'] - prev_record_totals['total_milk']
-        else:
-            # No previous record, differences are the totals themselves
-            record['first_time_diff'] = record['first_time_total']
-            record['second_time_diff'] = record['second_time_total']
-            record['third_time_diff'] = record['third_time_total']
-            record['total_diff'] = record['total_milk']
-
-    print(f"Sending Total Milk to API  {current_records_list}")
-
-    for record in current_records_list:
-        # Manually sum the totals for each milking time to calculate total_milk
-        record['total_milk'] = (record.get('first_time_total', 0) or 0) + \
-                            (record.get('second_time_total', 0) or 0) + \
-                            (record.get('third_time_total', 0) or 0)
+    
+    print(f"Sending {len(records_list)} records to API: {records_list}")
 
 
-
-   
-    return JsonResponse({
-        'records': current_records_list,
-        'current_totals': current_totals,
-        'prev_totals': prev_totals,
+    return Response({
+        'records': records_list,
         'time_filter': time_filter
-    }, encoder=DjangoJSONEncoder)
+    })
+
+def api_get_date_range(filter_key, today):
+    print(f"Received filter key: {filter_key}")
+    if filter_key == 'this_year':
+        start_date = today.replace(month=1, day=1)
+        end_date = today.replace(month=12, day=31)
+    elif filter_key == 'last_7_days':
+        end_date = today
+        start_date = today - timedelta(days=7)
+    elif filter_key == 'this_month':
+        start_date = today.replace(day=1)
+        last_day = (today.replace(day=28) + timedelta(days=4)).day  # Finds the last day of the current month
+        end_date = today.replace(day=last_day)
+    else:
+        # Default case, can adjust based on requirements
+        start_date = today
+        end_date = today
+    print(f"Calculated date range: Start: {start_date}, End: {end_date}")
+    return start_date, end_date
+
+
 
 def calculate_totals(milk_records):
     totals = {}
