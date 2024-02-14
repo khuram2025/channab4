@@ -722,6 +722,7 @@ def animal_milk_new(request):
         form = MilkRecordForm(instance=milk_record, farm=farm)
 
     return render(request, 'dairy/animal_milk_edit.html', {'form': form, 'edit_mode': edit_mode, 'milk_record': milk_record})
+
 from datetime import timedelta
 
 @login_required

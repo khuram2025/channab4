@@ -95,6 +95,42 @@ def api_total_milk_list(request):
         'time_filter': time_filter
     })
 
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_or_update_milk_record(request):
+    farm = request.user.farm
+
+    # Print the incoming request data
+    print("Received Milk Record Data:\n", request.data)
+
+    serializer = MilkRecordSerializer(data=request.data)
+
+    if serializer.is_valid():
+        animal_id = serializer.validated_data.get('animal').id
+        date = serializer.validated_data.get('date')
+
+        # Ensure the animal belongs to the user's farm
+        if not Animal.objects.filter(id=animal_id, farm=farm).exists():
+            return Response({'error': 'Animal not found in your farm.'}, status=status.HTTP_404_NOT_FOUND)
+
+        milk_record = serializer.save()
+        return Response(MilkRecordSerializer(milk_record).data, status=status.HTTP_201_CREATED)
+
+    else:  # Log validation errors
+        print("Validation Errors:\n", serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_filtered_milk_animals(request):
+    user = request.user
+    animals = Animal.objects.filter(sex='female', animal_type__in=['milking', 'preg_milking'])
+    serializer = AnimalSerializer(animals, many=True)
+    return Response(serializer.data)
+
 def api_get_date_range(filter_key, today):
     print(f"Received filter key: {filter_key}")
     if filter_key == 'this_year':
@@ -105,7 +141,15 @@ def api_get_date_range(filter_key, today):
         start_date = today - timedelta(days=7)
     elif filter_key == 'this_month':
         start_date = today.replace(day=1)
-        last_day = (today.replace(day=28) + timedelta(days=4)).day  # Finds the last day of the current month
+        year = today.year
+        month = today.month
+        # Correctly determine the last day of the month
+        if month == 2: #  Special case for February
+            last_day = 29 if (year % 4 == 0 and year % 100 != 0) or year % 400 == 0 else 28
+        else:
+            next_month = today.replace(day=28) + datetime.timedelta(days=4) 
+            last_day = next_month - datetime.timedelta(days=next_month.day) 
+
         end_date = today.replace(day=last_day)
     else:
         # Default case, can adjust based on requirements

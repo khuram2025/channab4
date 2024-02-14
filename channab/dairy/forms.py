@@ -98,6 +98,7 @@ class MilkSaleForm(forms.ModelForm):
             'third_sale': forms.NumberInput(attrs={'class': 'form-control'}),
             'price_per_liter': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+
 class MilkPaymentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         # Pop the user from the keyword arguments
